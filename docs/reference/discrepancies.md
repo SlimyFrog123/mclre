@@ -1,0 +1,13 @@
+# Discrepancies Log
+
+> Records every observed place where reference behavior disagrees with (a) this repo's assumptions, (b) wiki/community documentation, or (c) another reference snapshot. Precedence: reference source > owner captures > wiki > assumptions (SPEC 3.5).
+
+| # | Date | Area | Discrepancy | Resolution / Owner note |
+|---|---|---|---|---|
+| 1 | 2026-11-17 | Versioning | Spec guessed baseline ≈ "TU19"; the source carries no TU string — it shows display version `"1.6"`, product build 560, and 1.8.2-era forward-ports. | Record profile as `lce:141217` (date-based) until owner confirms TU/CU number externally. See `baseline.md`. |
+| 2 | 2026-11-17 | World sizes | Spec guessed Nether scale as uniform; source shows **per-preset** Nether scales (classic/small=3, medium=6, large=8) and a **fixed 18-chunk End** for all sizes. | Adopt source values as hard data in `WorldSizePreset`. |
+| 3 | 2026-11-17 | Java `Random.nextInt` | Spec assumed classic Java semantics; source uses the modern power-of-two path (`(next(31) * n) >> 31` in 64-bit) — same as current Java spec, not the old buggy wraparound. | Port the modern path exactly; note for parity vectors. |
+
+<!-- Template row:
+| N | YYYY-MM-DD | Area | What differs from expectation | How resolved + evidence |
+-->
