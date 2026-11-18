@@ -26,6 +26,8 @@ This is an exact, complete port of Java `Random` (4J comment at line 7 confirms 
 - `next_int(bound)` fast path must compute `(i64)next(31) * n >> 31` in 64-bit then cast to `i32`.
 - Gaussian cache must be part of serialized state where the reference serializes it (Java doesn't serialize the gaussian flag; Random's state is just the seed — but call-order can leave a cached value; keep the cache in-memory and reproduce call order).
 - Test vectors: derive from known Java outputs (e.g. `new Random(0).nextInt()`, seeded sequences of `nextInt(n)`, `nextLong`, `nextGaussian`) + reference-compiled vectors via devtools later.
+- **`nextBytes` divergence note (verified 2026-11-17):** the reference fills bytes via one `next(8)` per byte (old-Java ≤1.4 semantics). Modern JDKs (≥1.6) pack 4 bytes per `nextInt`, so JDK output is NOT ground truth for `nextBytes`. Our port matches the reference (byte-by-byte); test vectors are computed from an independent inline LCG (`crates/core/src/random.rs`).
+- **`nextGaussian` precision note (verified 2026-11-17):** the Box–Muller `log` step is not bit-identical across math libraries — Java allows ≤1 ulp, the reference used the MSVC CRT `log`, Rust uses `f64::ln`. The LCG and `next_double` draws feeding the gaussian ARE bit-exact (verified vs JDK 26, seeds 0/42/123456789/-1/-4936897262349239473). Tests tolerate ≤1 ulp. Baseline worldgen must not depend on gaussian output for parity-critical paths — confirm per-system at M6.
 
 ## 2. `Mth` — `Minecraft.World/Mth.{h,cpp}` (VERIFIED)
 
