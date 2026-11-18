@@ -4,11 +4,16 @@
 //! Currently implemented: [`identifier`], [`random`]. Registries, tags, block
 //! states, `Mth`, and NBT land in subsequent M1 slices.
 
+pub mod block_state;
 pub mod identifier;
 pub mod mth;
 pub mod random;
 pub mod registry;
 
+pub use block_state::{
+    BlockId, BlockProperties, BlockStateId, BlockStateModel, PropertyDefinition, PropertyValue,
+    StateError,
+};
 pub use identifier::{DEFAULT_NAMESPACE, Identifier, InternedStr, ParseError};
 pub use mth::Mth;
 pub use random::{CosmeticRandom, GameRandom};
