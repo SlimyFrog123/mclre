@@ -7,22 +7,21 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** Phase 0 — Reference Survey & Pre-M0 Groundwork (Planning complete; implementation not yet started)
-- **Active Milestone:** Pre-M0 (Kick-off checklist §21.0)
-- **Overall Progress:** Planning artifacts created (`PLAN.md`, `PROGRESS.md`); zero crates or code written yet.
+- **Current Phase:** Phase 0 — Reference Survey & Pre-M0 Groundwork (repo + reference submodule + workspace scaffold DONE; reference survey / CLAUDE.md / ADRs still pending)
+- **Active Milestone:** Pre-M0 (Kick-off checklist §21.0) — M0 workspace scaffold started early
+- **Overall Progress:** Dedicated git repo initialized (`main` branch, 2 commits); `reference/lce-141217` submodule attached (shallow, commit `0aa818c`); Cargo workspace with 22 crate skeletons created and verified with `cargo check --workspace`.
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-17
 
 ### Immediate Next Actions (Start Here in Next Session)
-1. **Confirm repo setup (`D-01` / git boundary):** Note that `C:\Users\DJ\Desktop` contains an empty `.git` repo (`git status` from `mclre` currently resolves to `../`). Confirm with the owner or initialize a dedicated git repository inside `C:\Users\DJ\Desktop\mclre\` before adding the reference submodule.
-2. **Survey the reference tree (`SPEC.md` §21.0):**
-   - Attach `https://github.com/furax124/Minecraft-LCE-PS3` (`MinecraftConsoles-141217`) read-only at `reference/lce-141217/`.
+1. **Survey the reference tree (`SPEC.md` §21.0):**
+   - Submodule is already attached at `reference/lce-141217/` (repo root; the Dec-2014 build is under `reference/lce-141217/MinecraftConsoles-141217/` with `Minecraft.Client`, `Minecraft.World`, `MinecraftConsoles.sln`).
    - Inventory `Minecraft.World` and `Minecraft.Client` and write `docs/reference/reference-tree.md`, `docs/reference/baseline.md`, `docs/reference/rng.md`, `docs/reference/discrepancies.md`, and `docs/reference/feature-flags.md`.
    - Resolve `[VERIFY]` items `V-01` through `V-05`.
-3. **Create governance files & initial ADRs:**
+2. **Create governance files & initial ADRs:**
    - Create `CLAUDE.md` (condensed core rules from `SPEC.md`).
    - Create `docs/adr/0000-template.md`, `docs/adr/0001-record-architecture-decisions.md`, and draft ADRs for `[DECIDE]` items (`D-01`..`D-13`) for owner sign-off.
-4. **Begin M0 — Foundation:** Once Phase 0 is complete, create `rust-toolchain.toml`, workspace `Cargo.toml`, crate skeletons, dependency-graph test, `deny.toml`, and `.github/workflows/ci.yml`.
+3. **Finish M0 — Foundation:** Remaining M0 work after the scaffold: `.github/workflows/ci.yml` (Windows + Linux: fmt, clippy `-D warnings`, test, `cargo-deny`, `cargo-audit`, dependency-graph test), `deny.toml`, and the automated dependency-rule test (see `PLAN.md` §4 M0). `cargo-deny` and `cargo-audit` are **not installed** locally yet.
 
 ---
 
@@ -31,12 +30,13 @@
 | Tool / Item | Observed Value | Notes |
 |---|---|---|
 | OS / Platform | Windows (`win32`) | Target CI matrix: Windows + Linux |
-| `rustc` | `1.88.0 (6b00bc388 2025-06-23)` | Available |
+| `rustc` | `1.88.0 (6b00bc388 2025-06-23)` | Available; pinned in `rust-toolchain.toml` (components rustfmt + clippy auto-installed on first build) |
 | `cargo` | `1.88.0 (873a06493 2025-05-10)` | Available |
 | `rustup` toolchain | `stable-x86_64-pc-windows-msvc (active, default)` | Available |
-| `git` | `2.56.0.windows.4` | Available; parent `Desktop/` has an empty `.git` |
+| `git` | `2.56.0.windows.4` | Dedicated repo at `C:\Users\DJ\Desktop\mclre` (branch `main`); identity `DJ <89934852+SlimyFrog123@users.noreply.github.com>` |
 | `cargo-deny` | Not installed (exit code 1) | Install before running M0 license/advisory checks |
 | `cargo-audit` | Not installed (exit code 1) | Install before running M0 advisory checks |
+| Disk space | `C:` ~9 GB free; `E:` ~242 GB free | `C:` is tight — the first submodule clone attempt failed with "No space left on device" (transient; a `--depth 1` retry succeeded). Prefer shallow clones and watch space when adding big dependencies. |
 
 ---
 
@@ -44,8 +44,8 @@
 
 | Milestone | Title | Status | Tag / Commit | Notes / Acceptance Gate |
 |---|---|---|---|---|
-| **Phase 0** | Reference Survey & Pre-M0 Groundwork | **In Progress** | — | `PLAN.md` & `PROGRESS.md` created. Next: git boundary, `reference/lce-141217/`, `docs/reference/*`, `CLAUDE.md`, ADRs. |
-| **M0** | Foundation | Not Started | — | Blocked on Phase 0. Gate: `cargo test --workspace` + dep-rule test + CI + `cargo-deny`/`cargo-audit`. |
+| **Phase 0** | Reference Survey & Pre-M0 Groundwork | **In Progress** | `43ed07c` | Git repo init + reference submodule attached + workspace scaffold DONE (done early, ahead of M0). Remaining: `docs/reference/*` survey, `CLAUDE.md`, ADRs. |
+| **M0** | Foundation | **In Progress** | — | Workspace skeleton (22 crates, edition 2024, workspace lints, `rust-toolchain.toml`) done; `cargo check --workspace` green. Remaining: CI, `deny.toml`, dependency-rule test, `cargo-deny`/`cargo-audit` install. Gate: `cargo test --workspace` + dep-rule test + CI + `cargo-deny`/`cargo-audit`. |
 | **M1** | Core Data Model | Not Started | — | Blocked on M0. Gate: ~20 test blocks via public API, `GameRandom` parity vectors, no `rand` in gameplay crates. |
 | **M2** | World Storage & Chunks | Not Started | — | Blocked on M1. Gate: chunk round-trip, crash-safety test, external Anvil inspect, bounded+infinite support. |
 | **M3** | Minimal Client Rendering | Not Started | — | Blocked on M2. Gate: 32-chunk flat world `>= 60 FPS` (mid), Vulkan/DX12/GL start. |
@@ -111,3 +111,23 @@
   - Confirm initializing a dedicated git repository inside `C:\Users\DJ\Desktop\mclre\` (separate from parent `C:\Users\DJ\Desktop\.git`).
   - Confirm proceeding to Phase 0 (cloning `https://github.com/furax124/Minecraft-LCE-PS3` `MinecraftConsoles-141217` into `reference/lce-141217/`).
 - **Next Steps:** Follow Section 1 ("Immediate Next Actions") in `PROGRESS.md`.
+
+### Session 2 — 2026-11-17
+- **Goal:** Initialize the dedicated git repository, attach the LCE reference submodule, and scaffold the Rust/Cargo project structure.
+- **Completed:**
+  - Initialized dedicated git repo at `C:\Users\DJ\Desktop\mclre` (branch `main`); confirmed the parent `Desktop\.git` no longer affects `git status` inside `mclre`.
+  - Attached submodule `https://github.com/furax124/Minecraft-LCE-PS3.git` at `reference/lce-141217` (`--depth 1`, commit `0aa818c2`, branch `main`). First clone attempt failed transiently ("No space left on device" / C: had ~9 GB free); a shallow retry succeeded. Set `submodule.reference/lce-141217.update none` to discourage accidental updates. Verified tree: repo root contains `MinecraftConsoles-141217/{Minecraft.Client, Minecraft.World, MinecraftConsoles.sln}`, `mc-console-oct2014/`, `mc-cpp-snapshot/`, `README.md`, and a torrent file.
+  - Created workspace root: `Cargo.toml` (resolver "3", edition 2024, workspace lints: `unsafe_code = "forbid"`, `missing_docs = "warn"`, clippy `all` + `pedantic` warn; version-pinned `[workspace.dependencies]`; internal path deps pre-declared), `rust-toolchain.toml` (pinned 1.88.0 + rustfmt/clippy), `.gitignore` (`/target/`, `/game-assets/`, logs, crash-reports).
+  - Generated 22 crate skeletons under `crates/` (all with `[lints] workspace = true`): libs `core, profiles, content-vanilla, world, worldgen, sim, protocol, net, server, client, render, ui, audio, input, assets, mod-api, modding, identity, tools/devtools`; bins `app` (pkg `mclre`, bin `mclre`), `server-bin` (pkg `mclre-server-bin`, bin `mclre-server`), `tools/assetc` (bin `assetc`).
+  - Verified with `cargo check --workspace` (EXIT=0; ~1.1s). No external deps are pulled yet.
+- **Files Created / Modified:**
+  - `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml`, `.gitignore` (created)
+  - `crates/*/Cargo.toml` + `crates/*/src/{lib,main}.rs` (22 crates, created)
+  - `PROGRESS.md` (updated)
+- **Git History:**
+  - `43ed07c` chore: seed repo with SPEC, PLAN, PROGRESS, and read-only LCE reference submodule (lce-141217)
+  - `5883ad0` chore: scaffold cargo workspace with 22 crate skeletons (M0 start)
+- **Verification Run:** `cargo check --workspace` → success. `git submodule status` → `0aa818c2 ... reference/lce-141217 (heads/main)`.
+- **Blockers / Open Questions for Owner:**
+  - None new. `cargo-deny`/`cargo-audit` still need installing (M0). C: disk space (~9 GB) is tight; watch it when adding `wgpu`/`wasmtime` etc.
+- **Next Steps:** Follow Section 1 ("Immediate Next Actions"): reference-tree survey + `docs/reference/*` docs, `CLAUDE.md`, ADRs, then finish M0 (CI, `deny.toml`, dependency-rule test).
