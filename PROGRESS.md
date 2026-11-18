@@ -22,7 +22,9 @@
    - `core::identifier` — `Identifier` + `InternedStr` interner + `ParseError`; validation `[a-z0-9_.-]`/`[a-z0-9_.-/]`; default-ns only for user-facing parse; content-ordered `Ord`; unit + prop tests. (commit `d0223e6`)
    - `core::random` — exact `GameRandom` port (`Random.cpp` verified); `CosmeticRandom` (splitmix64); **JDK 26-generated vectors** (nextInt/nextLong/nextDouble/nextFloat/nextBoolean/nextGaussian/nextInt(bound) for seeds 0/42/123456789/-1/-4936897262349239473) all pass; two fidelity notes documented (`docs/reference/rng.md`, discrepancies #4/#5): reference `nextBytes` is old-Java byte-by-byte, and `nextGaussian` `log` is ≤1-ulp across math libs. (commit `1b0dc9a`)
    - `core::mth` — `Mth` port: 65536-entry f32 sine LUT (lazy `Vec`, `sin`/`cos` with quarter-table offset), `sqrt`, `floor`(f32/f64)/`lfloor`/`fastFloor`/`absFloor`/`abs`/`ceil`. Detail: table index cast emulates MSVC/x64 `cvttss2si` overflow semantics (INT_MIN for out-of-range/NaN) so huge angles match the reference platform. (commit `f665717`)
-   REMAINING M1: `core::registry`/tags → block/state model → `core::nbt` → `profiles` → 20 test blocks in `content-vanilla` → devtools extractor scaffolding.
+   - `core::registry` — `Registry<T>` (Registering→Frozen), dense indices in registration order, `TagEntry` (direct + `#tag` refs), freeze-time tag resolution with DFS cycle detection + unknown-ref errors; 9 tests. (commit `e3284b5`)
+   - `core::block_state` — `PropertyDefinition` (bool/int-range/enum) + `BlockProperties` with validation; `BlockStateModel::freeze` enumerates a deterministic globally-dense `BlockStateId` table (registration × declaration × canonical value order); `state_from_values`/`state_from_indices`/`values_of`/`block_of`/`default_state`; 7 unit tests + injectivity/round-trip proptest. (commit `d08f440`)
+   REMAINING M1: `core::nbt` → `profiles` → 20 test blocks in `content-vanilla` → devtools extractor scaffolding.
 
 ---
 
