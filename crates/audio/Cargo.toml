@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "Audio engine: positional 3D sound, splitscreen listeners, sound events, music logic."
 
 [lints]

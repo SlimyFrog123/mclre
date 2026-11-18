@@ -5,6 +5,8 @@ all-features = true
 
 [licenses]
 version = 2
+# Pre-approved list (dependencies not yet in the graph; warnings for unused entries disabled).
+unused-allowed-license = "allow"
 # Keep in sync with ADR 0013. Flag (do not yet hard-deny) copyleft until owner confirms.
 allow = [
     "MIT",

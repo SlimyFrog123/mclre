@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "Vanilla (baseline profile) blocks/items/entities/recipes, registered through the public mod/registry API."
 
 [lints]

@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "Retained-mode data-driven UI toolkit recreating the LCE look: scenes, 9-slice, focus navigation."
 
 [lints]

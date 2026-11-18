@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
+license.workspace = true
 description = "assetc: offline importer/converter for LCE assets (archives, textures, audio, languages)."
 
 [[bin]]
