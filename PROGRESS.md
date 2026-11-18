@@ -9,7 +9,7 @@
 
 - **Current Phase:** Phase 0 COMPLETE · M0 (Foundation) essentially complete locally — remaining M0 item: CI verification on a remote (repo has no remote yet) before tagging `m0-foundation`.
 - **Active Milestone:** M0 (finish line) → next is M1 (Core Data Model)
-- **Overall Progress:** Phase 0 done (reference surveyed, CLAUDE.md + 14 ADRs). M0 done: 22 crate skeletons, dependency-rule test (verified to fail on violation), CI workflow, deny.toml; local gates green: fmt, clippy `-D warnings`, `cargo test --workspace`, `cargo-deny`, `cargo-audit`.
+- **Overall Progress:** Phase 0 done (reference surveyed, CLAUDE.md + 14 ADRs). M0 done: 22 crate skeletons, dependency-rule test (verified to fail on violation), CI workflow, deny.toml; local gates green: fmt, clippy `-D warnings`, `cargo test --workspace`, `cargo-deny`, `cargo-audit`. **M1 started: `core::identifier` implemented and green.**
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-17
 
@@ -18,13 +18,15 @@
    - Review ADRs 0002–0014 in `docs/adr/` (all "Proposed"); confirm/override — D-02 (namespaces) and D-05 (NBT) matter for M1.
    - Confirm baseline TU/CU number externally (likely TU19/CU7) → profile ID currently `lce:141217` (`docs/reference/baseline.md`).
    - Optionally create a private GitHub remote and push so CI (`ci.yml`) actually runs; then tag `m0-foundation`.
-2. **Start M1 — Core Data Model** (`PLAN.md` §4 M1):
-   - `core`: `Identifier` + interning + validation (proptest), `Registry<T>` (Registering→Frozen, tags), block/state model.
-   - `core`: exact `GameRandom` port of `Random.cpp` (see `docs/reference/rng.md` — exact constants already verified) + `CosmeticRandom` split.
-   - `core`: `Mth` sine LUT port (65536-entry f32 table).
-   - NBT via `simdnbt` (ADR 0006 default) behind `core::nbt`.
-   - `profiles`: `ProfileId` (`lce:141217`), `FeatureFlag` enum, `Profile` struct.
+2. **Continue M1 — Core Data Model** (`PLAN.md` §4 M1). DONE so far: `core::identifier` (`Identifier` + `InternedStr` interner + `ParseError`; validation `[a-z0-9_.-]` / `[a-z0-9_.-/]`; default-ns only for user-facing parse; content-ordered `Ord`; 8 unit tests + 2 proptests — tests/clippy/fmt green). REMAINING M1:
+   - `core::registry`: `Registry<T>` (Registering→Frozen), dense indices, `TagRegistry` with JSON tags + cycle detection.
+   - `core::block_state` (or in `world`): typed properties (bool/int/enum), dense deterministic `BlockStateId` table, proptests for injectivity/order.
+   - `core::random`: exact `GameRandom` port of `Random.cpp` per `docs/reference/rng.md` (constants already verified) + `CosmeticRandom` split + test vectors.
+   - `core::mth`: 65536-entry f32 sine LUT port.
+   - `core::nbt`: via `simdnbt` (ADR 0006 default) behind internal API.
+   - `profiles`: `ProfileId` (`lce:141217`), `FeatureFlag`, `Profile` struct.
    - `content-vanilla`: register ~20 test blocks through the public API.
+   - `tools/devtools`: start reference extractor scaffolding (`data/legacy/blocks.toml`, golden fixtures).
 
 ---
 

@@ -9,3 +9,10 @@ description = "MCLRE core: identifiers, registries, tags, math types, reference-
 
 [lints]
 workspace = true
+
+[dependencies]
+parking_lot.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest = "1"
