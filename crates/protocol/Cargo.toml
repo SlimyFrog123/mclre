@@ -1,0 +1,10 @@
+[package]
+name = "mclre-protocol"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Transport-agnostic typed protocol packets (Encode/Decode), versioned handshake/configuration/play states."
+
+[lints]
+workspace = true

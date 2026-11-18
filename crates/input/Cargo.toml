@@ -1,0 +1,10 @@
+[package]
+name = "mclre-input"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Input abstraction: keyboard/mouse/gamepad actions, per-player device bindings (LCE-style layouts)."
+
+[lints]
+workspace = true

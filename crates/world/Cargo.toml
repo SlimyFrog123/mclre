@@ -1,0 +1,10 @@
+[package]
+name = "mclre-world"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "World model: chunks, block states, palette-compressed sections, lighting, Anvil region storage, dimensions, world size presets."
+
+[lints]
+workspace = true

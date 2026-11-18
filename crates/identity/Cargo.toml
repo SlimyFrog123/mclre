@@ -1,0 +1,10 @@
+[package]
+name = "mclre-identity"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "IdentityProvider (launch-arg implementation, splitscreen guests) and EntitlementProvider placeholders."
+
+[lints]
+workspace = true

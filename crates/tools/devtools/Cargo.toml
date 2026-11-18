@@ -1,0 +1,10 @@
+[package]
+name = "mclre-devtools"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Developer tools: reference-data extractors, registry dumpers, worldgen viewers, packet inspectors."
+
+[lints]
+workspace = true

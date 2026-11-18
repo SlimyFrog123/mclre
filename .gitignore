@@ -1,0 +1,13 @@
+# Cargo build artifacts
+/target/
+
+# Proprietary converted assets (output of tools/assetc).
+# Isolated by policy (SPEC.md 11.3/16); only added to the repo by explicit owner decision.
+/game-assets/
+
+# Local logs and crash reports
+/*.log
+/crash-reports/
+
+# OS noise
+Thumbs.db

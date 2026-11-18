@@ -1,0 +1,5 @@
+[toolchain]
+# MSRV pinned per PLAN.md M0; matches the development environment (Rust 1.88.0).
+channel = "1.88.0"
+profile = "minimal"
+components = ["rustfmt", "clippy"]

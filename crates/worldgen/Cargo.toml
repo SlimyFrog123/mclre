@@ -1,0 +1,10 @@
+[package]
+name = "mclre-worldgen"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Versioned world generators (per Game Profile): biomes, terrain, caves, structures, decoration."
+
+[lints]
+workspace = true

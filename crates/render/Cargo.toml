@@ -1,0 +1,10 @@
+[package]
+name = "mclre-render"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "wgpu renderer: staged frame graph (Iris-mappable), chunk meshing, AO/smooth lighting, viewports."
+
+[lints]
+workspace = true

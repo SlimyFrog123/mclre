@@ -1,0 +1,77 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/core",
+    "crates/profiles",
+    "crates/content-vanilla",
+    "crates/world",
+    "crates/worldgen",
+    "crates/sim",
+    "crates/protocol",
+    "crates/net",
+    "crates/server",
+    "crates/server-bin",
+    "crates/client",
+    "crates/render",
+    "crates/ui",
+    "crates/audio",
+    "crates/input",
+    "crates/assets",
+    "crates/mod-api",
+    "crates/modding",
+    "crates/identity",
+    "crates/app",
+    "crates/tools/assetc",
+    "crates/tools/devtools",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+publish = false
+
+[workspace.lints.rust]
+# Unsafe policy (SPEC.md 14): forbidden by default everywhere; exceptions are
+# crate-level `#[allow]`s with SAFETY comments, granted crate by crate later.
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
+
+[workspace.dependencies]
+# Shared, version-pinned dependencies. Crates adopt these via `dep.workspace = true`.
+bytes = "1"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+serde = "1"
+serde_json = "1"
+toml = "0.8"
+uuid = { version = "1", features = ["v7"] }
+clap = "4"
+glam = "0.29"
+bytemuck = "1"
+rayon = "1"
+crossbeam-channel = "0.5"
+parking_lot = "0.12"
+image = "0.25"
+
+# Internal crates (added as needed, e.g. mclre-core.workspace = true)
+mclre-core = { path = "crates/core" }
+mclre-profiles = { path = "crates/profiles" }
+mclre-world = { path = "crates/world" }
+mclre-worldgen = { path = "crates/worldgen" }
+mclre-sim = { path = "crates/sim" }
+mclre-protocol = { path = "crates/protocol" }
+mclre-net = { path = "crates/net" }
+mclre-server = { path = "crates/server" }
+mclre-client = { path = "crates/client" }
+mclre-render = { path = "crates/render" }
+mclre-ui = { path = "crates/ui" }
+mclre-audio = { path = "crates/audio" }
+mclre-input = { path = "crates/input" }
+mclre-assets = { path = "crates/assets" }
+mclre-identity = { path = "crates/identity" }

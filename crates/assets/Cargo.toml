@@ -1,0 +1,10 @@
+[package]
+name = "mclre-assets"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Asset loading: virtual filesystem layering, content/resource packs, atlas building, localization."
+
+[lints]
+workspace = true

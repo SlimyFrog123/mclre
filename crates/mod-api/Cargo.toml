@@ -1,0 +1,10 @@
+[package]
+name = "mclre-mod-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Guest-side SDK crate that WASM mods depend on (no_std-friendly where possible)."
+
+[lints]
+workspace = true

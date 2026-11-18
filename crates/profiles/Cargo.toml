@@ -1,0 +1,10 @@
+[package]
+name = "mclre-profiles"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Game Profile system: ProfileId, typed FeatureFlags, per-version content/worldgen/protocol pinning."
+
+[lints]
+workspace = true

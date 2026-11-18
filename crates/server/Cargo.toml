@@ -1,0 +1,10 @@
+[package]
+name = "mclre-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Server library (integrated + dedicated): tick loop, ClientConnection adapter, host privileges."
+
+[lints]
+workspace = true

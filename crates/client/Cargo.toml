@@ -1,0 +1,10 @@
+[package]
+name = "mclre-client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Client library: ClientWorld mirror, prediction, interpolation, local players, UI state machine."
+
+[lints]
+workspace = true
