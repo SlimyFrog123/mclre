@@ -7,7 +7,9 @@
 pub mod identifier;
 pub mod mth;
 pub mod random;
+pub mod registry;
 
 pub use identifier::{DEFAULT_NAMESPACE, Identifier, InternedStr, ParseError};
 pub use mth::Mth;
 pub use random::{CosmeticRandom, GameRandom};
+pub use registry::{FrozenRegistry, Registry, RegistryError, TagEntry};
