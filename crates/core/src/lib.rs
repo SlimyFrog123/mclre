@@ -5,7 +5,9 @@
 //! states, `Mth`, and NBT land in subsequent M1 slices.
 
 pub mod identifier;
+pub mod mth;
 pub mod random;
 
 pub use identifier::{DEFAULT_NAMESPACE, Identifier, InternedStr, ParseError};
+pub use mth::Mth;
 pub use random::{CosmeticRandom, GameRandom};
