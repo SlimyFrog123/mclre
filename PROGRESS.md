@@ -68,29 +68,31 @@
 ### 4.1 Reference Verifications (`[VERIFY]`)
 | ID | Item | Status | Resolved Value / File |
 |---|---|---|---|
-| V-01 | `reference/lce-141217/` tree layout, build system, asset paths | Pending | `docs/reference/reference-tree.md` |
-| V-02 | Exact Dec 17, 2014 baseline TU/CU & final XB1/PS4 TU | Pending | `docs/reference/baseline.md` |
-| V-03 | Exact `classic`/`small`/`medium`/`large` dimensions, Nether/End scale, world edge behavior | Pending | `docs/reference/baseline.md` |
-| V-04 | `Mth` sine lookup tables, float/double ops, chunk/layer seed XOR constants | Pending | `docs/reference/rng.md` |
-| V-05 | Asset container/audio/texture/lang formats (`.arc`, `.binka`, `.dds`, etc.) | Pending | `docs/reference/reference-tree.md` |
-| V-06 | Splitscreen multi-listener audio attenuation behavior | Pending | `docs/reference/audio.md` |
+| V-01 | `reference/lce-141217/` tree layout, build system, asset paths | **Resolved** | `docs/reference/reference-tree.md` — Visual Studio C++ solution; `Minecraft.World` = flat ~1,800 .cpp/.h (~5.7 MB); `Minecraft.Client` = ~3,572 files (~598 MB) incl. `.swf`/`.xui` UI, `.png`, `.ttf`, `.arc`/`.pck` archives, `.binka` audio; `PSVita/`+`sce_sys/`+`redist64/` = platform glue (do not port). |
+| V-02 | Exact Dec 17, 2014 baseline TU/CU & final XB1/PS4 TU | **Partially resolved** | `docs/reference/baseline.md` — build is date 2014-12-17, display "1.6", product build 560, PC 1.8.2-era forward-ports; likely TU19/CU7 but the source carries no TU string → profile ID `lce:141217` until owner confirms. Final XB1/PS4 TU still open. |
+| V-03 | Exact `classic`/`small`/`medium`/`large` dimensions, Nether/End scale, world edge behavior | **Resolved** | `docs/reference/baseline.md` — 54/64/192/320 chunk widths (864/1024/3072/5120 blocks), per-preset Nether scales 3/3/6/8, End fixed 18×18 chunks, edge **moats** for classic/small/medium (`ChunkSource.h:57-59`). |
+| V-04 | `Mth` sine lookup tables, float/double ops, chunk/layer seed XOR constants | **Partially resolved** | `docs/reference/rng.md` — `Random.cpp` is an exact java.util.Random port (0x5DEECE66D/0xB/48-bit, modern power-of-2 nextInt path, Box-Muller cache); `Mth` 65536-entry f32 sine LUT. Chunk/layer seed constants still to analyze at M6. |
+| V-05 | Asset container/audio/texture/lang formats (`.arc`, `.binka`, `.dds`, etc.) | **Resolved** | `docs/reference/reference-tree.md` §3 — `.arc` (5, reader in `ArchiveFile.{h,cpp}`), `.pck` (19), `.binka` (40+, music), `.png` (391), `.ttf` + bitmap fonts, `.swf` (376) + `.xui` (170) UI. No `.dds` found in Common/Media. |
+| V-06 | Splitscreen multi-listener audio attenuation behavior | Pending | `docs/reference/audio.md` (at M11) |
 
 ### 4.2 Open Decisions (`[DECIDE]`)
+> All ADRs are now **drafted as "Proposed"** (`docs/adr/0002`–`0014`) with recommended defaults active until the owner confirms. Statuses below track *owner confirmation*.
+
 | ID | Decision | Status | Proposed Default | ADR Path |
 |---|---|---|---|---|
-| D-01 | Private repo reference/asset policy & Git LFS for `game-assets/` | Pending | Isolated `game-assets/`, read-only `reference/lce-141217/` | `docs/adr/0002-...` |
-| D-02 | LCE-only namespace policy (`lce:` vs `minecraft:`) | Pending | `minecraft:` if Java ID exists, else `lce:` | `docs/adr/0003-...` |
-| D-03 | `infinite` preset terrain match inside finite bounds | Pending | Confirm with owner | `docs/adr/0004-...` |
-| D-04 | Server ECS framework | Pending | `bevy_ecs` standalone behind `sim::entity` | `docs/adr/0005-...` |
-| D-05 | NBT crate (`simdnbt` vs `fastnbt`) | Pending | `simdnbt` (verify API/allocations) | `docs/adr/0006-...` |
-| D-06 | Light propagation authority | Pending | Server computes & sends light | `docs/adr/0007-...` |
-| D-07 | Text rendering crate | Pending | `glyphon` + custom bitmap pixel font path | `docs/adr/0008-...` |
-| D-08 | Chunk greedy meshing vs AO fidelity | Pending | Per-face first; greedy off by default | `docs/adr/0009-...` |
-| D-09 | Missing `--username` policy & splitscreen guest UUID derivation | Pending | Refuse in MP/prod, `Player` in `--dev-defaults`; deterministic guest UUIDs | `docs/adr/0010-...` |
-| D-10 | LAN transport, certs & discovery | Pending | `quinn` (QUIC, TOFU/LAN cert) + `mdns-sd` | `docs/adr/0011-...` |
-| D-11 | Audio crate, multi-listener mix & `assetc` `.binka` decoder | Pending | `kira` + external `vgmstream` invocation | `docs/adr/0012-...` |
-| D-12 | Modding WASM runtime & dev-only native Rust mods | Pending | `wasmtime` (WIT component model) | `docs/adr/0013-...` |
-| D-13 | Perf hardware targets, `faithful_bugs` defaults, finite→infinite migration, shader/project license, naming | Pending | Confirm with owner | `docs/adr/0014-...` |
+| D-01 | Private repo reference/asset policy & Git LFS for `game-assets/` | ADR drafted | Isolated `game-assets/`, read-only `reference/lce-141217/`, LFS deferred | `docs/adr/0002-reference-and-asset-policy.md` |
+| D-02 | LCE-only namespace policy (`lce:` vs `minecraft:`) | ADR drafted | `minecraft:` if Java ID exists, else `lce:` | `docs/adr/0003-identifier-namespaces.md` |
+| D-03 | `infinite` preset terrain match inside finite bounds | ADR drafted | Unbounded Java-like layout; parity region = finite presets | `docs/adr/0004-infinite-world-bounds-behavior.md` |
+| D-04 | Server ECS framework | ADR drafted | `bevy_ecs` standalone behind `sim::entity` | `docs/adr/0005-ecs-selection.md` |
+| D-05 | NBT crate (`simdnbt` vs `fastnbt`) | ADR drafted | `simdnbt` behind internal `core::nbt` API | `docs/adr/0006-nbt-crate.md` |
+| D-06 | Light propagation authority | ADR drafted | Server computes & sends light | `docs/adr/0007-lighting-authority.md` |
+| D-07 | Text rendering crate | ADR drafted | `glyphon` + custom bitmap pixel font path | `docs/adr/0014-client-structure-and-text.md` |
+| D-08 | Chunk greedy meshing vs AO fidelity | ADR drafted | Per-face first; greedy off by default | `docs/adr/0008-chunk-meshing-ao.md` |
+| D-09 | Missing `--username` policy & splitscreen guest UUID derivation | ADR drafted | Refuse in MP/prod, `Player` in `--dev-defaults`; UUIDv5 guests | `docs/adr/0009-identity-and-guests.md` |
+| D-10 | LAN transport, certs & discovery | ADR drafted | `quinn` (QUIC, TOFU/LAN cert) + `mdns-sd` | `docs/adr/0010-networking-transport-discovery.md` |
+| D-11 | Audio crate, multi-listener mix & `assetc` `.binka` decoder | ADR drafted | `kira` + external `vgmstream` invocation | `docs/adr/0011-audio-and-assetc-decoders.md` |
+| D-12 | Modding WASM runtime & dev-only native Rust mods | ADR drafted | `wasmtime` (WIT component model) | `docs/adr/0012-modding-runtime.md` |
+| D-13 | Perf hardware targets, `faithful_bugs` defaults, finite→infinite migration, shader/project license, naming | ADR drafted | Low/mid profiles defined; bugs on/off by class; MIT/Apache-2.0 dual; shader clean-room | `docs/adr/0013-perf-licensing-and-scope.md` |
 
 ---
 

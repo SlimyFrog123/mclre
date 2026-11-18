@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false # reference tree is not needed for CI
+      - name: Install Rust toolchain (pinned via rust-toolchain.toml)
+        run: rustup show
+      - name: Format check
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Tests (incl. dependency-rule enforcement)
+        run: cargo test --workspace
+
+  licenses-and-advisories:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Install Rust toolchain (pinned via rust-toolchain.toml)
+        run: rustup show
+      - name: cargo-deny (licenses + advisories graph)
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses bans sources
+      - name: cargo-audit
+        uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
