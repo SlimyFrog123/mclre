@@ -7,21 +7,24 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** Phase 0 — Reference Survey & Pre-M0 Groundwork (repo + reference submodule + workspace scaffold DONE; reference survey / CLAUDE.md / ADRs still pending)
-- **Active Milestone:** Pre-M0 (Kick-off checklist §21.0) — M0 workspace scaffold started early
-- **Overall Progress:** Dedicated git repo initialized (`main` branch, 2 commits); `reference/lce-141217` submodule attached (shallow, commit `0aa818c`); Cargo workspace with 22 crate skeletons created and verified with `cargo check --workspace`.
+- **Current Phase:** Phase 0 COMPLETE · M0 (Foundation) essentially complete locally — remaining M0 item: CI verification on a remote (repo has no remote yet) before tagging `m0-foundation`.
+- **Active Milestone:** M0 (finish line) → next is M1 (Core Data Model)
+- **Overall Progress:** Phase 0 done (reference surveyed, CLAUDE.md + 14 ADRs). M0 done: 22 crate skeletons, dependency-rule test (verified to fail on violation), CI workflow, deny.toml; local gates green: fmt, clippy `-D warnings`, `cargo test --workspace`, `cargo-deny`, `cargo-audit`.
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-17
 
 ### Immediate Next Actions (Start Here in Next Session)
-1. **Survey the reference tree (`SPEC.md` §21.0):**
-   - Submodule is already attached at `reference/lce-141217/` (repo root; the Dec-2014 build is under `reference/lce-141217/MinecraftConsoles-141217/` with `Minecraft.Client`, `Minecraft.World`, `MinecraftConsoles.sln`).
-   - Inventory `Minecraft.World` and `Minecraft.Client` and write `docs/reference/reference-tree.md`, `docs/reference/baseline.md`, `docs/reference/rng.md`, `docs/reference/discrepancies.md`, and `docs/reference/feature-flags.md`.
-   - Resolve `[VERIFY]` items `V-01` through `V-05`.
-2. **Create governance files & initial ADRs:**
-   - Create `CLAUDE.md` (condensed core rules from `SPEC.md`).
-   - Create `docs/adr/0000-template.md`, `docs/adr/0001-record-architecture-decisions.md`, and draft ADRs for `[DECIDE]` items (`D-01`..`D-13`) for owner sign-off.
-3. **Finish M0 — Foundation:** Remaining M0 work after the scaffold: `.github/workflows/ci.yml` (Windows + Linux: fmt, clippy `-D warnings`, test, `cargo-deny`, `cargo-audit`, dependency-graph test), `deny.toml`, and the automated dependency-rule test (see `PLAN.md` §4 M0). `cargo-deny` and `cargo-audit` are **not installed** locally yet.
+1. **Owner confirmations (non-blocking for M1, blocking where noted):**
+   - Review ADRs 0002–0014 in `docs/adr/` (all "Proposed"); confirm/override — D-02 (namespaces) and D-05 (NBT) matter for M1.
+   - Confirm baseline TU/CU number externally (likely TU19/CU7) → profile ID currently `lce:141217` (`docs/reference/baseline.md`).
+   - Optionally create a private GitHub remote and push so CI (`ci.yml`) actually runs; then tag `m0-foundation`.
+2. **Start M1 — Core Data Model** (`PLAN.md` §4 M1):
+   - `core`: `Identifier` + interning + validation (proptest), `Registry<T>` (Registering→Frozen, tags), block/state model.
+   - `core`: exact `GameRandom` port of `Random.cpp` (see `docs/reference/rng.md` — exact constants already verified) + `CosmeticRandom` split.
+   - `core`: `Mth` sine LUT port (65536-entry f32 table).
+   - NBT via `simdnbt` (ADR 0006 default) behind `core::nbt`.
+   - `profiles`: `ProfileId` (`lce:141217`), `FeatureFlag` enum, `Profile` struct.
+   - `content-vanilla`: register ~20 test blocks through the public API.
 
 ---
 
@@ -34,8 +37,8 @@
 | `cargo` | `1.88.0 (873a06493 2025-05-10)` | Available |
 | `rustup` toolchain | `stable-x86_64-pc-windows-msvc (active, default)` | Available |
 | `git` | `2.56.0.windows.4` | Dedicated repo at `C:\Users\DJ\Desktop\mclre` (branch `main`); identity `DJ <89934852+SlimyFrog123@users.noreply.github.com>` |
-| `cargo-deny` | Not installed (exit code 1) | Install before running M0 license/advisory checks |
-| `cargo-audit` | Not installed (exit code 1) | Install before running M0 advisory checks |
+| `cargo-deny` | **Installed:** `0.21.0` (prebuilt binary in `%USERPROFILE%\.cargo\bin`) | `cargo-deny check licenses bans sources` → exit 0 |
+| `cargo-audit` | **Installed:** `0.23.0` (prebuilt binary in `%USERPROFILE%\.cargo\bin`; invoke as `cargo-audit audit`) | `cargo-audit audit` → exit 0, 0 vulnerabilities (33 deps) |
 | Disk space | `C:` ~9 GB free; `E:` ~242 GB free | `C:` is tight — the first submodule clone attempt failed with "No space left on device" (transient; a `--depth 1` retry succeeded). Prefer shallow clones and watch space when adding big dependencies. |
 
 ---
@@ -44,8 +47,8 @@
 
 | Milestone | Title | Status | Tag / Commit | Notes / Acceptance Gate |
 |---|---|---|---|---|
-| **Phase 0** | Reference Survey & Pre-M0 Groundwork | **In Progress** | `43ed07c` | Git repo init + reference submodule attached + workspace scaffold DONE (done early, ahead of M0). Remaining: `docs/reference/*` survey, `CLAUDE.md`, ADRs. |
-| **M0** | Foundation | **In Progress** | — | Workspace skeleton (22 crates, edition 2024, workspace lints, `rust-toolchain.toml`) done; `cargo check --workspace` green. Remaining: CI, `deny.toml`, dependency-rule test, `cargo-deny`/`cargo-audit` install. Gate: `cargo test --workspace` + dep-rule test + CI + `cargo-deny`/`cargo-audit`. |
+| **Phase 0** | Reference Survey & Pre-M0 Groundwork | **Complete** | `09b225e`, `b0f6662` | Reference surveyed (`docs/reference/{reference-tree,baseline,rng,discrepancies,feature-flags}.md`); `CLAUDE.md` + ADRs 0000–0014 drafted (Proposed). V-01/V-03/V-05 resolved; V-02/V-04 partially (see ledger). |
+| **M0** | Foundation | **~95% (local gates green)** | `d612c38`, `101e0b7` | DONE: 22 crate skeletons; dep-rule test in `mclre-devtools` (verified it FAILS when `mclre-server` gains a render dep, then reverted); `.github/workflows/ci.yml` (Windows+Linux); `deny.toml`; licenses applied (`MIT OR Apache-2.0`); fmt/clippy `-D warnings`/`cargo test --workspace`/`cargo-deny`/`cargo-audit` all exit 0 locally. REMAINING: run CI on a remote (no GitHub remote yet) → then tag `m0-foundation`. |
 | **M1** | Core Data Model | Not Started | — | Blocked on M0. Gate: ~20 test blocks via public API, `GameRandom` parity vectors, no `rand` in gameplay crates. |
 | **M2** | World Storage & Chunks | Not Started | — | Blocked on M1. Gate: chunk round-trip, crash-safety test, external Anvil inspect, bounded+infinite support. |
 | **M3** | Minimal Client Rendering | Not Started | — | Blocked on M2. Gate: 32-chunk flat world `>= 60 FPS` (mid), Vulkan/DX12/GL start. |
@@ -133,3 +136,20 @@
 - **Blockers / Open Questions for Owner:**
   - None new. `cargo-deny`/`cargo-audit` still need installing (M0). C: disk space (~9 GB) is tight; watch it when adding `wgpu`/`wasmtime` etc.
 - **Next Steps:** Follow Section 1 ("Immediate Next Actions"): reference-tree survey + `docs/reference/*` docs, `CLAUDE.md`, ADRs, then finish M0 (CI, `deny.toml`, dependency-rule test).
+
+### Session 3 — 2026-11-17
+- **Goal:** Continue next steps: reference survey docs, CLAUDE.md, ADRs, finish M0 — documenting each change as it happens.
+- **Completed (in order):**
+  1. **Reference survey** — inventoried submodule (`Minecraft.World`: ~1,800 flat .cpp/.h, 5.7 MB; `Minecraft.Client`: ~3,572 files, 598 MB with `.swf`×376, `.xui`×170, `.png`×391, `.arc`×5, `.pck`×19, `.binka`×40+, `.ttf`×10). Verified `Random.cpp` = exact java.util.Random port; `Mth` 65536-entry sine LUT; world sizes (54/64/192/320 chunks; Nether scales 3/3/6/8; End fixed 18×18; edge moats in `ChunkSource.h:57-59`); version = "1.6"/build 560/1.8.2-era. Wrote `docs/reference/{reference-tree,baseline,rng,discrepancies,feature-flags}.md`. → commit `09b225e`.
+  2. **Governance** — wrote `CLAUDE.md` (condensed SPEC rules) + `docs/adr/0000-template.md`, `0001`, and drafts `0002`–`0014` (all "Proposed" with recommended defaults). → commit `b0f6662`.
+  3. **M0 dependency-rule test** — `crates/tools/devtools/tests/dependency_rules.rs` (via `cargo metadata --no-deps`): gameplay crates ⊬ GPU/UI/client crates; pure gameplay ⊬ `rand`; `client` ⊬ `sim`/`server`; `server-bin` ⊬ client-side crates. **Gate proven**: temporarily added `mclre-render` to `mclre-server` → test FAILED with clear message → reverted → green.
+  4. **CI + deny** — `.github/workflows/ci.yml` (windows+ubuntu: fmt, clippy `-D warnings`, test, cargo-deny action, audit-check); `deny.toml`. Fixed clippy 1.88 `lint-groups-priority` (group priority -1, specific allows priority +1); selective pedantic: `doc_markdown`, `module_name_repetitions` allowed workspace-wide. All local gates exit 0. → commit `d612c38`.
+  5. **Licenses** — applied `MIT OR Apache-2.0` (ADR 0013 default) to all 24 manifests so `cargo-deny` passes; `deny.toml` `unused-allowed-license = "allow"`. → commit `101e0b7`.
+  6. **Tooling installed** — `cargo-deny 0.21.0` and `cargo-audit 0.23.0` (prebuilt releases → `%USERPROFILE%\.cargo\bin`; note cargo-audit releases live under `rustsec/rustsec`, and the CLI needs the `audit` subcommand).
+- **Verification Run:** `cargo fmt --all -- --check` 0 · `cargo clippy --workspace --all-targets -- -D warnings` 0 · `cargo test --workspace` 0 (2 dep-rule tests pass) · `cargo-deny check licenses bans sources` 0 · `cargo-audit audit` 0 (33 deps, 0 vulns).
+- **Files Created / Modified:** `CLAUDE.md`; `docs/reference/*` (5); `docs/adr/*` (16); `crates/tools/devtools/tests/dependency_rules.rs` + `Cargo.toml`; `.github/workflows/ci.yml`; `deny.toml`; root + 22 crate `Cargo.toml`s (fmt fixes, license, lint config); `PROGRESS.md`.
+- **Blockers / Open Questions for Owner:**
+  - Confirm ADRs 0002–0014 (esp. D-02 namespaces, D-05 NBT before M1 freezes).
+  - Confirm baseline TU/CU externally; profile currently `lce:141217`.
+  - Provide a private GitHub remote (or confirm none) so `ci.yml` runs; then tag `m0-foundation`.
+- **Next Steps:** M1 — Core Data Model (see Section 1 item 2).
