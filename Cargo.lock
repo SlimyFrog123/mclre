@@ -400,6 +400,11 @@ version = "0.1.0"
 [[package]]
 name = "mclre-world"
 version = "0.1.0"
+dependencies = [
+ "mclre-core",
+ "proptest",
+ "thiserror",
+]
 
 [[package]]
 name = "mclre-worldgen"

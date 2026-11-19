@@ -9,3 +9,10 @@ description = "World model: chunks, block states, palette-compressed sections, l
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest = "1"
