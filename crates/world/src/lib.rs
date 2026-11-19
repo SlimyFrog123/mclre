@@ -7,13 +7,19 @@
 //! - [`preset`]: [`WorldSizePreset`] with the verified console dimensions,
 //!   Nether scales, fixed End size, and edge-moat flags.
 
+pub mod anvil;
+pub mod chunk;
 pub mod pos;
 pub mod preset;
 pub mod section;
+pub mod state_key;
 
+pub use anvil::{CompressionType, RegionError, RegionFile, region_file_name, region_of_path};
+pub use chunk::{BASELINE_SECTIONS, ChunkColumn, ChunkError, Heightmap, MAX_SECTIONS};
 pub use pos::{
     AIR_STATE, BlockPos, CHUNK_MASK, CHUNK_SHIFT, CHUNK_SIZE, ChunkPos, LocalPos, LocalPosError,
     SECTION_SIZE, SECTION_VOLUME, SectionPos,
 };
 pub use preset::{UnknownPreset, WorldSizePreset};
 pub use section::{ChunkSection, NibbleArray, SectionStorage, StorageKind};
+pub use state_key::{StateCodec, StateKey};

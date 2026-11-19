@@ -66,6 +66,7 @@ rayon = "1"
 crossbeam-channel = "0.5"
 parking_lot = "0.12"
 image = "0.25"
+flate2 = "1"
 
 # Internal crates (added as needed, e.g. mclre-core.workspace = true)
 mclre-core = { path = "crates/core" }
