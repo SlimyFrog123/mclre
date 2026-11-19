@@ -61,12 +61,17 @@ toml = "0.8"
 uuid = { version = "1", features = ["v7"] }
 clap = { version = "4", features = ["derive"] }
 glam = "0.29"
-bytemuck = "1"
+bytemuck = { version = "1", features = ["derive"] }
 rayon = "1"
 crossbeam-channel = "0.5"
 parking_lot = "0.12"
 image = "0.25"
 flate2 = "1"
+wgpu = { version = "22", features = ["wgsl"] }
+winit = { version = "0.30", features = [] }
+glyphon = "0.2"
+kira = { version = "0.12", features = [] }
+gilrs = "0.10"
 
 # Internal crates (added as needed, e.g. mclre-core.workspace = true)
 mclre-core = { path = "crates/core" }

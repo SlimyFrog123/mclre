@@ -9,3 +9,14 @@ description = "wgpu renderer: staged frame graph (Iris-mappable), chunk meshing,
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+mclre-world.workspace = true
+thiserror.workspace = true
+bytemuck.workspace = true
+wgpu.workspace = true
+winit.workspace = true
+glyphon.workspace = true
+kira.workspace = true
+image.workspace = true

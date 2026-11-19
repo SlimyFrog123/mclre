@@ -9,3 +9,13 @@ description = "Client library: ClientWorld mirror, prediction, interpolation, lo
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+mclre-world.workspace = true
+mclre-render.workspace = true
+mclre-input.workspace = true
+mclre-ui.workspace = true
+thiserror.workspace = true
+crossbeam-channel.workspace = true
+parking_lot.workspace = true

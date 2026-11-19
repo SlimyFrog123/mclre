@@ -9,3 +9,9 @@ description = "Input abstraction: keyboard/mouse/gamepad actions, per-player dev
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+thiserror.workspace = true
+winit.workspace = true
+gilrs.workspace = true

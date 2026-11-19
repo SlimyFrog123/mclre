@@ -13,3 +13,10 @@ path = "src/main.rs"
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+mclre-client.workspace = true
+mclre-server.workspace = true
+thiserror.workspace = true
+winit.workspace = true

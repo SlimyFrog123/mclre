@@ -9,3 +9,11 @@ description = "Retained-mode data-driven UI toolkit recreating the LCE look: sce
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+mclre-render.workspace = true
+thiserror.workspace = true
+glyphon.workspace = true
+image.workspace = true
+toml.workspace = true

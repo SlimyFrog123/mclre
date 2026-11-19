@@ -1,0 +1,183 @@
+//! View and camera uniforms.
+
+use bytemuck::{Pod, Zeroable};
+use mclre_core::Vec3;
+
+/// View-projection uniform for shaders (4x4 matrix, column-major, flat).
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Pod, Zeroable)]
+pub struct ViewUniform {
+    pub view_proj: [f32; 16],
+}
+
+impl ViewUniform {
+    /// Creates a view uniform from a view.
+    pub fn from(view: &View) -> Self {
+        Self {
+            view_proj: view.view_proj_matrix_flat(),
+        }
+    }
+}
+
+/// Camera view with position, orientation, and projection.
+#[derive(Debug, Clone, Copy)]
+pub struct View {
+    /// Camera position in world space.
+    pub position: Vec3<f32>,
+    /// Camera yaw (horizontal rotation, radians).
+    pub yaw: f32,
+    /// Camera pitch (vertical rotation, radians).
+    pub pitch: f32,
+    /// Field of view (radians).
+    pub fov: f32,
+    /// Aspect ratio (width / height).
+    pub aspect: f32,
+    /// Near clipping plane.
+    pub near: f32,
+    /// Far clipping plane.
+    pub far: f32,
+}
+
+impl View {
+    /// Creates a new view.
+    pub fn new(
+        position: Vec3<f32>,
+        yaw: f32,
+        pitch: f32,
+        fov: f32,
+        aspect: f32,
+        near: f32,
+        far: f32,
+    ) -> Self {
+        Self {
+            position,
+            yaw,
+            pitch,
+            fov,
+            aspect,
+            near,
+            far,
+        }
+    }
+
+    /// Returns the forward direction vector.
+    pub fn forward(&self) -> Vec3<f32> {
+        let cos_pitch = self.pitch.cos();
+        Vec3::new(
+            self.yaw.sin() * cos_pitch,
+            self.pitch.sin(),
+            -self.yaw.cos() * cos_pitch,
+        )
+    }
+
+    /// Returns the right direction vector.
+    pub fn right(&self) -> Vec3<f32> {
+        Vec3::new(self.yaw.cos(), 0.0, self.yaw.sin())
+    }
+
+    /// Returns the up direction vector.
+    pub fn up(&self) -> Vec3<f32> {
+        Vec3::new(0.0, 1.0, 0.0)
+    }
+
+    /// Computes the view-projection matrix.
+    pub fn view_proj_matrix(&self) -> [[f32; 4]; 4] {
+        let forward = self.forward();
+        let right = self.right();
+        let up = self.up();
+
+        // View matrix (column-major for wgpu)
+        let view = [
+            [right.x, up.x, -forward.x, 0.0],
+            [right.y, up.y, -forward.y, 0.0],
+            [right.z, up.z, -forward.z, 0.0],
+            [
+                -right.dot(self.position),
+                -up.dot(self.position),
+                forward.dot(self.position),
+                1.0,
+            ],
+        ];
+
+        // Projection matrix (perspective)
+        let f = 1.0 / (self.fov / 2.0).tan();
+        let proj = [
+            [f / self.aspect, 0.0, 0.0, 0.0],
+            [0.0, f, 0.0, 0.0],
+            [
+                0.0,
+                0.0,
+                (self.far + self.near) / (self.near - self.far),
+                -1.0,
+            ],
+            [
+                0.0,
+                0.0,
+                (2.0 * self.far * self.near) / (self.near - self.far),
+                0.0,
+            ],
+        ];
+
+        // Multiply proj * view
+        mul_mat4(&proj, &view)
+    }
+
+    /// Computes the view-projection matrix as a flat array (column-major).
+    pub fn view_proj_matrix_flat(&self) -> [f32; 16] {
+        let mat = self.view_proj_matrix();
+        let mut flat = [0.0f32; 16];
+        for row in 0..4 {
+            for col in 0..4 {
+                flat[col * 4 + row] = mat[row][col]; // Column-major: col * 4 + row
+            }
+        }
+        flat
+    }
+}
+
+/// Multiplies two 4x4 matrices (column-major).
+fn mul_mat4(a: &[[f32; 4]; 4], b: &[[f32; 4]; 4]) -> [[f32; 4]; 4] {
+    let mut out = [[0.0; 4]; 4];
+    for row in 0..4 {
+        for col in 0..4 {
+            out[row][col] = a[row][0] * b[0][col]
+                + a[row][1] * b[1][col]
+                + a[row][2] * b[2][col]
+                + a[row][3] * b[3][col];
+        }
+    }
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use mclre_core::Vec3;
+
+    #[test]
+    fn view_forward_is_unit() {
+        let view = View::new(Vec3::new(0.0, 0.0, 0.0), 0.0, 0.0, 1.0, 1.0, 0.1, 100.0);
+        let f = view.forward();
+        let len = (f.x * f.x + f.y * f.y + f.z * f.z).sqrt();
+        assert!((len - 1.0).abs() < 1e-5);
+    }
+
+    #[test]
+    fn view_matrix_is_valid() {
+        let view = View::new(
+            Vec3::new(0.0, 1.5, 3.0),
+            0.5,
+            -0.3,
+            std::f32::consts::FRAC_PI_2,
+            16.0 / 9.0,
+            0.1,
+            100.0,
+        );
+        let mat = view.view_proj_matrix();
+        // Check it's a valid 4x4 matrix
+        assert_eq!(mat.len(), 4);
+        for row in mat {
+            assert_eq!(row.len(), 4);
+        }
+    }
+}
