@@ -35,7 +35,7 @@ const NIBBLES: usize = SECTION_VOLUME;
 const MAX_INDIRECT_PALETTE: usize = 256;
 
 /// Bits per entry for direct storage when first needed.
-const DIRECT_MIN_BITS: u8 = 15;
+pub const DIRECT_MIN_BITS: u8 = 15;
 
 /// Maximum bits per entry supported by direct storage (`u32` state ids).
 const DIRECT_MAX_BITS: u8 = 32;
@@ -49,6 +49,52 @@ pub enum StorageKind {
     Indirect,
     /// Bit-packed global state ids, no palette.
     Direct,
+}
+
+/// Errors from reconstructing storage from decoded palette data.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum StorageError {
+    /// The palette is empty.
+    #[error("empty palette")]
+    EmptyPalette,
+    /// The palette exceeds 256 entries (that requires direct storage).
+    #[error("palette has {0} entries (maximum 256)")]
+    PaletteTooLong(usize),
+    /// Bits per entry outside the supported range for the storage form.
+    #[error("invalid bits per entry {bits} for {kind:?} storage")]
+    BitsPerEntry {
+        /// The rejected width.
+        bits: u8,
+        /// The storage form being built.
+        kind: StorageKind,
+    },
+    /// A packed palette index points past the palette.
+    #[error("packed index {index} is outside a palette of {len} entries")]
+    PaletteIndex {
+        /// The rejected index.
+        index: u64,
+        /// Palette length.
+        len: usize,
+    },
+    /// The word array is too short for 4096 entries at the given width.
+    #[error("packed array has {actual} words (expected {expected})")]
+    WordsTooShort {
+        /// Supplied words.
+        actual: usize,
+        /// Required words.
+        expected: usize,
+    },
+    /// A light array is not the exact size of a section.
+    #[error("light array has {actual} bytes (expected {expected})")]
+    LightLength {
+        /// Supplied bytes.
+        actual: usize,
+        /// Required bytes.
+        expected: usize,
+    },
+    /// A section declares a palette but omits the packed data.
+    #[error("section has a {0}-entry palette but no packed data")]
+    MissingData(usize),
 }
 
 /// A 4096-nibble (4-bit) array, used for light values.
@@ -117,6 +163,22 @@ impl NibbleArray {
     pub fn as_bytes(&self) -> &[u8] {
         &self.data
     }
+
+    /// Builds an array from raw bytes (save deserialization).
+    ///
+    /// Exactly `2048` bytes are required; anything else is an error rather
+    /// than a silent reshape.
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, StorageError> {
+        if bytes.len() != NIBBLES / 2 {
+            return Err(StorageError::LightLength {
+                actual: bytes.len(),
+                expected: NIBBLES / 2,
+            });
+        }
+        Ok(Self {
+            data: bytes.to_vec(),
+        })
+    }
 }
 
 impl Default for NibbleArray {
@@ -152,17 +214,17 @@ pub enum SectionStorage {
 }
 
 /// Entries per `u64` for a given bit width (no straddling).
-fn entries_per_word(bits: u8) -> usize {
+pub(crate) fn entries_per_word(bits: u8) -> usize {
     64 / bits as usize
 }
 
 /// Word count needed to hold 4096 entries at `bits` per entry.
-fn word_count(bits: u8) -> usize {
+pub(crate) fn word_count(bits: u8) -> usize {
     SECTION_VOLUME.div_ceil(entries_per_word(bits))
 }
 
 /// Minimum bits needed to represent `value`.
-fn bits_for(value: u32) -> u8 {
+pub(crate) fn bits_for(value: u32) -> u8 {
     (32 - value.leading_zeros()) as u8
 }
 
@@ -170,6 +232,101 @@ impl SectionStorage {
     /// A section filled with `state`.
     pub fn new_single(state: BlockStateId) -> Self {
         Self::Single { state }
+    }
+
+    /// Rebuilds indirect storage from a decoded palette and packed indices.
+    ///
+    /// Accepts widths `1..=8` (Java writes as few as 1 bit for tiny palettes);
+    /// widths below 4 are re-packed to 4 so the in-memory invariant holds.
+    /// Every packed index is validated against the palette, so corrupt data is
+    /// an error rather than a panic.
+    pub fn from_indirect(
+        palette: Vec<BlockStateId>,
+        bits: u8,
+        words: Vec<u64>,
+    ) -> Result<Self, StorageError> {
+        if palette.is_empty() {
+            return Err(StorageError::EmptyPalette);
+        }
+        if palette.len() > MAX_INDIRECT_PALETTE {
+            return Err(StorageError::PaletteTooLong(palette.len()));
+        }
+        if !(1..=8).contains(&bits) {
+            return Err(StorageError::BitsPerEntry {
+                bits,
+                kind: StorageKind::Indirect,
+            });
+        }
+        let expected = word_count(bits);
+        if words.len() < expected {
+            return Err(StorageError::WordsTooShort {
+                actual: words.len(),
+                expected,
+            });
+        }
+        for index in 0..SECTION_VOLUME {
+            let raw = unpack(&words, index, bits);
+            if raw as usize >= palette.len() {
+                return Err(StorageError::PaletteIndex {
+                    index: raw,
+                    len: palette.len(),
+                });
+            }
+        }
+        if bits < 4 {
+            // Normalize tiny palettes to the 4-bit minimum we ever write.
+            let new_bits = 4;
+            let mut repacked = vec![0u64; word_count(new_bits)];
+            for index in 0..SECTION_VOLUME {
+                let raw = unpack(&words, index, bits);
+                pack(&mut repacked, index, new_bits, raw);
+            }
+            return Ok(Self::Indirect {
+                palette,
+                bits: new_bits,
+                words: repacked,
+            });
+        }
+        Ok(Self::Indirect {
+            palette,
+            bits,
+            words: words[..expected].to_vec(),
+        })
+    }
+
+    /// Rebuilds direct storage from packed global state ids.
+    ///
+    /// Accepts widths `1..=32`; values are validated to fit in `u32`.
+    pub fn from_direct(bits: u8, words: Vec<u64>) -> Result<Self, StorageError> {
+        if !(1..=DIRECT_MAX_BITS).contains(&bits) {
+            return Err(StorageError::BitsPerEntry {
+                bits,
+                kind: StorageKind::Direct,
+            });
+        }
+        let expected = word_count(bits);
+        if words.len() < expected {
+            return Err(StorageError::WordsTooShort {
+                actual: words.len(),
+                expected,
+            });
+        }
+        if bits < DIRECT_MIN_BITS {
+            let new_bits = DIRECT_MIN_BITS;
+            let mut repacked = vec![0u64; word_count(new_bits)];
+            for index in 0..SECTION_VOLUME {
+                let raw = unpack(&words, index, bits);
+                pack(&mut repacked, index, new_bits, raw);
+            }
+            return Ok(Self::Direct {
+                bits: new_bits,
+                words: repacked,
+            });
+        }
+        Ok(Self::Direct {
+            bits,
+            words: words[..expected].to_vec(),
+        })
     }
 
     /// The storage form.
@@ -325,7 +482,7 @@ impl SectionStorage {
 }
 
 /// Reads one packed entry.
-fn unpack(words: &[u64], index: usize, bits: u8) -> u64 {
+pub(crate) fn unpack(words: &[u64], index: usize, bits: u8) -> u64 {
     let per_word = entries_per_word(bits);
     let word = words[index / per_word];
     let shift = (index % per_word) * bits as usize;
@@ -334,7 +491,7 @@ fn unpack(words: &[u64], index: usize, bits: u8) -> u64 {
 }
 
 /// Writes one packed entry (`value` must fit in `bits`).
-fn pack(words: &mut [u64], index: usize, bits: u8, value: u64) {
+pub(crate) fn pack(words: &mut [u64], index: usize, bits: u8, value: u64) {
     let per_word = entries_per_word(bits);
     let shift = (index % per_word) * bits as usize;
     let mask = (1u64 << bits) - 1;
@@ -373,6 +530,25 @@ impl ChunkSection {
             storage: SectionStorage::new_single(state),
             sky_light: NibbleArray::new(),
             block_light: NibbleArray::new(),
+            non_air,
+        }
+    }
+
+    /// Rebuilds a section from decoded storage and light arrays.
+    ///
+    /// The non-air count is recomputed from the storage, so a save can never
+    /// make it disagree with the blocks.
+    pub fn from_parts(
+        storage: SectionStorage,
+        sky_light: NibbleArray,
+        block_light: NibbleArray,
+    ) -> Self {
+        let non_air = u16::try_from(storage.iter().filter(|state| *state != AIR_STATE).count())
+            .unwrap_or(u16::MAX);
+        Self {
+            storage,
+            sky_light,
+            block_light,
             non_air,
         }
     }

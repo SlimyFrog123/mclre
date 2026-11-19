@@ -156,7 +156,7 @@ impl WorldSizePreset {
             None => true,
             Some(width) => {
                 let width = i32::try_from(width).unwrap_or(i32::MAX);
-                (0..width).contains(&pos.x) && (0..width).contains(&pos.z)
+                (0..width).contains(&pos.x()) && (0..width).contains(&pos.z())
             }
         }
     }

@@ -84,6 +84,12 @@ pub trait StateCodec {
 
     /// The state for a palette key, or `None` if it is not a known state.
     fn state_of(&self, key: &StateKey) -> Option<BlockStateId>;
+
+    /// Number of block states in this model.
+    ///
+    /// Save formats need it to derive the implicit bit width of direct (global
+    /// palette) sections; it must be stable for a given content set.
+    fn state_count(&self) -> u32;
 }
 
 /// Renders a property value the way saves express it (`true`, `7`, `top`).
@@ -153,6 +159,10 @@ impl StateCodec for BlockStateModel {
         }
         self.state_from_values(mclre_core::BlockId(index), &values)
             .ok()
+    }
+
+    fn state_count(&self) -> u32 {
+        BlockStateModel::state_count(self)
     }
 }
 

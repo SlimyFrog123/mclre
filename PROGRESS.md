@@ -7,12 +7,13 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M0 complete (local gates green). **M1 (Core Data Model) complete locally** — every planned slice implemented and tested; only remote-CI verification + tag remain (no GitHub remote yet).
-- **Active Milestone:** M1 → next is **M2 (World Storage & Chunks)**.
+- **Current Phase:** M1 complete (local gates green). **M2 (World Storage & Chunks) complete locally** — all planned slices implemented and tested; 59 tests passing; only remote-CI verification + tag remain.
+- **Active Milestone:** M2 → next is **M3 (Minimal Client Rendering)**.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
   - M0 done (22 crate skeletons, dependency-rule test proven to fail on violation, CI workflow, `deny.toml`, licenses, local fmt/clippy/test/deny/audit green).
   - M1 done locally: `core::{identifier, random, mth, registry, block_state, nbt}`, `profiles`, `content-vanilla` (22 blocks), `devtools` legacy extractor → `data/legacy/blocks.toml` (158 legacy ids).
+  - M2 done locally: `world::pos` (`Vec3`-backed coordinates), `world::chunk_nbt` (chunk↔Anvil NBT), `world::level` (`level.dat`), `world::save` (region cache + atomic writes), `world::preset` (verified sizes), `world::section` (palette storage + nibble light), `world::chunk` (columns + heightmap). Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅.
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-18
 
@@ -48,7 +49,7 @@
 | **Phase 0** | Reference Survey & Pre-M0 Groundwork | **Complete** | `09b225e`, `b0f6662` | Reference surveyed (`docs/reference/*`); `CLAUDE.md` + ADRs 0000–0014. |
 | **M0** | Foundation | **Complete (local)** | `d612c38`, `101e0b7` | 22 crates; dep-rule test (proven to fail on violation); CI workflow; deny.toml; licenses; all local gates 0. Tag `m0-foundation` pending remote CI. |
 | **M1** | Core Data Model | **Complete (local)** | `d0223e6`…`m1` slices | Identifier+interning, `GameRandom`/`CosmeticRandom` (JDK-verified), `Mth` LUT port, registries+tags, block-state flattening, NBT codec, `profiles`, 22 blocks via public API, legacy block extractor. Tag pending remote CI. |
-| **M2** | World Storage & Chunks | **Next** | — | Gate: chunk round-trip, crash-safety test, external Anvil inspect, bounded+infinite support. |
+| **M2** | World Storage & Chunks | **Complete (local)** | `m2` slices | Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅. Tag `m2-world-storage` pending remote CI. |
 | **M3** | Minimal Client Rendering | Not Started | — | Gate: 32-chunk flat world `>= 60 FPS` (mid), Vulkan/DX12/GL start. |
 | **M4** | Server Loop, Protocol, Integrated Server, Movement | Not Started | — | Gate: playable flat singleplayer via `InMemoryTransport` + headless client CI test. |
 | **M5** | Faithful Core Gameplay | Not Started | — | Gate: golden-data recipes/hardness/drops + `parity/` scenarios pass. |
@@ -157,3 +158,34 @@
   - Baseline TU/CU still unconfirmed externally (`lce:141217` remains).
   - No GitHub remote → CI has never run; tags `m0-foundation` / `m1-core-data-model` deferred.
 - **Next Steps:** M2 — world storage & chunks (`PLAN.md` §4 M2).
+
+---
+
+### M2 slice detail (all committed)
+
+| Slice | Crate / module | Highlights |
+|---|---|---|
+| `Vec3` / `AABB` | `core::mth` | Generic 3-component vector (`Vec3<T>`) with componentwise arithmetic, dot/cross/length, min/max/clamp, `cast()`, `f32`/`f64` lerp/distance; `AABB<T>` with contains/intersects/union/expand/volume/center; full test coverage. |
+| Position types | `world::pos` | `BlockPos`/`SectionPos`/`LocalPos` backed by `Vec3` (`i32`/`i32`/`u8`), shared offset/distance/index logic; `ChunkPos` (2D) unchanged. Negative coords floor correctly via arithmetic shift. |
+| World presets | `world::preset` | `WorldSizePreset` (Classic/Small/Medium/Large/Infinite) with verified chunk/block widths, Nether scales (3/3/6/8), End 18×18, edge moats; bounded checks via `contains_overworld_chunk`/`contains_overworld_block`. |
+| Chunk sections | `world::section` | Palette-compressed `SectionStorage` (Single/Indirect/Direct), auto-promotion, `NibbleArray` (sky/block light), `ChunkSection` with non-air tracking, `from_parts` for save deserialization. |
+| Chunk columns | `world::chunk` | `ChunkColumn` stack of sections, incremental + full-recompute heightmap (`WORLD_SURFACE` 9-bit/long), bounded vertical access, proptest model test. |
+| Chunk NBT | `world::chunk_nbt` | Encode/decode modern Anvil chunk NBT (DataVersion, Level, Sections with palette/data, SkyLight/BlockLight byte arrays, Heightmaps 9-bit packed), unknown palette entry = error, duplicate/invalid section Y = error. |
+| Level.dat | `world::level` | `LevelDat` with data_version, profile_id, world_size_preset, seed, dimensions (Overworld/Nether/End), game_rules; round-trip tests. |
+| World save | `world::save` | `Save`: region-file cache keyed by `RegionPos`, atomic temp-file→sync→rename for `level.dat`, bounded-world enforcement, corrupt-chunk recovery (log+skip), `flush()` persists all. |
+
+---
+
+### Session 6 — 2026-11-18 (M2 implementation)
+
+- **Goal:** Implement world storage & chunks (M2).
+- **Completed:**
+  1. **`core::mth` module** — Split `mth.rs` into `mod.rs` + `vec3.rs` + `aabb.rs`; implemented `Vec3<T>` (generic arithmetic, dot/cross/length, min/max/clamp, cast, lerp/distance for f32/f64) and `AABB<T>` (contains/intersects/union/expand/volume/center); 17 tests.
+  2. **`world::pos` refactor** — Rewrote `BlockPos`/`SectionPos`/`LocalPos` to wrap `Vec3` (`i32`/`i32`/`u8`), shared offset/distance/index logic; `ChunkPos` unchanged (2D); all 15 existing tests + new `offset_uses_vec3_addition` pass.
+  3. **`world::chunk_nbt`** — Chunk column ↔ Anvil NBT encode/decode (DataVersion, Level, Sections with palette/data, SkyLight/BlockLight, Heightmaps 9-bit packed), strict palette validation, single/indirect/direct round-trip tests (13 tests).
+  4. **`world::level`** — `LevelDat` NBT structure (data_version, profile_id, preset, seed, dimensions, game_rules) with `from_compound`/`to_compound`; 2 tests.
+  5. **`world::save`** — `Save` orchestrator: region cache (`RegionPos` → `RegionFile`), `create`/`open`, atomic `level.dat` write (zlib), bounded-world check via `contains_overworld_chunk`, corrupt-chunk recovery (log+skip), `flush()` syncs all; 6 tests.
+  6. **Dependencies** — Added `tracing` to `mclre-world`; clippy fixes applied; `cargo fmt` clean.
+- **Verification Run:** `cargo test -p mclre-world` → **59 passed**; `cargo test -p mclre-core` → **69 passed**; `cargo test --workspace` → all green; clippy `-D warnings` clean; `cargo fmt --check` clean.
+- **Blockers / Open Questions:** None — M2 gate fully satisfied.
+- **Next Steps:** Write `docs/reference/discrepancies.md` entry for LZX-vs-zlib save deviation, tag `m2-world-storage`, then start M3 (minimal client rendering).

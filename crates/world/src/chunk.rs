@@ -125,6 +125,24 @@ impl ChunkColumn {
         Self::new(pos, BASELINE_SECTIONS).unwrap_or_else(|error| unreachable!("{error}"))
     }
 
+    /// A column built from already-decoded sections (save deserialization).
+    ///
+    /// The heightmap is recomputed from the sections, which are authoritative.
+    pub fn from_sections(pos: ChunkPos, sections: Vec<ChunkSection>) -> Result<Self, ChunkError> {
+        let count =
+            u16::try_from(sections.len()).map_err(|_| ChunkError::SectionCount(u16::MAX))?;
+        if count == 0 || count > MAX_SECTIONS {
+            return Err(ChunkError::SectionCount(count));
+        }
+        let mut column = Self {
+            pos,
+            sections,
+            heightmap: Heightmap::empty(),
+        };
+        column.recompute_heightmap();
+        Ok(column)
+    }
+
     /// The column's chunk position.
     pub fn pos(&self) -> ChunkPos {
         self.pos
@@ -182,7 +200,7 @@ impl ChunkColumn {
         let x = pos.local_x();
         let z = pos.local_z();
         self.write_local(section_y, local, state);
-        self.update_heightmap(x, z, pos.y, state);
+        self.update_heightmap(x, z, pos.y(), state);
         Ok(true)
     }
 
@@ -248,12 +266,15 @@ impl ChunkColumn {
                 pos,
             });
         }
-        if pos.y < 0 || pos.y >= self.height() {
+        if pos.y() < 0 || pos.y() >= self.height() {
             return Ok(None);
         }
-        let section_y = pos.y >> 4;
-        let local =
-            LocalPos::from_axes(pos.local_x() as u8, (pos.y & 15) as u8, pos.local_z() as u8);
+        let section_y = pos.y() >> 4;
+        let local = LocalPos::from_axes(
+            pos.local_x() as u8,
+            (pos.y() & 15) as u8,
+            pos.local_z() as u8,
+        );
         Ok(Some((section_y as u16, local)))
     }
 

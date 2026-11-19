@@ -1,8 +1,8 @@
 //! MCLRE core: identifiers, registries, tags, math types, reference-exact RNG,
 //! NBT, errors, tick types (SPEC.md 5; PLAN.md M1).
 //!
-//! Implemented so far: [`identifier`], [`random`], [`mth`], [`registry`],
-//! [`block_state`], and [`nbt`].
+//! Implemented so far: [`identifier`], [`random`], [`mth`] (including [`Vec3`]
+//! and [`AABB`]), [`registry`], [`block_state`], and [`nbt`].
 
 pub mod block_state;
 pub mod identifier;
@@ -16,6 +16,6 @@ pub use block_state::{
     StateError,
 };
 pub use identifier::{DEFAULT_NAMESPACE, Identifier, InternedStr, ParseError};
-pub use mth::Mth;
+pub use mth::{AABB, Mth, Vec3};
 pub use random::{CosmeticRandom, GameRandom};
 pub use registry::{FrozenRegistry, Registry, RegistryError, TagEntry};

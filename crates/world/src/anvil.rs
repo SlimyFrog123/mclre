@@ -416,6 +416,22 @@ impl RegionFile {
         self.region
     }
 
+    /// Iterates over all loaded chunk positions in this region.
+    pub fn loaded_chunks(&self) -> impl Iterator<Item = ChunkPos> + '_ {
+        self.locations.iter().enumerate().filter_map(|(i, &loc)| {
+            if loc != 0 {
+                let x = i as i32 & 31;
+                let z = i as i32 >> 5;
+                Some(ChunkPos::new(
+                    (self.region.x << REGION_SHIFT) + x,
+                    (self.region.z << REGION_SHIFT) + z,
+                ))
+            } else {
+                None
+            }
+        })
+    }
+
     /// Finds `needed` contiguous free sectors (appending if necessary).
     fn allocate(&mut self, needed: usize) -> Result<usize, RegionError> {
         if self.sectors.len() < 2 {

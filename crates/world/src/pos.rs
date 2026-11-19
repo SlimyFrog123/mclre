@@ -14,6 +14,12 @@
 //!
 //! Local block coordinates inside a chunk/section are always `0..16` and are
 //! obtained with `x & 15` (or [`BlockPos::local_x`] and friends).
+//!
+//! The three-dimensional position types ([`BlockPos`], [`SectionPos`],
+//! [`LocalPos`]) store their components in [`mclre_core::Vec3`] so that
+//! addition, subtraction, offset, distance and componentwise logic is shared
+//! rather than re-implemented per type. [`ChunkPos`] is two-dimensional (X/Z)
+//! and keeps its own fields.
 
 // Coordinate math packs/unpacks 16-block indices; every cast is bounded by the
 // masks above (0..=4095, 0..=15) and never sees untrusted input.
@@ -22,7 +28,7 @@
 
 use std::fmt;
 
-use mclre_core::BlockStateId;
+use mclre_core::{BlockStateId, Vec3};
 
 /// Number of blocks along one horizontal chunk axis.
 pub const CHUNK_SIZE: i32 = 16;
@@ -39,66 +45,81 @@ pub const CHUNK_SHIFT: u32 = 4;
 /// Mask selecting the local coordinate inside a chunk/section (`16 - 1`).
 pub const CHUNK_MASK: i32 = CHUNK_SIZE - 1;
 
-/// A block position in world space.
+/// A block position in world space, backed by [`Vec3`]<i32>.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BlockPos {
-    /// World X (east).
-    pub x: i32,
-    /// World Y (up).
-    pub y: i32,
-    /// World Z (south).
-    pub z: i32,
+    /// World components (X east, Y up, Z south).
+    pub pos: Vec3<i32>,
 }
 
 impl BlockPos {
     /// Origin position `(0, 0, 0)`.
-    pub const ORIGIN: Self = Self { x: 0, y: 0, z: 0 };
+    pub const ORIGIN: Self = Self {
+        pos: Vec3::splat(0),
+    };
 
     /// Creates a position.
     pub const fn new(x: i32, y: i32, z: i32) -> Self {
-        Self { x, y, z }
+        Self {
+            pos: Vec3::new(x, y, z),
+        }
+    }
+
+    /// World X (east).
+    pub const fn x(&self) -> i32 {
+        self.pos.x
+    }
+
+    /// World Y (up).
+    pub const fn y(&self) -> i32 {
+        self.pos.y
+    }
+
+    /// World Z (south).
+    pub const fn z(&self) -> i32 {
+        self.pos.z
     }
 
     /// This position shifted by the given offsets.
     #[must_use]
-    pub const fn offset(self, dx: i32, dy: i32, dz: i32) -> Self {
+    pub fn offset(self, dx: i32, dy: i32, dz: i32) -> Self {
         Self {
-            x: self.x + dx,
-            y: self.y + dy,
-            z: self.z + dz,
+            pos: self.pos + Vec3::new(dx, dy, dz),
         }
     }
 
     /// The chunk column containing this position.
     pub const fn chunk(self) -> ChunkPos {
         ChunkPos {
-            x: self.x >> CHUNK_SHIFT,
-            z: self.z >> CHUNK_SHIFT,
+            x: self.pos.x >> CHUNK_SHIFT,
+            z: self.pos.z >> CHUNK_SHIFT,
         }
     }
 
     /// The section containing this position.
     pub const fn section(self) -> SectionPos {
         SectionPos {
-            x: self.x >> CHUNK_SHIFT,
-            y: self.y >> CHUNK_SHIFT,
-            z: self.z >> CHUNK_SHIFT,
+            pos: Vec3::new(
+                self.pos.x >> CHUNK_SHIFT,
+                self.pos.y >> CHUNK_SHIFT,
+                self.pos.z >> CHUNK_SHIFT,
+            ),
         }
     }
 
     /// X inside the chunk (`0..16`).
     pub const fn local_x(self) -> i32 {
-        self.x & CHUNK_MASK
+        self.pos.x & CHUNK_MASK
     }
 
     /// Y inside the section (`0..16`).
     pub const fn local_y(self) -> i32 {
-        self.y & CHUNK_MASK
+        self.pos.y & CHUNK_MASK
     }
 
     /// Z inside the chunk (`0..16`).
     pub const fn local_z(self) -> i32 {
-        self.z & CHUNK_MASK
+        self.pos.z & CHUNK_MASK
     }
 
     /// Linear index inside a section (`(y << 8) | (z << 4) | x`).
@@ -115,24 +136,24 @@ impl BlockPos {
     /// position outside the named chunk.
     pub const fn from_chunk_local(chunk: ChunkPos, x: i32, y: i32, z: i32) -> Self {
         Self {
-            x: (chunk.x << CHUNK_SHIFT) | (x & CHUNK_MASK),
-            y,
-            z: (chunk.z << CHUNK_SHIFT) | (z & CHUNK_MASK),
+            pos: Vec3::new(
+                (chunk.x << CHUNK_SHIFT) | (x & CHUNK_MASK),
+                y,
+                (chunk.z << CHUNK_SHIFT) | (z & CHUNK_MASK),
+            ),
         }
     }
 
     /// Squared Euclidean distance to `other` (`i64` to stay exact).
     pub fn distance_squared(self, other: Self) -> i64 {
-        let dx = i64::from(self.x) - i64::from(other.x);
-        let dy = i64::from(self.y) - i64::from(other.y);
-        let dz = i64::from(self.z) - i64::from(other.z);
-        dx * dx + dy * dy + dz * dz
+        let delta = self.pos.cast::<i64>() - other.pos.cast::<i64>();
+        delta.x * delta.x + delta.y * delta.y + delta.z * delta.z
     }
 }
 
 impl fmt::Display for BlockPos {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+        write!(f, "({}, {}, {})", self.pos.x, self.pos.y, self.pos.z)
     }
 }
 
@@ -165,9 +186,7 @@ impl ChunkPos {
     /// The block position of this chunk's `(0, y, 0)` corner.
     pub const fn origin(self, y: i32) -> BlockPos {
         BlockPos {
-            x: self.x << CHUNK_SHIFT,
-            y,
-            z: self.z << CHUNK_SHIFT,
+            pos: Vec3::new(self.x << CHUNK_SHIFT, y, self.z << CHUNK_SHIFT),
         }
     }
 
@@ -245,68 +264,81 @@ pub mod region {
     }
 }
 
-/// A 16×16×16 section position.
+/// A 16×16×16 section position, backed by [`Vec3`]<i32>.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SectionPos {
-    /// Section X.
-    pub x: i32,
-    /// Section Y (vertical section index, may be negative in future profiles).
-    pub y: i32,
-    /// Section Z.
-    pub z: i32,
+    /// Section components (X, Y vertical index, Z).
+    pub pos: Vec3<i32>,
 }
 
 impl SectionPos {
     /// Section position `(0, 0, 0)`.
-    pub const ORIGIN: Self = Self { x: 0, y: 0, z: 0 };
+    pub const ORIGIN: Self = Self {
+        pos: Vec3::splat(0),
+    };
 
     /// Creates a section position.
     pub const fn new(x: i32, y: i32, z: i32) -> Self {
-        Self { x, y, z }
+        Self {
+            pos: Vec3::new(x, y, z),
+        }
+    }
+
+    /// Section X.
+    pub const fn x(&self) -> i32 {
+        self.pos.x
+    }
+
+    /// Section Y (vertical section index, may be negative in future profiles).
+    pub const fn y(&self) -> i32 {
+        self.pos.y
+    }
+
+    /// Section Z.
+    pub const fn z(&self) -> i32 {
+        self.pos.z
     }
 
     /// The section containing the given block coordinates.
     pub const fn from_block(x: i32, y: i32, z: i32) -> Self {
         Self {
-            x: x >> CHUNK_SHIFT,
-            y: y >> CHUNK_SHIFT,
-            z: z >> CHUNK_SHIFT,
+            pos: Vec3::new(x >> CHUNK_SHIFT, y >> CHUNK_SHIFT, z >> CHUNK_SHIFT),
         }
     }
 
     /// The chunk column this section belongs to.
     pub const fn chunk(self) -> ChunkPos {
         ChunkPos {
-            x: self.x,
-            z: self.z,
+            x: self.pos.x,
+            z: self.pos.z,
         }
     }
 
     /// The block position of this section's `(0, 0, 0)` corner.
     pub const fn origin(self) -> BlockPos {
         BlockPos {
-            x: self.x << CHUNK_SHIFT,
-            y: self.y << CHUNK_SHIFT,
-            z: self.z << CHUNK_SHIFT,
+            pos: Vec3::new(
+                self.pos.x << CHUNK_SHIFT,
+                self.pos.y << CHUNK_SHIFT,
+                self.pos.z << CHUNK_SHIFT,
+            ),
         }
     }
 }
 
 impl fmt::Display for SectionPos {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+        write!(f, "({}, {}, {})", self.pos.x, self.pos.y, self.pos.z)
     }
 }
 
-/// A section-local block position (`0..16` on each axis).
+/// A section-local block position (`0..16` on each axis), backed by [`Vec3`]<u8>.
 ///
 /// Cheaper than [`BlockPos`] for palette/section APIs and for packed wire
 /// payloads; conversion is checked so a bad index is an error, not a wrap.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct LocalPos {
-    x: u8,
-    y: u8,
-    z: u8,
+    pos: Vec3<u8>,
 }
 
 /// A coordinate outside `0..16` was supplied for a section-local position.
@@ -332,9 +364,7 @@ impl LocalPos {
             return Err(LocalPosError { x, y, z });
         }
         Ok(Self {
-            x: x as u8,
-            y: y as u8,
-            z: z as u8,
+            pos: Vec3::new(x as u8, y as u8, z as u8),
         })
     }
 
@@ -345,27 +375,29 @@ impl LocalPos {
     /// untrusted input).
     pub const fn from_axes(x: u8, y: u8, z: u8) -> Self {
         assert!(x < 16 && y < 16 && z < 16, "local coordinate out of range");
-        Self { x, y, z }
+        Self {
+            pos: Vec3::new(x, y, z),
+        }
     }
 
     /// X coordinate.
     pub const fn x(self) -> u8 {
-        self.x
+        self.pos.x
     }
 
     /// Y coordinate.
     pub const fn y(self) -> u8 {
-        self.y
+        self.pos.y
     }
 
     /// Z coordinate.
     pub const fn z(self) -> u8 {
-        self.z
+        self.pos.z
     }
 
     /// Linear index in YZX order (`(y << 8) | (z << 4) | x`).
     pub const fn index(self) -> usize {
-        ((self.y as usize) << 8) | ((self.z as usize) << 4) | self.x as usize
+        ((self.pos.y as usize) << 8) | ((self.pos.z as usize) << 4) | self.pos.x as usize
     }
 
     /// The inverse of [`LocalPos::index`].
@@ -375,9 +407,11 @@ impl LocalPos {
     pub const fn from_index(index: usize) -> Self {
         assert!(index < SECTION_VOLUME, "section index out of range");
         Self {
-            x: (index & 15) as u8,
-            y: ((index >> 8) & 15) as u8,
-            z: ((index >> 4) & 15) as u8,
+            pos: Vec3::new(
+                (index & 15) as u8,
+                ((index >> 8) & 15) as u8,
+                ((index >> 4) & 15) as u8,
+            ),
         }
     }
 }
@@ -488,5 +522,12 @@ mod tests {
             ChunkPos::new(0, 0).distance_squared(ChunkPos::new(3, 4)),
             25
         );
+    }
+
+    #[test]
+    fn offset_uses_vec3_addition() {
+        let pos = BlockPos::new(1, 2, 3).offset(4, -1, 5);
+        assert_eq!(pos, BlockPos::new(5, 1, 8));
+        assert_eq!(pos.pos, Vec3::new(5, 1, 8));
     }
 }

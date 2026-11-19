@@ -14,6 +14,12 @@
 #![allow(clippy::cast_possible_wrap)]
 #![allow(clippy::cast_lossless)]
 
+pub mod aabb;
+pub mod vec3;
+
+pub use aabb::AABB;
+pub use vec3::Vec3;
+
 /// The reference's `Mth` math surface (subset used so far; extend per system).
 ///
 /// `sin`/`cos` use the exact 65536-entry `f32` lookup table built by the
