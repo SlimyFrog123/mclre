@@ -7,14 +7,14 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; text rendering placeholder (glyphon version mismatch with wgpu 22).
+- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; assets crate with VFS, texture loading, atlas building; text rendering placeholder (glyphon version mismatch with wgpu 22).
 - **Active Milestone:** M3 → next is **M4 (Server Loop, Protocol, Integrated Server, Movement)**.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
   - M0 done (22 crate skeletons, dependency-rule test proven to fail on violation, CI workflow, `deny.toml`, licenses, local fmt/clippy/test/deny/audit green).
   - M1 done locally: `core::{identifier, random, mth, registry, block_state, nbt}`, `profiles`, `content-vanilla` (22 blocks), `devtools` legacy extractor → `data/legacy/blocks.toml` (158 legacy ids).
   - M2 done locally: `world::pos` (`Vec3`-backed coordinates), `world::chunk_nbt` (chunk↔Anvil NBT), `world::level` (`level.dat`), `world::save` (region cache + atomic writes), `world::preset` (verified sizes), `world::section` (palette storage + nibble light), `world::chunk` (columns + heightmap). Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅.
-  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer, `TextureAtlas` with default white texture. Client/input/ui/assets crates have Cargo.toml dependencies wired for M3. Text rendering infrastructure added as placeholder (glyphon 0.8 API incompatible with wgpu 22).
+  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer, `TextureAtlas` with default white texture. `assets` crate with virtual filesystem (VFS), texture loading, and atlas building. `input` crate with keyboard/mouse/gamepad bindings. `client` with game loop, render thread, fixed-timestep simulation. Text rendering infrastructure added as placeholder (glyphon 0.8 API incompatible with wgpu 22).
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-19
 
@@ -209,6 +209,20 @@
 - **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy -p mclre-render` clean (warnings only for missing docs).
 - **Blockers / Open Questions:** None — M3 foundation ready for frame loop, chunk upload, texture atlas, UI text.
 - **Next Steps:** Implement frame loop with chunk upload/render, texture atlas loading, glyphphon text rendering, UI toolkit, input handling.
+
+---
+
+### Session 9 — 2026-11-19 (M3: Assets crate implementation)
+
+- **Goal:** Implement assets crate with virtual filesystem, texture loading, and atlas building.
+- **Completed:**
+  1. **`assets` crate** — `AssetVfs` with root directories and in-memory overrides, `Texture` and `TextureAtlas` with simple row-based packing, `AssetManager` for loading/caching textures and building atlases.
+  2. **Integration** — `AssetManager` creates default white texture atlas on initialization, integrates with `Renderer` and `ChunkPipeline`.
+  3. **Tests** — 4 tests covering VFS reads/writes, texture loading, atlas packing, and overrides.
+  4. **Dependencies** — Added `tempfile` as dev-dependency; updated `glyphon` to 0.8 (still incompatible with wgpu 22, placeholder maintained).
+- **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy` clean.
+- **Blockers / Open Questions:** None — Assets crate foundation ready for texture loading and atlas integration.
+- **Next Steps:** Implement UI toolkit foundation (crates/ui), complete client frame loop with chunk upload/render, integrate asset loading into render pipeline.
 
 ---
 
