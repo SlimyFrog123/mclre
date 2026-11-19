@@ -210,7 +210,9 @@ impl Save {
 
     /// Returns an iterator over all loaded chunk positions.
     pub fn loaded_chunks(&self) -> impl Iterator<Item = ChunkPos> + '_ {
-        self.regions.values().flat_map(super::anvil::RegionFile::loaded_chunks)
+        self.regions
+            .values()
+            .flat_map(super::anvil::RegionFile::loaded_chunks)
     }
 
     fn get_or_open_region(&mut self, pos: RegionPos) -> Result<&mut RegionFile> {
@@ -266,8 +268,7 @@ mod tests {
     use crate::pos::BlockPos;
     use crate::state_key::StateCodec;
     use mclre_core::{
-        BlockProperties, BlockStateId, BlockStateModel, Identifier, PropertyDefinition,
-        Registry,
+        BlockProperties, BlockStateId, BlockStateModel, Identifier, PropertyDefinition, Registry,
     };
     use tempfile::TempDir;
 
