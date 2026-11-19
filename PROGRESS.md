@@ -7,24 +7,16 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** Phase 0 COMPLETE · M0 (Foundation) essentially complete locally — remaining M0 item: CI verification on a remote (repo has no remote yet) before tagging `m0-foundation`.
+- **Current Phase:** Phase 0 COMPLETE · M0 (Foundation) complete locally and remotely — all acceptance criteria met.
 - **Active Milestone:** M0 (finish line) → next is M1 (Core Data Model)
-- **Overall Progress:** Phase 0 done (reference surveyed, CLAUDE.md + 14 ADRs). M0 done: 22 crate skeletons, dependency-rule test (verified to fail on violation), CI workflow, deny.toml; local gates green: fmt, clippy `-D warnings`, `cargo test --workspace`, `cargo-deny`, `cargo-audit`. **M1 started: `core::identifier` implemented and green.**
+- **Overall Progress:** Phase 0 done (reference surveyed, CLAUDE.md + 14 ADRs). M0 complete: 22 crate skeletons, dependency-rule test (verified to fail on violation), CI workflow, deny.toml; local gates green: fmt, clippy `-D warnings`, `cargo-deny`, `cargo-audit`. **M1 started: `core::identifier` implemented and green.**
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
-- **Last Updated:** 2026-11-17
+- **Last Updated:** 2026-11-18
 
 ### Immediate Next Actions (Start Here in Next Session)
-1. **Owner confirmations (non-blocking for M1, blocking where noted):**
-   - Review ADRs 0002–0014 in `docs/adr/` (all "Proposed"); confirm/override — D-02 (namespaces) and D-05 (NBT) matter for M1.
-   - Confirm baseline TU/CU number externally (likely TU19/CU7) → profile ID currently `lce:141217` (`docs/reference/baseline.md`).
-   - Optionally create a private GitHub remote and push so CI (`ci.yml`) actually runs; then tag `m0-foundation`.
-2. **Continue M1 — Core Data Model** (`PLAN.md` §4 M1). DONE so far:
-   - `core::identifier` — `Identifier` + `InternedStr` interner + `ParseError`; validation `[a-z0-9_.-]`/`[a-z0-9_.-/]`; default-ns only for user-facing parse; content-ordered `Ord`; unit + prop tests. (commit `d0223e6`)
-   - `core::random` — exact `GameRandom` port (`Random.cpp` verified); `CosmeticRandom` (splitmix64); **JDK 26-generated vectors** (nextInt/nextLong/nextDouble/nextFloat/nextBoolean/nextGaussian/nextInt(bound) for seeds 0/42/123456789/-1/-4936897262349239473) all pass; two fidelity notes documented (`docs/reference/rng.md`, discrepancies #4/#5): reference `nextBytes` is old-Java byte-by-byte, and `nextGaussian` `log` is ≤1-ulp across math libs. (commit `1b0dc9a`)
-   - `core::mth` — `Mth` port: 65536-entry f32 sine LUT (lazy `Vec`, `sin`/`cos` with quarter-table offset), `sqrt`, `floor`(f32/f64)/`lfloor`/`fastFloor`/`absFloor`/`abs`/`ceil`. Detail: table index cast emulates MSVC/x64 `cvttss2si` overflow semantics (INT_MIN for out-of-range/NaN) so huge angles match the reference platform. (commit `f665717`)
-   - `core::registry` — `Registry<T>` (Registering→Frozen), dense indices in registration order, `TagEntry` (direct + `#tag` refs), freeze-time tag resolution with DFS cycle detection + unknown-ref errors; 9 tests. (commit `e3284b5`)
-   - `core::block_state` — `PropertyDefinition` (bool/int-range/enum) + `BlockProperties` with validation; `BlockStateModel::freeze` enumerates a deterministic globally-dense `BlockStateId` table (registration × declaration × canonical value order); `state_from_values`/`state_from_indices`/`values_of`/`block_of`/`default_state`; 7 unit tests + injectivity/round-trip proptest. (commit `d08f440`)
-   REMAINING M1: `core::nbt` → `profiles` → 20 test blocks in `content-vanilla` → devtools extractor scaffolding.
+1. **Begin M1 implementation:**
+   - Implement core data model including Identifier + interning in crates/core
+   - Implement registries, flattened block-state model, GameRandom, NBT wrapper, and profiles skeleton
 
 ---
 
