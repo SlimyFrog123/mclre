@@ -7,8 +7,17 @@ publish.workspace = true
 license.workspace = true
 description = "Developer tools: reference-data extractors, registry dumpers, worldgen viewers, packet inspectors, dependency-rule enforcement."
 
-[dev-dependencies]
-serde_json.workspace = true
+[[bin]]
+name = "extract-legacy"
+path = "src/bin/extract_legacy.rs"
 
 [lints]
 workspace = true
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
