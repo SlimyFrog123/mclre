@@ -1,8 +1,8 @@
 # 0014. Client Structure & Text Rendering
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 12/14 [DECIDE]. Locking crate boundaries early prevents client/server bleed and keeps shipping UI data-driven.

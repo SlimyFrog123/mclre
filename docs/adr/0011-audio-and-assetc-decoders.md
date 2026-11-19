@@ -1,8 +1,8 @@
 # 0011. Audio Engine & assetc `.binka` Decoding
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 11.5/14 [DECIDE] + V-05: `.binka` audio confirmed in the reference (40+ music files). Multi-listener splitscreen policy documented in `docs/reference/audio.md` at M11 (V-06).

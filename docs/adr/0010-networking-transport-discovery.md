@@ -1,8 +1,8 @@
 # 0010. LAN Transport & Discovery
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 10/14 [DECIDE]. Transport trait stays abstract so UPnP/relay are later transports, not protocol changes. Alternatives: `renet`/`laminar` (smaller surface, no TLS).

@@ -142,6 +142,8 @@ fn encode_section(
             block_states.insert("palette", Value::List(entries));
             block_states.insert(
                 "data",
+                // NBT LongArray expects i64; values are guaranteed < 2^63 since they're palette indices/packed state ids
+                #[allow(clippy::cast_possible_wrap)]
                 Value::LongArray(words.iter().map(|word| *word as i64).collect()),
             );
         }
@@ -149,37 +151,31 @@ fn encode_section(
             // Direct sections have no palette, so the width must be implicit
             // but deterministic: it is derived from the codec's state count,
             // exactly like Java Edition derives it from the registry size.
-            let bits = direct_bits_for(codec.state_count())?;
+            let bits = direct_bits_for(codec.state_count());
             let mut words = vec![0u64; crate::section::word_count(bits)];
             for i in 0..SECTION_VOLUME {
                 crate::section::pack(&mut words, i, bits, u64::from(section.get_index(i).0));
             }
             block_states.insert(
                 "data",
+                // NBT LongArray expects i64; values are guaranteed < 2^63 since they're palette indices/packed state ids
+                #[allow(clippy::cast_possible_wrap)]
                 Value::LongArray(words.iter().map(|word| *word as i64).collect()),
             );
         }
     }
     out.insert("block_states", Value::Compound(block_states));
+    // Light values are 0..=15, well within i8 range
+    #[allow(clippy::cast_possible_wrap)]
+    let to_i8 = |bytes: &[u8]| -> Vec<i8> { bytes.iter().map(|byte| *byte as i8).collect() };
+
     out.insert(
         "SkyLight",
-        Value::ByteArray(
-            section
-                .sky_light_bytes()
-                .iter()
-                .map(|byte| *byte as i8)
-                .collect(),
-        ),
+        Value::ByteArray(to_i8(section.sky_light_bytes())),
     );
     out.insert(
         "BlockLight",
-        Value::ByteArray(
-            section
-                .block_light_bytes()
-                .iter()
-                .map(|byte| *byte as i8)
-                .collect(),
-        ),
+        Value::ByteArray(to_i8(section.block_light_bytes())),
     );
     Ok(out)
 }
@@ -212,6 +208,8 @@ fn pack_heightmap(column: &ChunkColumn) -> Vec<i64> {
     let mut words = vec![0u64; HEIGHTMAP_ENTRIES.div_ceil(HEIGHTMAP_PER_LONG)];
     for z in 0..CHUNK_SIZE {
         for x in 0..CHUNK_SIZE {
+            // CHUNK_SIZE is 16, so index fits in usize and is non-negative
+            #[allow(clippy::cast_sign_loss)]
             let index = (z * CHUNK_SIZE + x) as usize;
             let value = u64::from(map.get(x, z));
             let word = index / HEIGHTMAP_PER_LONG;
@@ -219,6 +217,8 @@ fn pack_heightmap(column: &ChunkColumn) -> Vec<i64> {
             words[word] |= value << shift;
         }
     }
+    // NBT LongArray expects i64; heightmap values are <= 256, so well within i64 range
+    #[allow(clippy::cast_possible_wrap)]
     words.into_iter().map(|word| word as i64).collect()
 }
 
@@ -331,7 +331,7 @@ fn decode_section(section: &Compound, codec: &dyn StateCodec) -> Result<ChunkSec
             SectionStorage::from_indirect(palette, bits, words_to_u64(words))?
         }
         (None, Some(words)) => {
-            let bits = direct_bits_for(codec.state_count())?;
+            let bits = direct_bits_for(codec.state_count());
             SectionStorage::from_direct(bits, words_to_u64(words))?
         }
         (None, None) => {
@@ -364,20 +364,24 @@ fn needed_bits(len: usize) -> Result<u8> {
 
 /// Bits per entry for direct storage, derived from the number of registered
 /// states (Java derives it from registry size the same way).
-fn direct_bits_for(state_count: u32) -> Result<u8> {
+fn direct_bits_for(state_count: u32) -> u8 {
     if state_count == 0 {
-        return Ok(crate::section::DIRECT_MIN_BITS);
+        return crate::section::DIRECT_MIN_BITS;
     }
     let needed = crate::section::bits_for(state_count - 1);
-    Ok(needed.max(crate::section::DIRECT_MIN_BITS))
+    needed.max(crate::section::DIRECT_MIN_BITS)
 }
 
 /// Reinterprets stored longs as `u64` words.
+/// NBT LongArray uses signed i64 but we need the bit pattern as u64.
+#[allow(clippy::cast_sign_loss)]
 fn words_to_u64(words: &[i64]) -> Vec<u64> {
     words.iter().map(|word| *word as u64).collect()
 }
 
 /// Reinterprets `TAG_Byte_Array` data as unsigned bytes.
+/// NBT ByteArray uses signed i8 but we need the bit pattern as u8.
+#[allow(clippy::cast_sign_loss)]
 fn to_u8(bytes: &[i8]) -> Vec<u8> {
     bytes.iter().map(|byte| *byte as u8).collect()
 }

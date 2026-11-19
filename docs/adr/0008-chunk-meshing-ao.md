@@ -1,8 +1,8 @@
 # 0008. Chunk Meshing Strategy & Smooth Lighting
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 12.2 [DECIDE]. LCE smooth lighting look is a fidelity target; greedy meshing can change vertex-level AO seams.

@@ -1,8 +1,8 @@
 # 0004. Infinite Preset Behavior Inside Legacy Bounds
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 3.6 [DECIDE]: whether an `infinite` world matches a finite preset in-bounds. Biome layout in LCE is scaled per world size; `infinite` has no original counterpart.

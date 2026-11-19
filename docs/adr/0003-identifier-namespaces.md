@@ -1,8 +1,8 @@
 # 0003. Namespace Policy for Identifiers
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 5.1 left the `lce:` vs `minecraft:` split open. The reference uses numeric IDs; our registry needs a stable namespace rule from M1 (first registries).

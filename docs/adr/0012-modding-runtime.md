@@ -1,8 +1,8 @@
 # 0012. Mod Runtime (WASM) & Native Mods
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 15 [DECIDE]. First mod milestone is the vanilla content crate itself + one example mod (block + recipe) as the API acceptance test.

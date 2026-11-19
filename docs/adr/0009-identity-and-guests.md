@@ -1,8 +1,8 @@
 # 0009. Identity Launch Args & Splitscreen Guest UUIDs
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 9.1 [DECIDE]. No auth backend exists yet; handshake must carry identity claim + optional proof field (empty) and accept-all verify hook.

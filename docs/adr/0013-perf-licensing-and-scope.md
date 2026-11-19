@@ -1,8 +1,8 @@
 # 0013. Perf Targets, `faithful_bugs` Defaults, Finite→Infinite Migration, Licenses
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 3.3, 8.1, 12.5, 13, 16, 20 [DECIDE]s bundled as one pending-owner ADR.

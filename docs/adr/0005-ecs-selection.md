@@ -1,8 +1,8 @@
 # 0005. Server ECS Framework
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 7.2 [DECIDE]. Needs scheduling, deterministic iteration control, and mod-facing registration. Alternatives: `hecs` (simpler, less scheduling), custom (max control, more work).

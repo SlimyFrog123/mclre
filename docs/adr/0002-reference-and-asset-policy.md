@@ -1,8 +1,8 @@
 # 0002. Reference Tree & Asset Isolation Policy
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 3.5/11.3/16 supersede the old clean-room policy: the private repo may contain the reference source and (later) original assets, isolated so distribution scope can shrink later. Verified tree layout recorded in `docs/reference/reference-tree.md`.

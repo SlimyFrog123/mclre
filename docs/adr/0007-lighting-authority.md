@@ -1,8 +1,8 @@
 # 0007. Light Computation Authority
 
-- **Status:** Proposed (pending owner confirmation)
+- **Status:** Accepted (agent decision, owner confirmation pending) — confirmed 2026-11-18
 - **Date:** 2026-11-17
-- **Deciders:** Agent draft; owner to confirm
+- **Deciders:** Agent (owner confirmation pending)
 
 ## Context
 SPEC 7.3 [DECIDE]. Server-authoritative keeps clients honest and deterministic; client recompute would duplicate the reference propagation algorithm on both sides.
