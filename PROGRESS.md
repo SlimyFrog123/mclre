@@ -211,3 +211,20 @@
 - **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy -p mclre-render` clean (warnings only for missing docs).
 - **Blockers / Open Questions:** None — M3 foundation ready for frame loop, chunk upload, texture atlas, UI text.
 - **Next Steps:** Implement frame loop with chunk upload/render, texture atlas loading, glyphphon text rendering, UI toolkit, input handling.
+
+---
+
+### Session 8 — 2026-11-18 (M3: Texture Atlas Integration)
+
+- **Goal:** Add texture atlas system and integrate with chunk rendering pipeline.
+- **Completed:**
+  1. **`texture_atlas.rs`** — `TextureAtlas` struct with:
+     - Directory-based loading from PNG files with automatic UV calculation
+     - Default white texture fallback for testing (no external assets needed)
+     - Bind group layout (bind group 1) for texture + sampler
+     - Nearest-neighbor filtering for pixel-art fidelity
+  2. **`ChunkPipeline`** — Updated to use bind group 1 for texture atlas, bind group 0 for view uniform
+  3. **`Renderer`** — Creates default texture atlas on initialization, passes atlas bind group to chunk pipeline
+  4. **Shader integration** — Pipeline uses bind group 1 for texture sampling
+- **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy` clean.
+- **Next Steps:** Implement frame loop with chunk upload/render, glyphphon text rendering, UI toolkit, input handling.
