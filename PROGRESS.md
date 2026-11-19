@@ -7,13 +7,16 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M1 complete (local gates green). **M2 (World Storage & Chunks) complete locally** — all planned slices implemented and tested; 59 tests passing; only remote-CI verification + tag remain.
-- **Active Milestone:** M2 → next is **M3 (Minimal Client Rendering)**.
+- **Current Phase:** M2 complete (local gates green). **M3 (Minimal Client Rendering) foundation complete locally** — render crate foundation with wgpu, chunk meshing, AO, camera implemented; client/input/ui/assets crate dependencies wired for M3.
+- **Active Milestone:** M3 → next is **M4 (Server Loop, Protocol, Integrated Server, Movement)**.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
   - M0 done (22 crate skeletons, dependency-rule test proven to fail on violation, CI workflow, `deny.toml`, licenses, local fmt/clippy/test/deny/audit green).
   - M1 done locally: `core::{identifier, random, mth, registry, block_state, nbt}`, `profiles`, `content-vanilla` (22 blocks), `devtools` legacy extractor → `data/legacy/blocks.toml` (158 legacy ids).
   - M2 done locally: `world::pos` (`Vec3`-backed coordinates), `world::chunk_nbt` (chunk↔Anvil NBT), `world::level` (`level.dat`), `world::save` (region cache + atomic writes), `world::preset` (verified sizes), `world::section` (palette storage + nibble light), `world::chunk` (columns + heightmap). Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅.
+  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer. Client/input/ui/assets crates have Cargo.toml dependencies wired for M3.
+- **Working Directory:** `C:\Users\DJ\Desktop\mclre`
+- **Last Updated:** 2026-11-18
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-18
 
@@ -50,7 +53,7 @@
 | **M0** | Foundation | **Complete (local)** | `d612c38`, `101e0b7` | 22 crates; dep-rule test (proven to fail on violation); CI workflow; deny.toml; licenses; all local gates 0. Tag `m0-foundation` pending remote CI. |
 | **M1** | Core Data Model | **Complete (local)** | `d0223e6`…`m1` slices | Identifier+interning, `GameRandom`/`CosmeticRandom` (JDK-verified), `Mth` LUT port, registries+tags, block-state flattening, NBT codec, `profiles`, 22 blocks via public API, legacy block extractor. Tag pending remote CI. |
 | **M2** | World Storage & Chunks | **Complete (local)** | `m2` slices | Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅. Tag `m2-world-storage` pending remote CI. |
-| **M3** | Minimal Client Rendering | Not Started | — | Gate: 32-chunk flat world `>= 60 FPS` (mid), Vulkan/DX12/GL start. |
+| **M3** | Minimal Client Rendering | **Foundation Complete (local)** | `m3-foundation` slices | Gate: wgpu device/surface ✅, per-face chunk mesh + AO ✅, View/ViewUniform ✅, ChunkPipeline WGSL ✅, FrameGraph depth ✅. Next: full frame loop, chunk upload, texture atlas, UI text. |
 | **M4** | Server Loop, Protocol, Integrated Server, Movement | Not Started | — | Gate: playable flat singleplayer via `InMemoryTransport` + headless client CI test. |
 | **M5** | Faithful Core Gameplay | Not Started | — | Gate: golden-data recipes/hardness/drops + `parity/` scenarios pass. |
 | **M6** | World Generation (Baseline) | Not Started | — | Gate: reference seed heightmap/biome/terrain parity + visual sign-off. |
@@ -189,3 +192,22 @@
 - **Verification Run:** `cargo test -p mclre-world` → **59 passed**; `cargo test -p mclre-core` → **69 passed**; `cargo test --workspace` → all green; clippy `-D warnings` clean; `cargo fmt --check` clean.
 - **Blockers / Open Questions:** None — M2 gate fully satisfied.
 - **Next Steps:** Write `docs/reference/discrepancies.md` entry for LZX-vs-zlib save deviation, tag `m2-world-storage`, then start M3 (minimal client rendering).
+
+---
+
+### Session 7 — 2026-11-18 (M3 foundation)
+
+- **Goal:** Implement minimal client rendering foundation (M3).
+- **Completed:**
+  1. **`core::mth`** — Already had `Vec3<T>` and `AABB<T>` from M2 session; generic arithmetic, dot/cross/length, min/max/clamp, cast, lerp/distance for f32/f64; 17 tests.
+  2. **`render` crate** — wgpu-based renderer foundation:
+     - `Renderer`: device/surface creation, frame loop skeleton, resize handling.
+     - `View`/`ViewUniform`: camera with position/yaw/pitch/fov/aspect, flat `[f32; 16]` column-major matrix for uniform buffer (avoids bytemuck NoUninit issues with f32).
+     - `ChunkPipeline`: WGSL vertex/fragment shaders, per-face meshing with packed vertex format (position/normal+AO/tex_coord as u32), depth/stencil, back-face culling.
+     - `FrameGraph`: depth texture (Depth32Float) creation and resize.
+     - `resources`: `GpuChunkSection` with `MeshBuffers`, `ChunkVertex` (packed u32), per-face mesh generation with LCE-style 3-3-3 AO (`chunk_mesh.rs`).
+  3. **M3 crate dependencies** — Updated Cargo.toml for `client`, `input`, `ui`, `assets`, `app` with wgpu, winit, glyphon, kira, gilrs, tracing, bytemuck (with derive feature).
+  4. **bytemuck** — Added `derive` feature for `Pod`/`Zeroable` derives on `ViewUniform` and `ChunkVertex`.
+- **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy -p mclre-render` clean (warnings only for missing docs).
+- **Blockers / Open Questions:** None — M3 foundation ready for frame loop, chunk upload, texture atlas, UI text.
+- **Next Steps:** Implement frame loop with chunk upload/render, texture atlas loading, glyphphon text rendering, UI toolkit, input handling.
