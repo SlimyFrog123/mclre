@@ -238,8 +238,11 @@ impl Client {
                         chunk_pos,
                         sections,
                     } => {
-                        // Upload chunk sections to GPU (simplified: use first section)
-                        if let Some(section) = sections.first() {
+                        // Upload all chunk sections to GPU
+                        for (section_index, section) in sections.iter().enumerate() {
+                            if section.is_empty() {
+                                continue;
+                            }
                             let gpu_chunk = mclre_render::resources::GpuChunkSection::from_section(
                                 renderer.device(),
                                 renderer.queue(),

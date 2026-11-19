@@ -7,12 +7,14 @@ pub mod chunk_mesh;
 pub mod frame;
 pub mod pipeline;
 pub mod resources;
+pub mod text;
 pub mod texture_atlas;
 pub mod view;
 
 pub use frame::{FrameGraph, FrameGraphError, RenderContext};
 pub use pipeline::{ChunkPipeline, PipelineError};
 pub use resources::{GpuChunkSection, MeshBuffers};
+pub use text::{TextRendererSystem, TextWidget};
 pub use texture_atlas::{AtlasError, TextureAtlas};
 pub use view::{View, ViewUniform};
 

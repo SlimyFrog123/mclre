@@ -69,7 +69,7 @@ image = "0.25"
 flate2 = "1"
 wgpu = { version = "22", features = ["wgsl"] }
 winit = { version = "0.30", features = [] }
-glyphon = "0.2"
+glyphon = { version = "0.8", features = [] }
 kira = { version = "0.12", features = [] }
 gilrs = "0.10"
 
