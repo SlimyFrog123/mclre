@@ -207,6 +207,10 @@ version = "0.1.0"
 [[package]]
 name = "mclre-content-vanilla"
 version = "0.1.0"
+dependencies = [
+ "mclre-core",
+ "thiserror",
+]
 
 [[package]]
 name = "mclre-core"

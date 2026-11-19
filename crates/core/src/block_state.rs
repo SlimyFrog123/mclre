@@ -114,6 +114,35 @@ pub enum StateError {
 }
 
 impl PropertyDefinition {
+    /// A boolean property (`false` < `true`).
+    pub fn bool(name: impl Into<Box<str>>) -> Self {
+        Self::Bool { name: name.into() }
+    }
+
+    /// An inclusive integer property (`min..=max`).
+    pub fn int(name: impl Into<Box<str>>, min: i32, max: i32) -> Self {
+        Self::Int {
+            name: name.into(),
+            min,
+            max,
+        }
+    }
+
+    /// An enum property with values in canonical order (first = default).
+    ///
+    /// Values are matched exactly (lowercase tokens by convention); the order
+    /// given here defines the state-index order and must never be reordered
+    /// once saves exist.
+    pub fn enumeration(
+        name: impl Into<Box<str>>,
+        values: impl IntoIterator<Item = impl Into<Box<str>>>,
+    ) -> Self {
+        Self::Enum {
+            name: name.into(),
+            values: values.into_iter().map(Into::into).collect(),
+        }
+    }
+
     /// The property's name.
     pub fn name(&self) -> &str {
         match self {

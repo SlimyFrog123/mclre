@@ -9,3 +9,7 @@ description = "Vanilla (baseline profile) blocks/items/entities/recipes, registe
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+thiserror.workspace = true
