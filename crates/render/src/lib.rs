@@ -7,11 +7,13 @@ pub mod chunk_mesh;
 pub mod frame;
 pub mod pipeline;
 pub mod resources;
+pub mod texture_atlas;
 pub mod view;
 
 pub use frame::{FrameGraph, FrameGraphError, RenderContext};
 pub use pipeline::{ChunkPipeline, PipelineError};
 pub use resources::{GpuChunkSection, MeshBuffers};
+pub use texture_atlas::{AtlasError, TextureAtlas};
 pub use view::{View, ViewUniform};
 
 use std::sync::Arc;
@@ -29,6 +31,8 @@ pub struct Renderer {
     chunk_pipeline: ChunkPipeline,
     view_uniform_buffer: wgpu::Buffer,
     view_bind_group: wgpu::BindGroup,
+    /// Texture atlas for block textures.
+    texture_atlas: TextureAtlas,
 }
 
 impl Renderer {
@@ -125,6 +129,9 @@ impl Renderer {
             }],
         });
 
+        // Create texture atlas before moving device/queue
+        let texture_atlas = TextureAtlas::default(&device, &queue)?;
+
         Ok(Self {
             device,
             queue,
@@ -135,6 +142,7 @@ impl Renderer {
             chunk_pipeline,
             view_uniform_buffer,
             view_bind_group,
+            texture_atlas,
         })
     }
 
@@ -203,8 +211,12 @@ impl Renderer {
             });
 
             render_pass.set_bind_group(0, &self.view_bind_group, &[]);
-            self.chunk_pipeline
-                .render(&mut render_pass, &self.frame_graph, chunks);
+            self.chunk_pipeline.render(
+                &mut render_pass,
+                &self.frame_graph,
+                chunks,
+                self.texture_atlas.bind_group(),
+            );
         }
 
         self.queue.submit(std::iter::once(encoder.finish()));
@@ -240,6 +252,8 @@ pub enum RendererError {
     CreateSurface(#[from] wgpu::CreateSurfaceError),
     #[error("device request error: {0}")]
     RequestDevice(#[from] wgpu::RequestDeviceError),
+    #[error("texture atlas error: {0}")]
+    TextureAtlas(#[from] AtlasError),
 }
 
 #[cfg(test)]

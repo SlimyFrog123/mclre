@@ -1,7 +1,8 @@
 //! Render pipelines: chunk pipeline, UI pipeline, etc.
 
 use crate::frame::FrameGraph;
-use crate::resources::{ChunkVertex, MeshBuffers};
+use crate::resources::ChunkVertex;
+use crate::texture_atlas::TextureAtlas;
 use wgpu::{Device, RenderPass, TextureFormat};
 
 /// Chunk rendering pipeline.
@@ -17,11 +18,11 @@ impl ChunkPipeline {
             source: wgpu::ShaderSource::Wgsl(include_str!("shaders/chunk.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("chunk bind group layout"),
-            entries: &[
-                // View uniform (bind group 0, set in renderer)
-                wgpu::BindGroupLayoutEntry {
+        // Bind group 0: View uniform
+        let view_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("view bind group layout"),
+                entries: &[wgpu::BindGroupLayoutEntry {
                     binding: 0,
                     visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Buffer {
@@ -30,13 +31,15 @@ impl ChunkPipeline {
                         min_binding_size: None,
                     },
                     count: None,
-                },
-            ],
-        });
+                }],
+            });
+
+        // Bind group 1: Texture atlas
+        let atlas_bind_group_layout = TextureAtlas::create_bind_group_layout(device);
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("chunk pipeline layout"),
-            bind_group_layouts: &[&bind_group_layout],
+            bind_group_layouts: &[&view_bind_group_layout, &atlas_bind_group_layout],
             push_constant_ranges: &[],
         });
 
@@ -59,7 +62,11 @@ impl ChunkPipeline {
                 fragment: Some(wgpu::FragmentState {
                     module: &shader,
                     entry_point: "fs_main",
-                    targets,
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: Some(wgpu::BlendState::REPLACE),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
                     compilation_options: wgpu::PipelineCompilationOptions::default(),
                 }),
                 primitive: wgpu::PrimitiveState {
@@ -91,10 +98,13 @@ impl ChunkPipeline {
     pub fn render<'a>(
         &'a self,
         render_pass: &mut RenderPass<'a>,
-        frame_graph: &FrameGraph,
+        _frame_graph: &FrameGraph,
         chunks: &[crate::resources::GpuChunkSection],
+        atlas_bind_group: &wgpu::BindGroup,
     ) {
         render_pass.set_pipeline(&self.render_pipeline);
+        // Bind group 0 (view) is set by the renderer
+        render_pass.set_bind_group(1, atlas_bind_group, &[]);
 
         for chunk in chunks {
             if chunk.is_empty || chunk.mesh.index_count == 0 {
