@@ -269,7 +269,6 @@ pub enum RendererError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use mclre_core::Vec3;
 
     #[test]
     fn view_uniform_size_is_correct() {

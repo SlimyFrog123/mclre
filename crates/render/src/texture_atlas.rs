@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use image::{DynamicImage, ImageBuffer, Rgba};
+use image::{ImageBuffer, Rgba};
 use wgpu::{
     Device, Extent3d, Queue, Texture, TextureDescriptor, TextureDimension, TextureFormat,
     TextureUsages,
@@ -365,12 +365,16 @@ impl TextureAtlas {
 /// Texture atlas errors.
 #[derive(Debug, thiserror::Error)]
 pub enum AtlasError {
+    /// I/O error.
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
+    /// Image loading/decoding error.
     #[error("image error: {0}")]
     Image(#[from] image::ImageError),
+    /// No textures found in directory.
     #[error("no textures found in directory")]
     NoTextures,
+    /// wgpu error.
     #[error("wgpu error: {0}")]
     Wgpu(#[from] wgpu::Error),
 }

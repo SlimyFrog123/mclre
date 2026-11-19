@@ -7,6 +7,7 @@ use mclre_core::Vec3;
 #[repr(C)]
 #[derive(Debug, Clone, Copy, Pod, Zeroable)]
 pub struct ViewUniform {
+    /// Column-major 4x4 view-projection matrix (16 floats).
     pub view_proj: [f32; 16],
 }
 

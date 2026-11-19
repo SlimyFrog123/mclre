@@ -6,6 +6,7 @@ use wgpu::{
 };
 
 /// Frame graph managing render targets and transient resources.
+#[derive(Debug)]
 pub struct FrameGraph {
     depth_texture: Texture,
     depth_view: TextureView,
@@ -79,16 +80,19 @@ pub enum FrameGraphError {
 }
 
 /// Render context passed to render passes.
+#[derive(Debug)]
 pub struct RenderContext<'a> {
+    /// The wgpu device.
     pub device: &'a Device,
+    /// The wgpu queue.
     pub queue: &'a Queue,
+    /// The frame graph.
     pub frame_graph: &'a FrameGraph,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wgpu::{Device, Queue};
 
     #[test]
     fn depth_texture_format_is_correct() {
