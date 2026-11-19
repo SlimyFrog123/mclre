@@ -9,3 +9,7 @@ description = "Game Profile system: ProfileId, typed FeatureFlags, per-version c
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+thiserror.workspace = true

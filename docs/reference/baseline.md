@@ -40,6 +40,19 @@ Evidence: `Minecraft.World/ChunkSource.h:8-49`, `Minecraft.Client/LevelRenderer.
 
 **Edge behavior:** finite worlds have **edge moats** — `ChunkSource.h:57-59` declares `m_classicEdgeMoat`, `m_smallEdgeMoat`, `m_mediumEdgeMoat` (large worlds presumably unmoated/ocean edge). Confirms the "moat" treatment at world boundaries. Exact edge visuals (barrier vs ocean) to be pinned down when porting chunk-edge rendering (M6/M13).
 
+**Vertical dimensions (VERIFIED, added 2026-11-18):**
+
+| Fact | Value | Evidence |
+|---|---|---|
+| Minimum build height | **0** | `Level.h:69` `minBuildHeight = 0` |
+| Maximum build height | **256** (valid Y `0..=255`) | `Level.h:70` `maxBuildHeight = 256` ("brought forward from 1.2.3") |
+| Terrain generation depth | **128** | `Level.h:71-73` `genDepthBits = 7`, `genDepth = 1 << 7` |
+| Sea level | **63** | `Level.h:74` `constSeaLevel = genDepth / 2 - 1` |
+| Chunk storage split | lower half compressed, upper half sparse | `LevelChunk.h:50` `upperBlocks; // 128 - 255` |
+
+So the baseline profile exposes **256 blocks of build height** while worldgen only fills the **bottom 128**; the upper half is (normally) air and stored sparsely. This is encoded in `crates/profiles` (`build_height`, `terrain_height`, `sea_level`).
+
+
 **Dimension chunk-pool layout:** `LevelRenderer.cpp:92-96` computes per-dimension render grid sizes and `DIMENSION_OFFSETS` — confirms all three dimensions live in one bounded coordinate system sized by the preset.
 
 ## 3. RNG & math (V-04) — VERIFIED

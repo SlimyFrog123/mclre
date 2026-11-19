@@ -247,6 +247,10 @@ version = "0.1.0"
 [[package]]
 name = "mclre-profiles"
 version = "0.1.0"
+dependencies = [
+ "mclre-core",
+ "thiserror",
+]
 
 [[package]]
 name = "mclre-protocol"
