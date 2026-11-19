@@ -7,18 +7,16 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad.
+- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; text rendering placeholder (glyphon version mismatch with wgpu 22).
 - **Active Milestone:** M3 → next is **M4 (Server Loop, Protocol, Integrated Server, Movement)**.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
   - M0 done (22 crate skeletons, dependency-rule test proven to fail on violation, CI workflow, `deny.toml`, licenses, local fmt/clippy/test/deny/audit green).
   - M1 done locally: `core::{identifier, random, mth, registry, block_state, nbt}`, `profiles`, `content-vanilla` (22 blocks), `devtools` legacy extractor → `data/legacy/blocks.toml` (158 legacy ids).
   - M2 done locally: `world::pos` (`Vec3`-backed coordinates), `world::chunk_nbt` (chunk↔Anvil NBT), `world::level` (`level.dat`), `world::save` (region cache + atomic writes), `world::preset` (verified sizes), `world::section` (palette storage + nibble light), `world::chunk` (columns + heightmap). Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅.
-  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer, `TextureAtlas` with default white texture. Client/input/ui/assets crates have Cargo.toml dependencies wired for M3.
+  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer, `TextureAtlas` with default white texture. Client/input/ui/assets crates have Cargo.toml dependencies wired for M3. Text rendering infrastructure added as placeholder (glyphon 0.8 API incompatible with wgpu 22).
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
 - **Last Updated:** 2026-11-19
-- **Working Directory:** `C:\Users\DJ\Desktop\mclre`
-- **Last Updated:** 2026-11-18
 
 ### Immediate Next Actions (Start Here in Next Session)
 1. **Owner confirmations (non-blocking, but needed before dependent milestones):**
