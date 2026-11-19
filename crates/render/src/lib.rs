@@ -233,6 +233,16 @@ impl Renderer {
     pub fn queue(&self) -> &Queue {
         &self.queue
     }
+
+    /// Returns the render surface width.
+    pub fn width(&self) -> u32 {
+        self.config.width
+    }
+
+    /// Returns the render surface height.
+    pub fn height(&self) -> u32 {
+        self.config.height
+    }
 }
 
 /// Errors from renderer creation and operation.

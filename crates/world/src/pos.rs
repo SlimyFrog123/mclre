@@ -219,6 +219,12 @@ impl fmt::Display for ChunkPos {
     }
 }
 
+impl From<ChunkPos> for Vec3<i32> {
+    fn from(pos: ChunkPos) -> Self {
+        Vec3::new(pos.x, 0, pos.z)
+    }
+}
+
 /// Anvil region math: 32×32 chunks per `r.X.Z.mca` file.
 pub mod region {
     /// Chunks per region axis.

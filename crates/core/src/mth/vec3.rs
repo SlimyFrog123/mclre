@@ -42,6 +42,15 @@ impl<T> Vec3<T> {
         }
     }
 
+    /// The zero vector (requires `T: Default`).
+    #[must_use]
+    pub fn zero() -> Self
+    where
+        T: Default,
+    {
+        Self::default()
+    }
+
     /// The components as an array `[x, y, z]`.
     #[must_use]
     pub fn to_array(self) -> [T; 3] {
@@ -152,6 +161,60 @@ impl_binop!(Sub, sub, SubAssign, sub_assign);
 impl_binop!(Mul, mul, MulAssign, mul_assign);
 impl_binop!(Div, div, DivAssign, div_assign);
 
+/// Scalar division: Vec3 / scalar.
+impl<T> Div<T> for Vec3<T>
+where
+    T: Copy + Div<Output = T>,
+{
+    type Output = Self;
+    fn div(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+/// Scalar division assignment: Vec3 /= scalar.
+impl<T> DivAssign<T> for Vec3<T>
+where
+    T: Copy + DivAssign,
+{
+    fn div_assign(&mut self, rhs: T) {
+        self.x /= rhs;
+        self.y /= rhs;
+        self.z /= rhs;
+    }
+}
+
+/// Scalar multiplication: Vec3 * scalar.
+impl<T> Mul<T> for Vec3<T>
+where
+    T: Copy + Mul<Output = T>,
+{
+    type Output = Self;
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+/// Scalar multiplication assignment: Vec3 *= scalar.
+impl<T> MulAssign<T> for Vec3<T>
+where
+    T: Copy + MulAssign,
+{
+    fn mul_assign(&mut self, rhs: T) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
+    }
+}
+
 /// Componentwise negation.
 impl<T> Neg for Vec3<T>
 where
@@ -241,6 +304,14 @@ impl Vec3<f32> {
         self.length_squared().sqrt()
     }
 
+    /// Returns a normalized version of the vector (length 1).
+    /// Returns zero vector if length is zero.
+    #[must_use]
+    pub fn normalize(self) -> Self {
+        let len = self.length();
+        if len == 0.0 { Self::zero() } else { self / len }
+    }
+
     /// The Euclidean distance between `self` and `other`.
     #[must_use]
     pub fn distance(self, other: Self) -> f32 {
@@ -265,6 +336,14 @@ impl Vec3<f64> {
     #[must_use]
     pub fn length(self) -> f64 {
         self.length_squared().sqrt()
+    }
+
+    /// Returns a normalized version of the vector (length 1).
+    /// Returns zero vector if length is zero.
+    #[must_use]
+    pub fn normalize(self) -> Self {
+        let len = self.length();
+        if len == 0.0 { Self::zero() } else { self / len }
     }
 
     /// The Euclidean distance between `self` and `other`.

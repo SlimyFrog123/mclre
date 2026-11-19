@@ -19,3 +19,5 @@ mclre-ui.workspace = true
 thiserror.workspace = true
 crossbeam-channel.workspace = true
 parking_lot.workspace = true
+pollster = "0.3"
+winit.workspace = true

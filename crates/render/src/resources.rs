@@ -1,5 +1,7 @@
 //! GPU resources: chunk sections, mesh buffers, texture atlases.
 
+use std::sync::Arc;
+
 use bytemuck::{Pod, Zeroable};
 use mclre_core::Vec3;
 use mclre_world::section::ChunkSection;
@@ -7,7 +9,7 @@ use wgpu::util::DeviceExt;
 use wgpu::{Buffer, BufferUsages, Device, Queue};
 
 /// A chunk section uploaded to the GPU.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GpuChunkSection {
     /// The chunk section position.
     pub position: Vec3<i32>,
@@ -40,12 +42,12 @@ impl GpuChunkSection {
 }
 
 /// Mesh buffers for a chunk section (vertices + indices).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MeshBuffers {
     /// Vertex buffer.
-    pub vertices: Buffer,
+    pub vertices: Arc<Buffer>,
     /// Index buffer.
-    pub indices: Buffer,
+    pub indices: Arc<Buffer>,
     /// Number of indices.
     pub index_count: u32,
 }
@@ -53,18 +55,18 @@ pub struct MeshBuffers {
 impl MeshBuffers {
     /// Creates empty mesh buffers.
     pub fn empty(device: &Device) -> Self {
-        let vertices = device.create_buffer(&wgpu::BufferDescriptor {
+        let vertices = Arc::new(device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("empty vertex buffer"),
             size: std::mem::size_of::<ChunkVertex>() as u64,
             usage: BufferUsages::VERTEX | BufferUsages::COPY_DST,
             mapped_at_creation: false,
-        });
-        let indices = device.create_buffer(&wgpu::BufferDescriptor {
+        }));
+        let indices = Arc::new(device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("empty index buffer"),
             size: std::mem::size_of::<u32>() as u64,
             usage: BufferUsages::INDEX | BufferUsages::COPY_DST,
             mapped_at_creation: false,
-        });
+        }));
         Self {
             vertices,
             indices,
@@ -73,7 +75,7 @@ impl MeshBuffers {
     }
 
     /// Creates mesh buffers from a chunk section.
-    pub fn from_section(device: &Device, queue: &Queue, section: &ChunkSection) -> Self {
+    pub fn from_section(device: &Device, _queue: &Queue, section: &ChunkSection) -> Self {
         let (vertices, indices) = generate_mesh(section);
         let index_count = indices.len() as u32;
 
@@ -84,17 +86,21 @@ impl MeshBuffers {
             .flat_map(|v| [v.position, v.normal_ao, v.tex_coord])
             .collect();
 
-        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("chunk vertex buffer"),
-            contents: bytemuck::cast_slice(&vertex_u32s),
-            usage: BufferUsages::VERTEX,
-        });
+        let vertex_buffer = Arc::new(device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("chunk vertex buffer"),
+                contents: bytemuck::cast_slice(&vertex_u32s),
+                usage: BufferUsages::VERTEX,
+            },
+        ));
 
-        let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("chunk index buffer"),
-            contents: bytemuck::cast_slice(&indices),
-            usage: BufferUsages::INDEX,
-        });
+        let index_buffer = Arc::new(
+            device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("chunk index buffer"),
+                contents: bytemuck::cast_slice(&indices),
+                usage: BufferUsages::INDEX,
+            }),
+        );
 
         Self {
             vertices: vertex_buffer,
