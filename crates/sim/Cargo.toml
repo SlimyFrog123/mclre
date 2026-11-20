@@ -9,3 +9,16 @@ description = "Authoritative server simulation: fixed 20 TPS tick, entities, phy
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core = { path = "../core" }
+mclre-world = { path = "../world" }
+mclre-protocol = { path = "../protocol" }
+mclre-identity = { path = "../identity" }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+parking_lot = { workspace = true }
+bevy_ecs = { workspace = true }
+
+[dev-dependencies]
+uuid = { workspace = true }

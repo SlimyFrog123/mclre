@@ -343,16 +343,22 @@ Game logic  ⇄  Protocol (typed packets, versioned)  ⇄  Session (handshake, k
 ## 11. Assets, content packs, localization, audio
 
 ### 11.1 Modern asset formats
+> **Asset format decision:** Use **Minecraft: Java Edition resource/data pack formats** wherever possible. This enables:
+> - Direct compatibility with the vast ecosystem of Java resource packs, data packs, and tools
+> - Easier backporting from Java Edition features, worldgen, and content
+> - Familiar tooling for modders and content creators
+> - Future Java Edition protocol/parity compatibility
+
 | Purpose | Format |
 |---|---|
 | Textures | PNG (authoring/import), runtime packed to GPU formats (BCn/ASTC where supported, else RGBA8); KTX2 allowed for pre-compressed; mipmaps generated at load |
 | Block/item models | JSON models + blockstate JSON in the **Java resource pack style** (parent models, elements, faces, variants/multipart). Gives resource-pack and later Java-parity compatibility |
 | Audio | **Ogg Vorbis** for music/long sounds, short effects as Ogg or WAV; Opus optional later |
 | Fonts | TTF/OTF + bitmap font support (LCE-style pixel font replicated or rebuilt from owner-supplied assets) |
-| Localization | JSON language files keyed by `namespace:key` or `namespace.key` strings (modern style), converted from LCE's language files by `assetc` |
+| Localization | JSON language files keyed by `namespace:key` or `namespace.key` strings (modern Java style), converted from LCE's language files by `assetc` |
 | UI layouts | Data files (RON/JSON) describing layout trees, styles, and animations (see 12.4); no Flash/SWF runtime |
-| Structures/worldgen data | NBT structure files and JSON where applicable |
-| Archives/packs | Directory or ZIP, with a `pack.toml`/`pack.json` manifest |
+| Structures/worldgen data | NBT structure files and JSON where applicable (Java `structure_template` format) |
+| Archives/packs | Directory or ZIP, with a `pack.toml`/`pack.json` manifest (Java `pack.mcmeta` compatible) |
 
 ### 11.2 Asset pipeline
 - `assets` crate: virtual filesystem layering (base game assets → content packs → resource packs → mod assets → user overrides), hot-reload in dev.

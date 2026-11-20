@@ -12,7 +12,6 @@ workspace = true
 
 [dependencies]
 mclre-core.workspace = true
-mclre-render.workspace = true
 thiserror.workspace = true
 image.workspace = true
 toml.workspace = true

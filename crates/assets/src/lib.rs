@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use image::{DynamicImage, ImageBuffer, Rgba};
-use mclre_core::Identifier;
+pub use mclre_core::Identifier;
 use thiserror::Error;
 
 /// Errors from asset loading.
@@ -68,10 +68,11 @@ impl Texture {
 /// A texture atlas for batching multiple textures.
 #[derive(Debug)]
 pub struct TextureAtlas {
-    texture: Texture,
-    regions: HashMap<Identifier, AtlasRegion>,
-    width: u32,
-    height: u32,
+    pub texture: Texture,
+    pub regions: HashMap<Identifier, AtlasRegion>,
+    pub width: u32,
+    pub height: u32,
+    padding: u32,
 }
 
 /// A region within a texture atlas.
@@ -90,65 +91,122 @@ pub struct AtlasRegion {
 impl TextureAtlas {
     /// Creates a new empty texture atlas.
     pub fn new(width: u32, height: u32) -> Self {
+        Self::with_padding(width, height, 1)
+    }
+
+    /// Creates a new empty texture atlas with specified padding between textures.
+    /// Padding prevents texture bleeding when using mipmaps/bilinear filtering.
+    pub fn with_padding(width: u32, height: u32, padding: u32) -> Self {
         let texture = Texture::from_rgba(width, height, vec![0; (width * height * 4) as usize]);
         Self {
             texture,
             regions: HashMap::new(),
             width,
             height,
+            padding,
         }
     }
 
-    /// Adds a texture to the atlas.
+    /// Adds a texture to the atlas using shelf packing with padding.
     pub fn add_texture(&mut self, id: Identifier, texture: &Texture) -> Result<AtlasRegion> {
-        // Simple row-based packing for now
         let tex_width = texture.width;
         let tex_height = texture.height;
+        let pad = self.padding;
+        let padded_width = tex_width + 2 * pad;
+        let padded_height = tex_height + 2 * pad;
 
-        if tex_width > self.width || tex_height > self.height {
+        if padded_width > self.width || padded_height > self.height {
             return Err(AssetError::Atlas("Texture too large for atlas".into()));
         }
 
-        // Find a place for the texture (simple row-based packing)
-        let mut x = 0;
-        let mut y = 0;
-        let mut row_height = 0;
+        // Shelf packing: maintain a list of shelves (rows)
+        // Each shelf has: y position, height, current x offset
+        #[derive(Debug, Clone, Copy)]
+        struct Shelf {
+            y: u32,
+            height: u32,
+            x: u32,
+        }
 
-        // Find first available spot (simplified)
-        for existing in self.regions.values() {
-            if existing.y == y && existing.x + existing.width + tex_width <= self.width {
-                x = existing.x + existing.width;
-            } else if existing.y + existing.height > y {
-                y = existing.y + existing.height;
-                x = 0;
-                row_height = 0;
+        // Build shelves from existing regions
+        let mut shelves: Vec<Shelf> = Vec::new();
+        for region in self.regions.values() {
+            // Find or create shelf for this region's y position
+            let shelf_y = region.y.saturating_sub(pad);
+            let shelf_height = region.height + 2 * pad;
+
+            if let Some(shelf) = shelves.iter_mut().find(|s| s.y == shelf_y) {
+                shelf.x = shelf.x.max(region.x + region.width + pad);
+                shelf.height = shelf.height.max(shelf_height);
+            } else {
+                shelves.push(Shelf {
+                    y: shelf_y,
+                    height: shelf_height,
+                    x: region.x + region.width + pad,
+                });
             }
-            row_height = row_height.max(existing.height);
         }
 
-        if x + tex_width > self.width {
-            x = 0;
-            y += row_height;
-            row_height = tex_height;
+        // Sort shelves by y position
+        shelves.sort_by_key(|s| s.y);
+
+        // Try to place texture on existing shelves
+        for shelf in &mut shelves {
+            if shelf.x + padded_width <= self.width {
+                // Fits on this shelf
+                let padded_x = shelf.x + pad;
+                let padded_y = shelf.y + pad;
+
+                self.copy_texture(texture, padded_x, padded_y);
+
+                let region = AtlasRegion {
+                    x: padded_x,
+                    y: padded_y,
+                    width: tex_width,
+                    height: tex_height,
+                    u_min: padded_x as f32 / self.width as f32,
+                    v_min: padded_y as f32 / self.height as f32,
+                    u_max: (padded_x + tex_width) as f32 / self.width as f32,
+                    v_max: (padded_y + tex_height) as f32 / self.height as f32,
+                };
+
+                shelf.x += padded_width;
+                shelf.height = shelf.height.max(padded_height);
+
+                self.regions.insert(id, region);
+                return Ok(region);
+            }
         }
 
-        if y + tex_height > self.height {
+        // No existing shelf fits, create new shelf at bottom
+        let new_y = shelves.last().map(|s| s.y + s.height + pad).unwrap_or(0);
+
+        if new_y + padded_height > self.height {
             return Err(AssetError::Atlas("Atlas full".into()));
         }
 
-        // Copy texture data into atlas
-        self.copy_texture(texture, x, y);
+        let padded_x = pad;
+        let padded_y = new_y + pad;
+
+        self.copy_texture(texture, padded_x, padded_y);
 
         let region = AtlasRegion {
-            x,
-            y,
+            x: padded_x,
+            y: padded_y,
             width: tex_width,
             height: tex_height,
-            u_min: x as f32 / self.width as f32,
-            v_min: y as f32 / self.height as f32,
-            u_max: (x + tex_width) as f32 / self.width as f32,
-            v_max: (y + tex_height) as f32 / self.height as f32,
+            u_min: padded_x as f32 / self.width as f32,
+            v_min: padded_y as f32 / self.height as f32,
+            u_max: (padded_x + tex_width) as f32 / self.width as f32,
+            v_max: (padded_y + tex_height) as f32 / self.height as f32,
         };
+
+        // Add new shelf
+        shelves.push(Shelf {
+            y: new_y,
+            height: padded_height,
+            x: padded_width,
+        });
 
         self.regions.insert(id, region);
         Ok(region)
@@ -186,7 +244,7 @@ impl TextureAtlas {
 /// Virtual filesystem for assets with layering support.
 #[derive(Debug, Default)]
 pub struct AssetVfs {
-    roots: Vec<PathBuf>,
+    pub roots: Vec<PathBuf>,
     overrides: HashMap<String, Vec<u8>>, // In-memory overrides
 }
 
@@ -272,9 +330,9 @@ impl AssetVfs {
 
 /// Asset manager for loading and caching assets.
 pub struct AssetManager {
-    vfs: AssetVfs,
+    pub vfs: AssetVfs,
     texture_cache: HashMap<Identifier, Arc<Texture>>,
-    atlas: TextureAtlas,
+    pub atlas: TextureAtlas,
 }
 
 impl AssetManager {
@@ -283,7 +341,7 @@ impl AssetManager {
         Self {
             vfs: AssetVfs::new(),
             texture_cache: HashMap::new(),
-            atlas: TextureAtlas::new(2048, 2048), // Default 2048x2048 atlas
+            atlas: TextureAtlas::with_padding(8192, 8192, 1), // 8192x8192 atlas with 1px padding
         }
     }
 
@@ -365,7 +423,7 @@ mod tests {
 
     #[test]
     fn texture_atlas_adds_textures() {
-        let mut atlas = TextureAtlas::new(256, 256);
+        let mut atlas = TextureAtlas::with_padding(256, 256, 1);
         let id = Identifier::new("minecraft", "test").expect("valid id");
         let texture = Texture::from_rgba(16, 16, vec![255; 16 * 16 * 4]);
         let region = atlas.add_texture(id.clone(), &texture).unwrap();
@@ -373,6 +431,9 @@ mod tests {
         assert_eq!(region.width, 16);
         assert_eq!(region.height, 16);
         assert!(atlas.get_region(&id).is_some());
+        // Check padding is applied (region should start at 1,1)
+        assert_eq!(region.x, 1);
+        assert_eq!(region.y, 1);
     }
 
     #[test]

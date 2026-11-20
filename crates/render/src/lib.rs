@@ -18,6 +18,9 @@ pub use text::{TextRendererSystem, TextWidget};
 pub use texture_atlas::{AtlasError, TextureAtlas};
 pub use view::{View, ViewUniform};
 
+pub use wgpu::Texture;
+
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use wgpu::{Device, Queue, Surface, SurfaceConfiguration, TextureFormat};
@@ -148,6 +151,73 @@ impl Renderer {
         })
     }
 
+    /// Sets a custom texture atlas from the asset system.
+    ///
+    /// This allows the asset system (mclre-assets) to build a texture atlas
+    /// on the CPU and upload it to the GPU.
+    pub fn set_texture_atlas(
+        &mut self,
+        texture: &mclre_assets::Texture,
+        uvs: HashMap<String, [f32; 4]>,
+        padding: u32,
+    ) -> Result<(), RendererError> {
+        self.texture_atlas =
+            TextureAtlas::from_texture(&self.device, &self.queue, texture, uvs, padding)?;
+
+        // Create a properly ordered UV array for the shader.
+        // Assign explicit layer indices to basic blocks first for consistent rendering.
+        let mut uv_array = vec![[0.0f32; 4]; 512];
+
+        // Define priority order for basic blocks (layer indices 0-15)
+        let basic_blocks = [
+            "minecraft:block/stone",
+            "minecraft:block/dirt",
+            "minecraft:block/grass_block_top",
+            "minecraft:block/bedrock",
+            "minecraft:block/cobblestone",
+            "minecraft:block/sand",
+            "minecraft:block/gravel",
+            "minecraft:block/oak_log",
+            "minecraft:block/oak_planks",
+            "minecraft:block/crafting_table",
+            "minecraft:block/furnace",
+            "minecraft:block/chest",
+            "minecraft:block/glass",
+            "minecraft:block/coal_ore",
+            "minecraft:block/iron_ore",
+            "minecraft:block/gold_ore",
+        ];
+
+        let mut layer = 0;
+        // Assign basic blocks first
+        for name in basic_blocks {
+            if let Some(uv) = self.texture_atlas.uvs(name) {
+                uv_array[layer] = uv;
+                layer += 1;
+            }
+        }
+
+        // Add remaining textures
+        for (_, uv) in self.texture_atlas.all_uvs() {
+            if layer >= 512 {
+                break;
+            }
+            // Skip already assigned basic blocks
+            let is_basic = basic_blocks
+                .iter()
+                .any(|b| self.texture_atlas.uvs(b) == Some(uv));
+            if !is_basic {
+                uv_array[layer] = uv;
+                layer += 1;
+            }
+        }
+
+        // Update the chunk pipeline with the UV regions
+        self.chunk_pipeline.update_atlas_uvs(&self.queue, &uv_array);
+
+        Ok(())
+    }
+
     /// Resizes the surface.
     pub fn resize(&mut self, width: u32, height: u32) {
         if width == 0 || height == 0 {
@@ -215,6 +285,7 @@ impl Renderer {
             render_pass.set_bind_group(0, &self.view_bind_group, &[]);
             self.chunk_pipeline.render(
                 &mut render_pass,
+                &self.queue,
                 &self.frame_graph,
                 chunks,
                 self.texture_atlas.bind_group(),

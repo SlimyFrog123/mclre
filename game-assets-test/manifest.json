@@ -1,0 +1,3115 @@
+{
+  "textures": {
+    "minecraft:block/oak_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/carrots": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:item/boat": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/purpur_stairs": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/acacia_door": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/cauldron": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/bookshelf": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/cobblestone_wall": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/monster_egg": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lever": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/powered_rail": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/oak_log": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wooden_button": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/water_flow": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/snow": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.125
+    },
+    "minecraft:block/purpur_double_slab": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lime_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/bone_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/birch_fence": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_rod": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/gray_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/acacia_fence_gate": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/spruce_fence": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char3": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/double_wooden_slab": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lava_still": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/green_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/hopper": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/flower_pot": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/note_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/vignette": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/ender_chest": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/huge_mushroom_2": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/footprint": {
+      "x": 848,
+      "y": 0,
+      "width": 8,
+      "height": 8,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.41796875,
+      "v_max": 0.00390625
+    },
+    "minecraft:block/emerald_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/trapdoor": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/trapped_chest": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/observer": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/cyan_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/tripwire_hook": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/structure_void": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/wolf_tame": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/obsidian": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/crafting_table": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/diamond_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/vine": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/planks": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/slime": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/background": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char4": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/clouds": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/red_sandstone_slab": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/creeper": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/iron_2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/red_mushroom": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/fence_gate": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/pumpkin_stem": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/brewing_stand": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/mob_spawner": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/diamond_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/jungle_door": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/anvil": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/stone_pressure_plate": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/cyan_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/piston_moving": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/purple_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lava_flow": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sea_lantern": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/glass": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/slot": {
+      "x": 848,
+      "y": 0,
+      "width": 128,
+      "height": 128,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4765625,
+      "v_max": 0.0625
+    },
+    "minecraft:misc/cloth_1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/spider_eyes": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/concrete": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_portal_frame": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/coal_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/web": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/particles": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/iron_trapdoor": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/grasscolor": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/grass_path": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wooden_door": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/iron_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/shadow": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 64,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.03125
+    },
+    "minecraft:block/log2": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/water_lily": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/ghast": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/pigzombie": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/black_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_sandstone": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/yellow_flower": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/emerald_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/locked_chest": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/purpur_slab": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/concrete_powder": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sponge": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/nether_quartz_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/nether_brick_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/trap": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/birch_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:item/door": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/redstone_lamp_off": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/diamond_2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/gold_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_wire": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/kz": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/sand": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/brick_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char6": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/structure_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/green_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/gray_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/gui": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:misc/char": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/piston": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/melon_stem": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/mycelium": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/iron_bars": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dirt": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/zombie": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/sticky_piston": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/light_gray_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/cow": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/frosted_ice": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/fire": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/slime": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/light_gray_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/items": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/ladder": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/detector_rail": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/wolf": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/redstone_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/jack_o_lantern": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/sheep": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/yellow_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/oak_leaves": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/magma": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/spruce_door": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/melon": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/inventory": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/purpur_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/leaves2": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/pigman": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/brown_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/pig": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/rail": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/bg": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:misc/icons": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/hardened_clay": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/birch_fence_gate": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wooden_pressure_plate": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/gold_2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/cocoa": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:item/arrows": {
+      "x": 848,
+      "y": 0,
+      "width": 32,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4296875,
+      "v_max": 0.015625
+    },
+    "minecraft:block/orange_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/pumpkinblur": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/chorus_flower": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/squid": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/activator_rail": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/chain_command_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wool": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/black_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/cobblestone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/logo": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/nether_wart_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/purpur_pillar": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_sandstone_stairs": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/sheep_fur": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/glass_pane": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/cloth_2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/packed_ice": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/stone_slab": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/huge_mushroom_1": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/diamond_1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/iron_door": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_gateway": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/double_red_sandstone_slab": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/tall_grass": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/furnace": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/tnt": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/watercolor": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:misc/gold_1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/soul_sand": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sunflower": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lit_furnace": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/nether_brick_fence": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_nether_brick": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/stone_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dark_oak_door": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/light_weighted_pressure_plate": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/spruce_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/acacia_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_flower": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/mapbg": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 64,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.03125
+    },
+    "minecraft:block/nether_brick": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/blue_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/farmland": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/light_blue_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_repeater_off": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wall_sign": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dragon_egg": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/chest": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/prismarine": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/chain_1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/chicken": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/stone_brick_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/wheat_crops": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/blue_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/water_still": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/light_blue_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/red_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/piston_top": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sandstone_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_lamp_on": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/rain": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.125
+    },
+    "minecraft:misc/saddle": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/stone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/command_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/chain_2": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/wolf_angry": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/ghast_fire": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/foliagecolor": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/redstone_comparator_on": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/gravel": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/unknown_pack": {
+      "x": 848,
+      "y": 0,
+      "width": 128,
+      "height": 128,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4765625,
+      "v_max": 0.0625
+    },
+    "minecraft:block/tripwire": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lapis_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/quartz_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:item/cart": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/potatoes": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_repeater_on": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/torch": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/white_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_portal": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/brick_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/gold_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/jungle_fence": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dropper": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/iron_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/chorus_plant": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/pink_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_stone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/hay_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dead_bush": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/white_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/barrier": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/coal_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/jungle_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/nether_wart": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/beacon": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/purple_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_block": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/water": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/moon": {
+      "x": 848,
+      "y": 0,
+      "width": 32,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4296875,
+      "v_max": 0.015625
+    },
+    "minecraft:block/magenta_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/enchantment_table": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/container": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/stone_brick": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/redstone_comparator_off": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/skeleton": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/power": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/quartz_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/double_stone_slab": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/carpet": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/daylight_detector": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dark_oak_stairs": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/heavy_weighted_pressure_plate": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/yellow_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/stained_glass_pane": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/birch_door": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:item/sign": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/cake": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/repeating_command_block": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/brown_mushroom": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/beetroot": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sign_post": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/pink_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/glowstone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sapling": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/iron_1": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:misc/mapicons": {
+      "x": 848,
+      "y": 0,
+      "width": 32,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4296875,
+      "v_max": 0.015625
+    },
+    "minecraft:block/magenta_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/spruce_fence_gate": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dark_oak_fence_gate": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char5": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/netherrack": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/spider": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/wooden_slab": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sun": {
+      "x": 848,
+      "y": 0,
+      "width": 32,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4296875,
+      "v_max": 0.015625
+    },
+    "minecraft:block/lapis_ore": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/bed": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/lime_glazed_terracotta": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/mossy_cobblestone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/dial": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/orange_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/stained_hardened_clay": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/sandstone": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/crafting": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    },
+    "minecraft:block/dispenser": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/dark_oak_fence": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/end_brick": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/bedrock": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/grass_block_top": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/acacia_fence": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/char7": {
+      "x": 848,
+      "y": 0,
+      "width": 64,
+      "height": 32,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.4453125,
+      "v_max": 0.015625
+    },
+    "minecraft:block/brown_shulker_box": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/skull": {
+      "x": 832,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.40625,
+      "v_min": 0.0,
+      "u_max": 0.4140625,
+      "v_max": 0.0078125
+    },
+    "minecraft:block/jungle_fence_gate": {
+      "x": 848,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.421875,
+      "v_max": 0.0078125
+    },
+    "minecraft:misc/furnace": {
+      "x": 848,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "u_min": 0.4140625,
+      "v_min": 0.0,
+      "u_max": 0.5390625,
+      "v_max": 0.125
+    }
+  },
+  "generated_at": "2026-11-19T14:53:33.419157200+00:00"
+}

@@ -7,6 +7,27 @@ struct ViewUniform {
 @group(0) @binding(0)
 var<uniform> view: ViewUniform;
 
+@group(1) @binding(0)
+var atlas_texture: texture_2d<f32>;
+
+@group(1) @binding(1)
+var atlas_sampler: sampler;
+
+@group(2) @binding(0)
+var<uniform> atlas_uvs: AtlasUVs;
+
+struct AtlasUVs {
+    regions: array<vec4<f32>, 512>, // u_min, v_min, u_max, v_max
+}
+
+// Uniform for chunk section origin (3 i32 = 12 bytes)
+struct ChunkOrigin {
+    origin: vec3<i32>,
+}
+
+@group(3) @binding(0)
+var<uniform> chunk_origin: ChunkOrigin;
+
 struct VertexInput {
     @location(0) position: u32,
     @location(1) normal_ao: u32,
@@ -33,7 +54,6 @@ fn unpack_position(packed: u32) -> vec3<u32> {
 fn unpack_normal_ao(packed: u32) -> vec2<f32> {
     let face = packed & 0x3u;
     let ao = (packed >> 2) & 0x3Fu;
-    let face_normal = select_face_normal(face);
     return vec2<f32>(f32(face), f32(ao) / 63.0);
 }
 
@@ -67,14 +87,14 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     let pos = vec3<f32>(f32(pos_u32.x), f32(pos_u32.y), f32(pos_u32.z));
 
     let normal_ao = unpack_normal_ao(input.normal_ao);
-    let face = normal_ao.x;
+    let face = u32(normal_ao.x);
     let ao = normal_ao.y;
 
     let tex = unpack_tex_coord(input.tex_coord);
 
-    // World position = section origin + local position
-    // For now, assume section origin is (0,0,0) - will be handled by instancing or push constants
-    let world_pos = pos;
+    // Get chunk section origin from uniform
+    // World position = section origin * 16 + local position
+    let world_pos = pos + vec3<f32>(f32(chunk_origin.origin.x) * 16.0, f32(chunk_origin.origin.y) * 16.0, f32(chunk_origin.origin.z) * 16.0);
 
     // Transform to clip space
     output.clip_position = view.view_proj * vec4<f32>(world_pos, 1.0);
@@ -90,15 +110,31 @@ fn vs_main(input: VertexInput) -> VertexOutput {
 
 @fragment
 fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
+    // Get the atlas UV region for this texture layer
+    let layer = input.layer;
+    let uv_region = atlas_uvs.regions[layer];
+    let u_min = uv_region.x;
+    let v_min = uv_region.y;
+    let u_max = uv_region.z;
+    let v_max = uv_region.w;
+    
+    // Map face-local UV (0-1) to atlas UV region
+    let atlas_u = u_min + input.tex_coord.x * (u_max - u_min);
+    let atlas_v = v_min + input.tex_coord.y * (v_max - v_min);
+    let atlas_uv = vec2<f32>(atlas_u, atlas_v);
+    
+    // Sample texture from atlas
+    let tex_color = textureSample(atlas_texture, atlas_sampler, atlas_uv);
+    
     // Simple lit shading with AO
     let light_dir = normalize(vec3<f32>(0.5, 1.0, 0.3));
     let diffuse = max(dot(input.normal, light_dir), 0.0);
 
     // Ambient + diffuse with AO
     let ambient = 0.3;
-    let color = vec3<f32>(0.8, 0.7, 0.6); // Placeholder block color
+    let color = tex_color.rgb; // Use texture color
 
     let lit = color * (ambient + (1.0 - ambient) * diffuse) * input.ao;
 
-    return vec4<f32>(lit, 1.0);
+    return vec4<f32>(lit, tex_color.a);
 }

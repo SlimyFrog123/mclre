@@ -113,6 +113,7 @@ mclre/
 | D-11 | Audio crate & splitscreen mix | **`kira`** (or `rodio` + `symphonia`) + per-listener attenuation mixing; external `vgmstream` vs bundled decoder in `assetc` | `0012-audio-and-assetc-decoders.md` | M3/M11 |
 | D-12 | Modding WASM & native mods | **`wasmtime`** (WIT component model) + optional dev-only native Rust mods flag | `0013-modding-runtime.md` | M12 |
 | D-13 | Perf targets, finite→infinite migration, shaders/license | Confirm low/mid hardware budgets (`docs/perf.md`), finite→infinite migration support, `faithful_bugs` defaults, clean-room vs LGPL Iris policy, and own code license | `0014-perf-licensing-and-scope.md` | M3 / Post-1.0 |
+| D-14 | Asset formats: Java Edition parity | Use Java Edition resource/data pack formats (JSON models, blockstates, sounds.json, pack.mcmeta) for all modern assets | `0015-asset-format-java-parity.md` | M3/M8 |
 
 ---
 
@@ -239,6 +240,7 @@ mclre/
 
 1. **`assets` (baseline):**
    - Virtual filesystem (`AssetVfs`) loading `assets-placeholder/` (and optional `--assets` directory) with clean "assets missing" fallback behavior.
+   - **Asset format policy:** Use **Minecraft: Java Edition resource/data pack formats** for all modern assets (JSON block/item models, blockstates, language files, pack manifests). This enables direct Java resource pack compatibility and easier backporting.
    - Texture loader (`image`) + block texture atlas / texture array builder + mipmap generation + animated texture frame scheduler stub.
 2. **`input` (baseline) & `app` shell:**
    - `winit` event loop + CLI parsing (`clap`) implementing `SPEC.md` §19 flags (`--gpu-backend`, `--assets`, `--dev-defaults`, `--log`, etc.).
@@ -370,7 +372,9 @@ mclre/
 
 1. **`tools/assetc` (v1 — textures, lang, models):**
    - Extract LCE archives (`.arc` / pack files per verified `V-05`).
-   - Convert textures (DDS/PNG → PNG/KTX2) and language files → JSON into `game-assets/`, emitting source-hash manifest (idempotent & resumable).
+   - Convert textures (DDS/PNG → PNG/KTX2) and language files → **Java Edition JSON format** into `game-assets/`, emitting source-hash manifest (idempotent & resumable).
+   - Convert LCE block/item models → **Java Edition JSON model format** (parent models, elements, faces, variants/multipart).
+   - Convert LCE pack manifests → **Java Edition `pack.mcmeta` compatible format** with `pack.toml`/`pack.json`.
    - Keep `assets-placeholder/` functional for CI.
 2. **`input` (full):**
    - `winit` + `gilrs` action system, per-player device assignment, LCE default gamepad bindings (LB/RB tabs, X/Y quick-move, pointerless inventory cursor/grid nav) and KB+M bindings, control remapping persisted in `options.toml`.
@@ -432,7 +436,7 @@ mclre/
 *Goal:* Full sound & music engine with LCE asset conversion, 3D spatial attenuation, multi-listener splitscreen support, and non-fatal failure isolation.
 
 1. **`tools/assetc` (audio extension):**
-   - Convert LCE `.binka` audio to `.ogg` (Ogg Vorbis) / `.wav` (delegating to `vgmstream` or selected decoder per ADR `D-12`) and generate `sounds.json` mappings.
+   - Convert LCE `.binka` audio to `.ogg` (Ogg Vorbis) / `.wav` (delegating to `vgmstream` or selected decoder per ADR `D-12`) and generate **Java Edition `sounds.json` format** mappings.
 2. **`audio` crate:**
    - Isolated audio thread (`kira` or `rodio` + `symphonia` per ADR `D-12`); initialization failure logs a warning and degrades to silent mode without crashing.
    - `SoundEvent` registry + `sounds.json` pitch/volume/variant selection.

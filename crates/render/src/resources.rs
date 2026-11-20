@@ -3,7 +3,7 @@
 use std::sync::Arc;
 
 use bytemuck::{Pod, Zeroable};
-use mclre_core::Vec3;
+use mclre_core::{BlockStateModel, Vec3};
 use mclre_world::section::ChunkSection;
 use wgpu::util::DeviceExt;
 use wgpu::{Buffer, BufferUsages, Device, Queue};
@@ -26,11 +26,12 @@ impl GpuChunkSection {
         queue: &Queue,
         section: &ChunkSection,
         position: Vec3<i32>,
+        block_state_model: Option<&BlockStateModel>,
     ) -> Self {
         let mesh = if section.is_empty() {
             MeshBuffers::empty(device)
         } else {
-            MeshBuffers::from_section(device, queue, section)
+            MeshBuffers::from_section(device, queue, section, block_state_model)
         };
         let is_empty = section.is_empty();
         Self {
@@ -75,8 +76,13 @@ impl MeshBuffers {
     }
 
     /// Creates mesh buffers from a chunk section.
-    pub fn from_section(device: &Device, _queue: &Queue, section: &ChunkSection) -> Self {
-        let (vertices, indices) = generate_mesh(section);
+    pub fn from_section(
+        device: &Device,
+        _queue: &Queue,
+        section: &ChunkSection,
+        block_state_model: Option<&BlockStateModel>,
+    ) -> Self {
+        let (vertices, indices) = crate::chunk_mesh::generate_mesh(section, block_state_model);
         let index_count = indices.len() as u32;
 
         // ChunkVertex is repr(C) with 3 u32 fields, so it has the same layout as [u32; 3]
@@ -133,125 +139,16 @@ impl ChunkVertex {
     }
 }
 
-/// Generates a mesh for a chunk section using per-face meshing with AO.
-///
-/// This implements the per-face strategy from ADR 0008 with LCE smooth lighting.
-fn generate_mesh(section: &ChunkSection) -> (Vec<ChunkVertex>, Vec<u32>) {
-    let mut vertices = Vec::new();
-    let mut indices = Vec::new();
-
-    // Face directions: +X, -X, +Y, -Y, +Z, -Z
-    const FACE_DIRS: [(i32, i32, i32); 6] = [
-        (1, 0, 0),
-        (-1, 0, 0),
-        (0, 1, 0),
-        (0, -1, 0),
-        (0, 0, 1),
-        (0, 0, -1),
-    ];
-
-    // Vertex offsets for each face (4 vertices per face, CCW from bottom-left when viewed from outside)
-    const FACE_VERTICES: [[(u32, u32, u32); 4]; 6] = [
-        // +X face (right)
-        [(1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 0, 1)],
-        // -X face (left)
-        [(0, 0, 1), (0, 1, 1), (0, 1, 0), (0, 0, 0)],
-        // +Y face (top)
-        [(0, 1, 0), (1, 1, 0), (1, 1, 1), (0, 1, 1)],
-        // -Y face (bottom)
-        [(0, 0, 1), (1, 0, 1), (1, 0, 0), (0, 0, 0)],
-        // +Z face (front)
-        [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)],
-        // -Z face (back)
-        [(1, 0, 0), (1, 1, 0), (0, 1, 0), (0, 0, 0)],
-    ];
-
-    // Texture coordinates for each vertex of a face
-    const FACE_UV: [(u32, u32); 4] = [(0, 0), (1, 0), (1, 1), (0, 1)];
-
-    for (face, &(dx, dy, dz)) in FACE_DIRS.iter().enumerate() {
-        for x in 0..16 {
-            for y in 0..16 {
-                for z in 0..16 {
-                    let idx = ((y << 8) | (z << 4) | x) as usize;
-                    let state = section.get_index(idx);
-                    if state.0 == 0 {
-                        continue; // Air
-                    }
-
-                    // Check neighbor in face direction
-                    let nx = x as i32 + dx;
-                    let ny = y as i32 + dy;
-                    let nz = z as i32 + dz;
-
-                    let neighbor_is_solid = if (0..16).contains(&nx)
-                        && (0..16).contains(&ny)
-                        && (0..16).contains(&nz)
-                    {
-                        let nidx = ((ny as usize) << 8) | ((nz as usize) << 4) | (nx as usize);
-                        section.get_index(nidx).0 != 0
-                    } else {
-                        false // Neighbor is in another section - assume solid for now
-                    };
-
-                    if neighbor_is_solid {
-                        continue; // Face is occluded
-                    }
-
-                    // Compute AO for the 4 corners of this face
-                    let ao_values = compute_face_ao(section, x, y, z, face);
-
-                    let base_vertex = vertices.len() as u32;
-                    for (i, &(vx, vy, vz)) in FACE_VERTICES[face].iter().enumerate() {
-                        let vx = x + vx;
-                        let vy = y + vy;
-                        let vz = z + vz;
-                        let (u, v) = FACE_UV[i];
-                        let ao = ao_values[i];
-                        vertices.push(ChunkVertex::new(vx, vy, vz, face as u32, ao, u, v, 0));
-                    }
-
-                    // Two triangles per face (CCW winding)
-                    indices.push(base_vertex);
-                    indices.push(base_vertex + 1);
-                    indices.push(base_vertex + 2);
-                    indices.push(base_vertex);
-                    indices.push(base_vertex + 2);
-                    indices.push(base_vertex + 3);
-                }
-            }
-        }
-    }
-
-    (vertices, indices)
-}
-
-/// Computes ambient occlusion values for the 4 corners of a face.
-///
-/// Uses the standard 3-3-3 AO pattern for smooth lighting.
-fn compute_face_ao(_section: &ChunkSection, _x: u32, _y: u32, _z: u32, _face: usize) -> [u32; 4] {
-    // For each corner, check the 3 adjacent voxels
-    // This is a simplified AO - real implementation would be more sophisticated
-    let mut ao = [0u32; 4];
-
-    // Define the 3 voxels to check for each corner of each face
-    // This is a placeholder - full AO implementation is complex
-    for i in 0..4 {
-        ao[i] = 63; // Full brightness for now
-    }
-
-    ao
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::chunk_mesh::generate_mesh;
     use mclre_world::section::ChunkSection;
 
     #[test]
     fn empty_section_generates_empty_mesh() {
         let section = ChunkSection::air();
-        let (vertices, indices) = generate_mesh(&section);
+        let (vertices, indices) = generate_mesh(&section, None);
         assert!(vertices.is_empty());
         assert!(indices.is_empty());
     }
@@ -263,7 +160,7 @@ mod tests {
             mclre_world::pos::LocalPos::from_axes(8, 8, 8),
             mclre_core::BlockStateId(1),
         );
-        let (vertices, indices) = generate_mesh(&section);
+        let (vertices, indices) = generate_mesh(&section, None);
         // 6 faces * 4 vertices = 24 vertices, 6 faces * 6 indices = 36 indices
         // But some faces may be internal...
         assert!(!vertices.is_empty());

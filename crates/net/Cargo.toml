@@ -9,3 +9,10 @@ description = "Transport layer: Transport trait, in-memory transport, QUIC LAN t
 
 [lints]
 workspace = true
+
+[dependencies]
+bytes = { workspace = true }
+crossbeam-channel = { workspace = true }
+mclre-protocol = { path = "../protocol" }
+thiserror = { workspace = true }
+tracing = { workspace = true }

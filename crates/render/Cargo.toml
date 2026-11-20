@@ -13,6 +13,7 @@ workspace = true
 [dependencies]
 mclre-core.workspace = true
 mclre-world.workspace = true
+mclre-assets.workspace = true
 thiserror.workspace = true
 bytemuck.workspace = true
 wgpu.workspace = true

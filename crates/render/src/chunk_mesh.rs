@@ -3,12 +3,16 @@
 //! Implements the per-face strategy from ADR 0008 with LCE smooth lighting.
 
 use crate::resources::ChunkVertex;
+use mclre_core::BlockStateModel;
 use mclre_world::section::ChunkSection;
 
 /// Generates a mesh for a chunk section using per-face meshing with AO.
 ///
 /// This implements the per-face strategy from ADR 0008 with LCE smooth lighting.
-pub fn generate_mesh(section: &ChunkSection) -> (Vec<ChunkVertex>, Vec<u32>) {
+pub fn generate_mesh(
+    section: &ChunkSection,
+    block_state_model: Option<&BlockStateModel>,
+) -> (Vec<ChunkVertex>, Vec<u32>) {
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
 
@@ -74,13 +78,22 @@ pub fn generate_mesh(section: &ChunkSection) -> (Vec<ChunkVertex>, Vec<u32>) {
                     let ao_values = compute_face_ao(section, x, y, z, face);
 
                     let base_vertex = vertices.len() as u32;
+                    // Determine texture layer from block state
+                    let layer = if let Some(model) = block_state_model {
+                        // Get the block ID from the block state
+                        let block_id = model.block_of(state).map(|b| b.0).unwrap_or(0);
+                        // Clamp to max layers
+                        (block_id as u32).min(511)
+                    } else {
+                        0
+                    };
                     for (i, &(vx, vy, vz)) in FACE_VERTICES[face].iter().enumerate() {
                         let vx = x + vx;
                         let vy = y + vy;
                         let vz = z + vz;
                         let (u, v) = FACE_UV[i];
                         let ao = ao_values[i];
-                        vertices.push(ChunkVertex::new(vx, vy, vz, face as u32, ao, u, v, 0));
+                        vertices.push(ChunkVertex::new(vx, vy, vz, face as u32, ao, u, v, layer));
                     }
 
                     // Two triangles per face (CCW winding)
@@ -212,7 +225,7 @@ mod tests {
     #[test]
     fn empty_section_generates_empty_mesh() {
         let section = ChunkSection::air();
-        let (vertices, indices) = generate_mesh(&section);
+        let (vertices, indices) = generate_mesh(&section, None);
         assert!(vertices.is_empty());
         assert!(indices.is_empty());
     }
@@ -224,7 +237,7 @@ mod tests {
             mclre_world::pos::LocalPos::from_axes(8, 8, 8),
             mclre_core::BlockStateId(1),
         );
-        let (vertices, indices) = generate_mesh(&section);
+        let (vertices, indices) = generate_mesh(&section, None);
         // 6 faces * 4 vertices = 24 vertices
         // 6 faces * 6 indices = 36 indices
         assert_eq!(vertices.len(), 24);
@@ -242,7 +255,7 @@ mod tests {
             mclre_world::pos::LocalPos::from_axes(9, 8, 8),
             mclre_core::BlockStateId(1),
         );
-        let (vertices, indices) = generate_mesh(&section);
+        let (vertices, indices) = generate_mesh(&section, None);
         // 2 blocks = 12 faces, minus 1 shared face = 10 faces
         // 10 * 4 = 40 vertices, 10 * 6 = 60 indices
         assert_eq!(vertices.len(), 40);
@@ -256,7 +269,7 @@ mod tests {
             mclre_world::pos::LocalPos::from_axes(8, 8, 8),
             mclre_core::BlockStateId(1),
         );
-        let (vertices, _) = generate_mesh(&section);
+        let (vertices, _) = generate_mesh(&section, None);
         for v in vertices {
             assert!(v.normal_ao & 0x3F <= 63); // AO is 6 bits
         }

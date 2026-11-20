@@ -4,13 +4,16 @@
 #![allow(clippy::cast_sign_loss)]
 
 use std::collections::HashMap;
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use crossbeam_channel::{Receiver, Sender};
-use mclre_core::Vec3;
+use mclre_assets::{AssetManager, Identifier};
+use mclre_content_vanilla::block_states;
+use mclre_core::{BlockStateId, Vec3};
 use mclre_input::{Action, InputManager};
-use mclre_world::{ChunkColumn, ChunkPos, WorldSizePreset};
+use mclre_world::{ChunkColumn, ChunkPos, ChunkSection, WorldSizePreset};
 use parking_lot::Mutex;
 use winit::{
     event::{Event, WindowEvent},
@@ -25,6 +28,8 @@ pub struct ClientWorld {
     chunks: Mutex<HashMap<ChunkPos, Arc<ChunkColumn>>>,
     /// Chunks that need to be uploaded to GPU.
     dirty_chunks: Mutex<Vec<ChunkPos>>,
+    /// GPU chunk sections ready for rendering.
+    gpu_chunks: Mutex<HashMap<ChunkPos, Vec<mclre_render::resources::GpuChunkSection>>>,
     /// Local player position.
     player_pos: Mutex<Vec3<f32>>,
     /// Local player rotation (yaw, pitch).
@@ -37,6 +42,7 @@ impl ClientWorld {
         Self {
             chunks: Mutex::new(HashMap::new()),
             dirty_chunks: Mutex::new(Vec::new()),
+            gpu_chunks: Mutex::new(HashMap::new()),
             player_pos: Mutex::new(Vec3::new(0.0, 64.0, 0.0)),
             player_rot: Mutex::new((0.0, 0.0)),
         }
@@ -80,6 +86,20 @@ impl ClientWorld {
         std::mem::take(&mut *dirty)
     }
 
+    /// Stores GPU chunk sections for rendering.
+    pub fn store_gpu_chunks(
+        &self,
+        pos: ChunkPos,
+        gpu_sections: Vec<mclre_render::resources::GpuChunkSection>,
+    ) {
+        self.gpu_chunks.lock().insert(pos, gpu_sections);
+    }
+
+    /// Gets all GPU chunk sections for rendering.
+    pub fn get_gpu_chunks(&self) -> Vec<mclre_render::resources::GpuChunkSection> {
+        self.gpu_chunks.lock().values().flatten().cloned().collect()
+    }
+
     /// Creates a view from the player's perspective.
     pub fn create_view(&self, aspect: f32) -> mclre_render::View {
         let pos = self.player_pos();
@@ -102,6 +122,78 @@ impl Default for ClientWorld {
     }
 }
 
+/// Creates a flat test world with some initial chunks around the spawn point.
+///
+/// This creates a simple flat world with:
+/// - Bedrock at y=0
+/// - Stone from y=1 to y=60
+/// - Dirt from y=61 to y=62
+/// - Grass block at y=63
+/// - Air above
+///
+/// Returns a tuple of (block_state_model, vec of (ChunkPos, ChunkColumn))
+pub fn create_flat_test_world() -> Result<
+    (mclre_core::BlockStateModel, Vec<(ChunkPos, ChunkColumn)>),
+    mclre_content_vanilla::ContentError,
+> {
+    let model = block_states()?;
+
+    // Get block state IDs for our flat world blocks
+    let air_state = model
+        .default_state(mclre_core::BlockId(0))
+        .unwrap_or(mclre_core::BlockStateId(0)); // air is index 0
+    let stone_state = model
+        .default_state(mclre_core::BlockId(1))
+        .unwrap_or(mclre_core::BlockStateId(1)); // stone is index 1
+    let dirt_state = model
+        .default_state(mclre_core::BlockId(2))
+        .unwrap_or(mclre_core::BlockStateId(2)); // dirt is index 2
+    let grass_state = model
+        .default_state(mclre_core::BlockId(3))
+        .unwrap_or(mclre_core::BlockStateId(3)); // grass_block is index 3
+    let bedrock_state = model
+        .default_state(mclre_core::BlockId(4))
+        .unwrap_or(mclre_core::BlockStateId(4)); // bedrock is index 4
+
+    let mut columns = Vec::new();
+
+    // Create a 3x3 chunk area around spawn (0,0)
+    for cx in -1..=1 {
+        for cz in -1..=1 {
+            let chunk_pos = ChunkPos::new(cx, cz);
+            let mut sections = Vec::new();
+
+            // 16 sections (256 blocks tall)
+            for section_y in 0..16 {
+                let section_base_y = section_y * 16;
+                let section = if section_base_y == 0 {
+                    // Bedrock at y=0
+                    ChunkSection::filled(bedrock_state)
+                } else if section_base_y <= 60 {
+                    // Stone from y=1 to y=60
+                    ChunkSection::filled(stone_state)
+                } else if section_base_y <= 62 {
+                    // Dirt from y=61 to y=62
+                    ChunkSection::filled(dirt_state)
+                } else if section_base_y == 63 {
+                    // Grass at y=63
+                    ChunkSection::filled(grass_state)
+                } else {
+                    // Air above
+                    ChunkSection::air()
+                };
+                sections.push(section);
+            }
+
+            let column =
+                ChunkColumn::from_sections(chunk_pos, sections).expect("valid chunk column");
+            columns.push((chunk_pos, column));
+        }
+    }
+
+    Ok((model, columns))
+}
+
 /// Client configuration.
 #[derive(Debug, Clone)]
 pub struct ClientConfig {
@@ -122,7 +214,7 @@ pub struct ClientConfig {
 impl Default for ClientConfig {
     fn default() -> Self {
         Self {
-            title: "MCLRE".to_string(),
+            title: "Minecraft: Legacy Rust Edition".to_string(),
             width: 1280,
             height: 720,
             target_frame_time: Duration::from_millis(50), // 20 TPS
@@ -160,136 +252,174 @@ pub struct Client {
     config: ClientConfig,
     world: Arc<ClientWorld>,
     input: Mutex<InputManager<'static>>,
-    render_sender: Sender<RenderCommand>,
-    render_receiver: Receiver<RenderEvent>,
-    window: Arc<winit::window::Window>,
+    asset_manager: Arc<Mutex<mclre_assets::AssetManager>>,
+    block_state_model: Arc<mclre_core::BlockStateModel>,
+    window: Option<Arc<winit::window::Window>>,
 }
 
 impl Client {
-    /// Creates a new client.
+    /// Creates a new client (window created in run()).
     pub fn new(config: ClientConfig) -> Result<Self, ClientError> {
+        let world = Arc::new(ClientWorld::new());
+        world.set_player_pos(config.spawn_pos);
+
+        // Create initial flat test world
+        let (block_state_model, columns) =
+            create_flat_test_world().expect("Failed to create flat test world");
+
+        // Populate the world with initial chunks
+        for (pos, column) in columns {
+            world.set_chunk(Arc::new(column));
+        }
+
+        let input = Mutex::new(InputManager::new());
+
+        // Create asset manager
+        let asset_manager = Arc::new(Mutex::new(mclre_assets::AssetManager::new()));
+
+        Ok(Self {
+            config,
+            world,
+            input,
+            asset_manager,
+            block_state_model: Arc::new(block_state_model),
+            window: None,
+        })
+    }
+
+    /// Renders a frame using the provided renderer.
+    fn render_frame_with_renderer(&self, renderer: &mut mclre_render::Renderer) {
+        // Take dirty chunks and upload to GPU, storing the results
+        let dirty_chunks = self.world.take_dirty_chunks();
+        for pos in dirty_chunks {
+            if let Some(chunk) = self.world.get_chunk(pos) {
+                let mut gpu_sections = Vec::new();
+                let chunk_pos_vec = pos.into(); // Convert ChunkPos to Vec3<i32>
+                for section in chunk.sections() {
+                    if section.is_empty() {
+                        continue;
+                    }
+                    let gpu_chunk = mclre_render::resources::GpuChunkSection::from_section(
+                        renderer.device(),
+                        renderer.queue(),
+                        section,
+                        chunk_pos_vec,
+                        Some(&self.block_state_model),
+                    );
+                    gpu_sections.push(gpu_chunk);
+                }
+                if !gpu_sections.is_empty() {
+                    self.world.store_gpu_chunks(pos, gpu_sections);
+                }
+            }
+        }
+
+        // Get view
+        let view = self
+            .world
+            .create_view(self.config.width as f32 / self.config.height as f32);
+
+        // Get all GPU chunks for rendering
+        let chunks = self.world.get_gpu_chunks();
+
+        // Render frame
+        if let Err(e) = renderer.render(&view, &chunks) {
+            eprintln!("Render error: {}", e);
+        }
+    }
+
+    /// Runs the main game loop.
+    pub fn run(mut self) -> Result<(), ClientError> {
         let event_loop = EventLoop::new()?;
         let window = Arc::new(
             event_loop.create_window(
                 winit::window::WindowAttributes::default()
-                    .with_title(&config.title)
-                    .with_inner_size(winit::dpi::LogicalSize::new(config.width, config.height)),
+                    .with_title(&self.config.title)
+                    .with_inner_size(winit::dpi::LogicalSize::new(
+                        self.config.width,
+                        self.config.height,
+                    )),
             )?,
         );
 
-        let (render_sender, render_receiver) = crossbeam_channel::bounded(64);
-        let (event_sender, event_receiver) = crossbeam_channel::bounded(64);
+        // Store window in client
+        self.window = Some(window.clone());
 
-        let world = Arc::new(ClientWorld::new());
-        world.set_player_pos(config.spawn_pos);
+        // Create renderer in main thread (where window was created)
+        let mut renderer = pollster::block_on(mclre_render::Renderer::new(window.clone()))
+            .expect("Failed to create renderer");
 
-        let input = Mutex::new(InputManager::new());
-        input.lock().set_mouse_captured(true);
+        // Load pre-built texture atlas from converted game-assets
+        {
+            let mut asset_manager = self.asset_manager.lock();
+            asset_manager.add_root(std::path::PathBuf::from("game-assets"));
+
+            // Load the pre-built texture atlas from the converted assets
+            let atlas_path = "textures/block/atlas.png";
+            let atlas_id = mclre_assets::Identifier::new("minecraft", "atlas").unwrap();
+
+            if let Ok(region) = asset_manager.load_into_atlas(atlas_id, "textures/block/atlas.png")
+            {
+                println!(
+                    "Loaded pre-built atlas: region ({}, {}) {}x{}",
+                    region.x, region.y, region.width, region.height
+                );
+            } else {
+                eprintln!("Failed to load pre-built atlas, falling back to individual textures");
+            }
+
+            // Load UV coordinates from manifest.json for individual texture lookup
+            let manifest_path = std::path::PathBuf::from("game-assets/manifest.json");
+            let uvs: std::collections::HashMap<String, [f32; 4]> = if manifest_path.exists() {
+                let manifest_data = std::fs::read_to_string(&manifest_path).unwrap_or_default();
+                let manifest: serde_json::Value =
+                    serde_json::from_str(&manifest_data).unwrap_or(serde_json::json!({}));
+                let mut uvs = std::collections::HashMap::new();
+                if let Some(textures) = manifest.get("textures").and_then(|t| t.as_object()) {
+                    for (name, region) in textures {
+                        if let (Some(u_min), Some(v_min), Some(u_max), Some(v_max)) = (
+                            region.get("u_min").and_then(|v| v.as_f64()),
+                            region.get("v_min").and_then(|v| v.as_f64()),
+                            region.get("u_max").and_then(|v| v.as_f64()),
+                            region.get("v_max").and_then(|v| v.as_f64()),
+                        ) {
+                            uvs.insert(
+                                name.clone(),
+                                [u_min as f32, v_min as f32, u_max as f32, v_max as f32],
+                            );
+                        }
+                    }
+                }
+                println!("Loaded {} texture UV regions from manifest", uvs.len());
+                uvs
+            } else {
+                std::collections::HashMap::new()
+            };
+
+            // Upload atlas to GPU
+            let atlas_texture = asset_manager.atlas_texture().clone();
+            let uvs_count = uvs.len();
+            let padding = 1;
+            if let Err(e) = renderer.set_texture_atlas(&atlas_texture, uvs, padding) {
+                eprintln!("Failed to set texture atlas: {}", e);
+            } else {
+                println!(
+                    "Texture atlas set successfully on renderer with {} UV regions",
+                    uvs_count
+                );
+            }
+        }
+
+        // Setup input manager
+        self.input.lock().set_mouse_captured(true);
         window
             .set_cursor_grab(winit::window::CursorGrabMode::Confined)
             .ok();
         window.set_cursor_visible(false);
 
-        let render_sender_clone = render_sender.clone();
-        let world_clone = world.clone();
-        let window_for_renderer = window.clone();
+        // Store window in client
+        self.window = Some(window.clone());
 
-        // Spawn render thread
-        std::thread::spawn(move || {
-            Self::render_thread(
-                window_for_renderer,
-                render_receiver,
-                event_sender,
-                world_clone,
-            );
-        });
-
-        Ok(Self {
-            config,
-            world,
-            input: Mutex::new(InputManager::new()),
-            render_sender,
-            render_receiver: event_receiver,
-            window,
-        })
-    }
-
-    /// The render thread function.
-    fn render_thread(
-        window: Arc<winit::window::Window>,
-        receiver: Receiver<RenderCommand>,
-        sender: Sender<RenderEvent>,
-        world: Arc<ClientWorld>,
-    ) {
-        // Create renderer (blocking on async)
-        let renderer = pollster::block_on(mclre_render::Renderer::new(window.clone()))
-            .expect("Failed to create renderer");
-
-        let mut renderer = renderer;
-        let mut dirty_uploads: HashMap<
-            mclre_world::ChunkPos,
-            mclre_render::resources::GpuChunkSection,
-        > = HashMap::new();
-
-        loop {
-            match receiver.recv_timeout(Duration::from_millis(16)) {
-                Ok(cmd) => match cmd {
-                    RenderCommand::UploadChunk {
-                        chunk_pos,
-                        sections,
-                    } => {
-                        // Upload all chunk sections to GPU
-                        for (section_index, section) in sections.iter().enumerate() {
-                            if section.is_empty() {
-                                continue;
-                            }
-                            let gpu_chunk = mclre_render::resources::GpuChunkSection::from_section(
-                                renderer.device(),
-                                renderer.queue(),
-                                section,
-                                chunk_pos.into(),
-                            );
-                            dirty_uploads.insert(chunk_pos, gpu_chunk);
-                        }
-                    }
-                    RenderCommand::RemoveChunk(pos) => {
-                        dirty_uploads.remove(&pos);
-                    }
-                    RenderCommand::UpdateView(_view) => {
-                        // View is passed to render() call
-                    }
-                    RenderCommand::Shutdown => {
-                        break;
-                    }
-                },
-                Err(crossbeam_channel::RecvTimeoutError::Timeout) => {
-                    // No commands, render a frame
-                }
-                Err(crossbeam_channel::RecvTimeoutError::Disconnected) => {
-                    break;
-                }
-            }
-
-            // Get current view from world
-            let view = world.create_view(renderer.width() as f32 / renderer.height() as f32);
-
-            // Get chunks to render
-            let chunks: Vec<_> = dirty_uploads.values().cloned().collect();
-
-            // Render frame
-            if let Err(e) = renderer.render(&view, &chunks) {
-                let _ = sender.send(RenderEvent::Error(e.to_string()));
-            }
-
-            let _ = sender.send(RenderEvent::FrameComplete);
-        }
-
-        let _ = sender.send(RenderEvent::FrameComplete);
-    }
-
-    /// Runs the main game loop.
-    pub fn run(self) -> Result<(), ClientError> {
-        let event_loop = EventLoop::new()?;
         let mut last_frame = Instant::now();
         let mut accumulator = Duration::ZERO;
         let fixed_dt = self.config.target_frame_time;
@@ -305,7 +435,8 @@ impl Client {
                         event_loop.exit();
                     }
                     WindowEvent::Resized(size) => {
-                        // TODO: Handle resize
+                        // Handle resize
+                        renderer.resize(size.width, size.height);
                     }
                     WindowEvent::KeyboardInput { event, .. } => {
                         client.input.lock().process_keyboard(event);
@@ -322,11 +453,10 @@ impl Client {
                     WindowEvent::Focused(focused) => {
                         if !focused {
                             client.input.lock().set_mouse_captured(false);
-                            client.window.set_cursor_visible(true);
-                            client
-                                .window
-                                .set_cursor_grab(winit::window::CursorGrabMode::None)
-                                .ok();
+                            client.window.as_ref().map(|w| w.set_cursor_visible(true));
+                            client.window.as_ref().map(|w| {
+                                w.set_cursor_grab(winit::window::CursorGrabMode::None).ok()
+                            });
                         }
                     }
                     _ => {}
@@ -368,9 +498,11 @@ impl Client {
                     }
 
                     // Render
-                    client.render_frame();
+                    client.render_frame_with_renderer(&mut renderer);
 
-                    client.window.request_redraw();
+                    if let Some(w) = &client.window {
+                        w.request_redraw();
+                    }
                 }
                 _ => {}
             }
@@ -380,7 +512,9 @@ impl Client {
     }
 
     /// Fixed timestep update (20 TPS).
-    fn fixed_update(&self, _dt: Duration) {
+    fn fixed_update(&self, dt: Duration) {
+        let dt_secs = dt.as_secs_f32();
+
         // Process input actions
         let input = self.input.lock();
 
@@ -416,44 +550,18 @@ impl Client {
 
         if velocity.length() > 0.0 {
             velocity = velocity.normalize() * speed * sprint_multiplier;
-            pos.x += velocity.x * 0.05; // 20 TPS = 0.05s per tick
-            pos.z += velocity.z * 0.05;
-            pos.y += velocity.y * 0.05;
+            pos.x += velocity.x * dt_secs;
+            pos.z += velocity.z * dt_secs;
+            pos.y += velocity.y * dt_secs;
         }
 
         // Simple gravity
         if pos.y > 0.0 {
-            pos.y -= 0.08 * 0.05; // Gravity
+            pos.y -= 0.08 * dt_secs; // Gravity
             if pos.y < 0.0 {
                 pos.y = 0.0;
             }
         }
-    }
-
-    /// Renders a frame.
-    fn render_frame(&self) {
-        // Take dirty chunks and upload
-        let dirty_chunks = self.world.take_dirty_chunks();
-        for pos in dirty_chunks {
-            if let Some(chunk) = self.world.get_chunk(pos) {
-                // Upload chunk sections
-                let sections: Vec<_> = chunk.sections().iter().cloned().collect();
-                let _ = self.render_sender.send(RenderCommand::UploadChunk {
-                    chunk_pos: pos,
-                    sections,
-                });
-            }
-        }
-
-        // Get view
-        let view = self
-            .world
-            .create_view(self.config.width as f32 / self.config.height as f32);
-
-        let _ = self.render_sender.send(RenderCommand::UpdateView(view));
-
-        // Wait for frame complete
-        let _ = self.render_receiver.recv();
     }
 }
 

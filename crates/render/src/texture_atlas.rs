@@ -237,6 +237,11 @@ impl TextureAtlas {
         self.uvs.get(name).copied()
     }
 
+    /// Returns all UV entries as a vector of (name, uv) pairs.
+    pub fn all_uvs(&self) -> Vec<(&str, [f32; 4])> {
+        self.uvs.iter().map(|(k, v)| (k.as_str(), *v)).collect()
+    }
+
     /// Returns the texture dimensions.
     pub fn dimensions(&self) -> (u32, u32) {
         (self.width, self.height)
@@ -262,9 +267,45 @@ impl TextureAtlas {
         let v2 = ((padding + 16) as f32) / (height as f32);
         uvs.insert("default".to_string(), [u1, v1, u2, v2]);
 
+        Self::create_atlas(device, queue, width, height, &atlas, uvs, padding)
+    }
+
+    /// Creates a texture atlas from a pre-built CPU-side texture.
+    ///
+    /// This is used to upload a texture atlas built by the asset system (mclre-assets)
+    /// to the GPU.
+    pub fn from_texture(
+        device: &Device,
+        queue: &Queue,
+        texture: &mclre_assets::Texture,
+        uvs: HashMap<String, [f32; 4]>,
+        padding: u32,
+    ) -> Result<Self, AtlasError> {
+        let width = texture.width;
+        let height = texture.height;
+
+        // Convert raw RGBA data to ImageBuffer for upload
+        let atlas = ImageBuffer::<Rgba<u8>, Vec<u8>>::from_raw(width, height, texture.data.clone())
+            .ok_or_else(|| {
+                AtlasError::Atlas("Failed to create image buffer from texture data".into())
+            })?;
+
+        Self::create_atlas(device, queue, width, height, &atlas, uvs, padding)
+    }
+
+    /// Internal helper to create the GPU texture atlas from an ImageBuffer.
+    fn create_atlas(
+        device: &Device,
+        queue: &Queue,
+        width: u32,
+        height: u32,
+        atlas: &ImageBuffer<Rgba<u8>, Vec<u8>>,
+        uvs: HashMap<String, [f32; 4]>,
+        padding: u32,
+    ) -> Result<Self, AtlasError> {
         // Create GPU texture
         let texture = device.create_texture(&TextureDescriptor {
-            label: Some("default texture atlas"),
+            label: Some("texture atlas"),
             size: Extent3d {
                 width,
                 height,
@@ -286,7 +327,7 @@ impl TextureAtlas {
                 origin: wgpu::Origin3d::ZERO,
                 aspect: wgpu::TextureAspect::All,
             },
-            &atlas,
+            atlas,
             wgpu::ImageDataLayout {
                 offset: 0,
                 bytes_per_row: Some(4 * width),
@@ -371,6 +412,9 @@ pub enum AtlasError {
     /// Image loading/decoding error.
     #[error("image error: {0}")]
     Image(#[from] image::ImageError),
+    /// Atlas error (generic).
+    #[error("atlas error: {0}")]
+    Atlas(String),
     /// No textures found in directory.
     #[error("no textures found in directory")]
     NoTextures,

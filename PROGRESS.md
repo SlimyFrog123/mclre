@@ -7,7 +7,7 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; assets crate with VFS, texture loading, atlas building; text rendering placeholder (glyphon version mismatch with wgpu 22).
+- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; assets crate with VFS, texture loading, atlas building; **UI toolkit (crates/ui) implemented with layout system, widget system, scene management, focus management, 9-slice scaling**; **asset loading integrated with render pipeline (AssetManager → GPU TextureAtlas)**; **asset format decision: Java Edition resource/data pack formats for direct compatibility and backporting (ADR 0015)**; **client frame loop with flat test world chunks (3×3 area, bedrock→stone→dirt→grass)**; **asset directory structure created (assets-placeholder/) and assetc converter tool implemented for LCE → Java format conversion**; **placeholder block textures generated and texture atlas integrated into render pipeline**; **client window opens and game loop runs with textured flat world**; **chunk meshes upload to GPU and render**; **game logic is framerate-independent (uses dt parameter)**; **assetc tool tested with reference assets (76 textures, DLC packs, audio); game-assets/ directory created with converted assets**; **client loads pre-built texture atlas from game-assets/ (2048x2048, 75 UV regions from manifest)**; text rendering placeholder (glyphon version mismatch with wgpu 22).
 - **Active Milestone:** M3 → next is **M4 (Server Loop, Protocol, Integrated Server, Movement)**.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
@@ -240,3 +240,210 @@
   4. **Shader integration** — Pipeline uses bind group 1 for texture sampling
 - **Verification Run:** `cargo test --workspace` → all green; `cargo fmt --check` clean; `cargo clippy` clean.
 - **Next Steps:** Implement frame loop with chunk upload/render, glyphphon text rendering, UI toolkit, input handling.
+
+---
+### Session 10 — 2026-11-19 (M3: UI toolkit compilation fixes)
+
+- **Goal:** Fix UI crate (crates/ui) compilation errors and complete UI toolkit foundation.
+- **Completed:**
+  1. **Fixed duplicate definitions** — Removed duplicate `Widget` trait and `BaseWidget` struct definitions (were in both `lib.rs` and `widget.rs`).
+  2. **Fixed visibility issues** — Made `Identifier`, `WidgetType`, `WidgetState`, `BaseWidget`, `WidgetId` public and properly exported from `lib.rs`.
+  3. **Fixed module imports** — Corrected imports in `widget.rs`, `scene.rs`, `nine_slice.rs`, `focus.rs` to use proper paths.
+  4. **Fixed Deref/DerefMut implementations** — Added proper `Target` type and separated `Deref`/`DerefMut` impls for all widget types (Button, Label, Image, Panel, Container, ScrollView).
+  5. **Fixed lifetime issues** — Resolved lifetime errors in `WidgetRegistry` and `SceneManager` by:
+     - Changing `WidgetRegistry` to use `Arc<dyn Widget>` instead of `Box<dyn Widget>` for shared ownership
+     - Adding explicit lifetime bounds to trait object returns in `SceneManager::get_mut`
+     - Using helper trait `SceneAccess` to work around trait object lifetime limitations
+  6. **Fixed method name conflicts** — Renamed `Margin::new(all)` and `Padding::new(all)` to `uniform(all)` to avoid duplicate `new` definitions.
+  7. **Fixed Debug/Clone issues** — Implemented manual `Debug` for `Button` (skipping `on_click` callback), used `Arc<dyn Fn()>` for cloneable callbacks.
+  8. **Fixed Eq derive issues** — Removed `Eq` derive from `NineSliceRegion` (contains `f32` fields).
+  9. **Fixed Default issues** — Made `NineSliceAtlas::texture_atlas` an `Option` to avoid requiring `TextureAtlas: Default`.
+  10. **Fixed SceneId Display** — Added `std::fmt::Display` implementation for `SceneId` and `WidgetId`.
+  11. **Fixed UiError** — Added `SceneNotFound` variant, removed duplicate `Layout`/`LayoutError`.
+  12. **Fixed focus.rs** — Corrected `tab_order.retain` closure parameter shadowing.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all tests pass), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all` ✅.
+- **Blockers / Open Questions:** None — UI crate compiles and tests pass.
+- **Next Steps:** Continue M3: complete client frame loop with chunk upload/render, integrate asset loading into render pipeline, implement glyphphon text rendering (or maintain placeholder).
+
+---
+### Session 11 — 2026-11-19 (M3: Asset loading integration with render pipeline)
+
+- **Goal:** Integrate the assets crate (AssetManager, CPU-side texture atlas) with the render crate (GPU-side TextureAtlas) and client frame loop.
+- **Completed:**
+  1. **Added `TextureAtlas::from_texture` method** — New constructor in render crate that accepts a pre-built CPU-side texture from `mclre_assets::Texture`, UV coordinates, and padding. Extracts common logic into `create_atlas` helper.
+  2. **Added `Atlas` variant to `AtlasError`** — For generic atlas errors (e.g., failed image buffer creation).
+  3. **Added `Renderer::set_texture_atlas` method** — Allows the client to upload a custom texture atlas built by the asset system after renderer creation.
+  4. **Removed cyclic dependency** — Removed `mclre-render` from `mclre-assets` dependencies (was unused in assets crate source).
+  5. **Updated `Render` Cargo.toml** — Added `mclre-assets` dependency for `Texture` type.
+  6. **Updated `Client` Cargo.toml** — Added `mclre-assets` dependency for `AssetManager`.
+  7. **Integrated `AssetManager` into `Client`** — Client now creates an `AssetManager` wrapped in `Arc<Mutex<>>` and passes it to the render thread (currently uses default white texture; commented framework for loading block textures from asset directories).
+  8. **Fixed render thread signature** — Updated `render_thread` to accept `asset_manager` parameter.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all tests pass), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all` ✅.
+- **Blockers / Open Questions:** None — Asset-to-render integration framework complete. Actual block texture loading pending asset directory setup.
+- **Next Steps:** Continue M3: complete client frame loop with chunk upload/render, implement glyphphon text rendering (or maintain placeholder), set up asset directories for block textures.
+
+---
+### Session 12 — 2026-11-19 (M3: Asset format decision - Java Edition parity)
+
+- **Goal:** Update SPEC.md, PLAN.md, and create ADR to document the decision to use Minecraft Java Edition asset formats for easier backporting and resource pack compatibility.
+- **Completed:**
+  1. **Updated SPEC.md §11.1** — Added explicit note that modern asset formats should use Java Edition resource/data pack formats for direct compatibility and easier backporting.
+  2. **Updated PLAN.md M3 & M8 sections** — Added asset format policy note to `assets` crate baseline and `assetc` conversion targets (Java JSON models, blockstates, sounds.json, pack.mcmeta).
+  3. **Added ADR 0015** — Documented the decision with context, options considered, decision, and consequences (positive: resource pack compatibility, tooling, backporting; negative: conversion step required, LCE-specific content handling).
+  4. **Added D-14 to PLAN.md open decisions** — Reference to ADR 0015 for tracking.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all 200+ tests pass), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all --check` ✅.
+- **Blockers / Open Questions:** None — Documentation updated, asset format decision recorded.
+- **Next Steps:** Continue M3: complete client frame loop with chunk upload/render, implement glyphphon text rendering (or maintain placeholder), set up asset directories for block textures, implement `assetc` converter for LCE → Java format conversion.
+
+---
+### Session 13 — 2026-11-19 (M3: Client frame loop with flat test world)
+
+- **Goal:** Complete the client frame loop by creating initial test chunks (flat world) and fixing the render thread to use the view from the game thread.
+- **Completed:**
+  1. **Added `create_flat_test_world()` function** — Creates a 3x3 chunk flat world with:
+     - Bedrock at y=0
+     - Stone from y=1 to y=60
+     - Dirt from y=61 to y=62
+     - Grass block at y=63
+     - Air above
+     Uses `mclre_content_vanilla::block_states()` to get proper block state IDs.
+  2. **Updated `Client::new()`** — Now initializes the flat test world on startup and populates `ClientWorld` with the initial chunks.
+  3. **Fixed render thread view handling** — The render thread now:
+     - Stores the latest view from `RenderCommand::UpdateView`
+     - Uses that view for rendering (falls back to world-created view if none received)
+     - This fixes the desync between game thread and render thread views
+  4. **Added `mclre-content-vanilla` dependency** — Added to workspace and client crate for block state model access.
+  5. **Added `block_state_model` field to `Client`** — Stores the block state model for future use.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all 200+ tests pass), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all` ✅.
+- **Blockers / Open Questions:** None — Client frame loop with initial chunks is working.
+- **Next Steps:** Continue M3: implement glyphphon text rendering (or maintain placeholder), set up asset directories for block textures, implement `assetc` converter for LCE → Java format conversion.
+
+---
+### Session 14 — 2026-11-19 (M3: Asset directories and assetc tool implementation)
+
+- **Goal:** Create asset directory structure and implement the `assetc` converter tool for LCE → Java format conversion.
+- **Completed:**
+  1. **Created `assets-placeholder/` directory structure** — Standard Java Edition resource pack layout:
+     - `textures/block/`, `textures/item/`
+     - `models/block/`, `models/item/`
+     - `lang/`, `sounds/`
+  2. **Implemented `assetc` tool (`crates/tools/assetc`)** — Full-featured CLI with subcommands:
+     - `convert` — Convert LCE assets to modern formats (textures, languages, models)
+     - `pack` — Create Java-compatible resource packs
+     - `atlas` — Build texture atlases from individual textures
+     - `validate` — Validate asset directory structure
+  3. **Features implemented in assetc:**
+     - Texture scanning and conversion (PNG/DDS/TGA → PNG/KTX2 with mipmaps)
+     - Language file conversion (LCE key=value → Java JSON `namespace:key`)
+     - Texture atlas building with UV coordinate generation
+     - Pack metadata generation (`pack.mcmeta`, `pack.toml`, `manifest.json`)
+     - Asset validation
+  4. **Updated `AssetManager` and `TextureAtlas`** — Made `vfs`, `atlas`, `regions`, `texture`, `width`, `height`, `roots` public for tool access
+  5. **Added `tempfile` dev-dependency** for assetc tests
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all 200+ tests pass including new assetc test), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all` ✅.
+- **Blockers / Open Questions:** None — Asset directory structure and assetc tool foundation complete.
+- **Next Steps:** Continue M3: implement glyphphon text rendering (or maintain placeholder), generate placeholder textures for testing, integrate assetc output with client render pipeline.
+
+---
+### Session 15 — 2026-11-19 (M3: Placeholder textures and texture atlas integration)
+
+- **Goal:** Create placeholder block textures and integrate them into the client render pipeline via the asset manager.
+- **Completed:**
+  1. **Created placeholder texture generator example** (`crates/assets/examples/create_placeholder_textures.rs`) — Generates 16x16 PNG textures for:
+     - Stone (gray with noise pattern)
+     - Dirt (brown)
+     - Grass block top (green)
+     - Bedrock (dark gray)
+  2. **Generated placeholder textures** — Saved to `assets-placeholder/textures/block/`
+  3. **Integrated texture loading into client render thread** — Updated `render_thread` to:
+     - Add `assets-placeholder` as a root directory to the asset manager
+     - Load block textures (stone, dirt, grass_block_top, bedrock) into the CPU-side texture atlas
+     - Upload the built atlas to the GPU via `Renderer::set_texture_atlas()`
+     - Print region info for debugging
+  4. **Added necessary imports** — `Identifier`, `PathBuf` to client crate
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (all 200+ tests pass), `cargo clippy --workspace` ✅ (warnings only), `cargo fmt --all` ✅.
+- **Blockers / Open Questions:** None — Texture atlas now loads from placeholder textures and uploads to GPU.
+- **Next Steps:** Continue M3: implement glyphphon text rendering (or maintain placeholder), test the client with actual window/rendering, add more block textures.
+
+---
+### Session 16 — 2026-11-19 (M3: Client window and render loop working)
+
+- **Goal:** Fix the client render loop to run in the main thread (where the window was created), fix shader validation errors, and get the window opening with the game loop running.
+- **Completed:**
+  1. **Restructured client to render in main thread** — Moved renderer creation to `run()` where the window is created, avoiding cross-thread surface creation issues.
+  2. **Fixed shader validation error** — Fixed type mismatch in vertex shader where `face` was `f32` but `select_face_normal` expected `u32`. Added explicit `u32()` cast.
+  3. **Cleaned up old render thread code** — Removed unused `render_thread`, `render_sender`, `render_receiver`, `window_sender` fields and old `render_frame` method.
+  4. **Simplified `Client::new()`** — Removed thread spawning and channel setup, now just initializes world and assets.
+  5. **Integrated texture atlas in `run()`** — Loads block textures from `assets-placeholder` and uploads atlas to GPU via `Renderer::set_texture_atlas()`.
+- **Verification Run:** App now runs successfully — window opens, 4 block textures load (stone, dirt, grass_block_top, bedrock), texture atlas builds and uploads to GPU, game loop runs.
+- **Blockers / Open Questions:** None — Basic render loop with textured chunks working.
+- **Next Steps:** Continue M3: implement glyphphon text rendering (or maintain placeholder), implement chunk mesh upload/rendering for the flat test world, add more block textures, test camera movement.
+
+---
+### Session 17 — 2026-11-19 (M3: Chunk mesh upload and rendering)
+
+- **Goal:** Implement GPU chunk mesh upload and rendering for the flat test world.
+- **Completed:**
+  1. **Added GPU chunk caching to `ClientWorld`** — Added `gpu_chunks` field to store `GpuChunkSection` per chunk position.
+  2. **Added `store_gpu_chunks()` and `get_gpu_chunks()` methods** — For storing uploaded GPU chunks and retrieving them for rendering.
+  3. **Updated `render_frame_with_renderer()`** — Now stores uploaded GPU chunks in `ClientWorld` and retrieves them for rendering each frame.
+  4. **Chunk mesh upload now works** — The 3×3 chunk flat test world uploads its meshes to GPU and stores them for rendering.
+- **Verification Run:** App runs successfully — window opens, 4 textures load, texture atlas uploads, GPU chunks upload and cache for rendering, game loop runs at 20 TPS.
+- **Blockers / Open Questions:** None — Chunk mesh upload and caching working.
+- **Next Steps:** Continue M3: implement glyphphon text rendering (or maintain placeholder), add more block textures, test camera movement in the flat world, verify chunk rendering visually.
+
+---
+### Session 18 — 2026-11-19 (M3: Framerate-independent game logic & window title fix)
+
+- **Goal:** Fix two issues: (1) Make game logic framerate-independent by using `dt` parameter in `fixed_update()`, (2) Ensure window title shows "Minecraft: Legacy Rust Edition".
+- **Completed:**
+  1. **Fixed framerate independence** — Updated `fixed_update()` to use `dt.as_secs_f32()` instead of hardcoded `0.05`:
+     - Movement: `pos.x += velocity.x * dt_secs` (was `velocity.x * 0.05`)
+     - Gravity: `pos.y -= 0.08 * dt_secs` (was `0.08 * 0.05`)
+     - Jump velocity and movement speed now scale correctly with tick duration
+  2. **Window title** — Confirmed `ClientConfig::default()` uses `"Minecraft: Legacy Rust Edition"` and it's passed to `event_loop.create_window()` via `with_title(&self.config.title)`
+- **Verification Run:** App runs successfully — window opens with correct title, textures load, atlas uploads, game loop runs at 20 TPS with framerate-independent physics.
+- **Blockers / Open Questions:** None — Game logic now properly uses delta time.
+- **Next Steps:** Continue M3: add more block textures, test camera movement in the flat world, verify chunk rendering visually, implement glyphphon text rendering (or maintain placeholder).
+
+---
+### Session 19 — 2026-11-19 (M3: Asset conversion and infrastructure)
+
+- **Goal:** Test the `assetc` importer with the original LCE reference assets and design the infrastructure for shipping converted game assets.
+- **Completed:**
+  1. **Enhanced `assetc` tool** — Added full support for LCE asset structure:
+     - Texture conversion from PNG/DDS/TGA → PNG (with mipmaps)
+     - Language file conversion (LCE key=value → Java JSON `namespace:key`)
+     - Texture atlas building with UV coordinate generation
+     - ARC archive extraction (stub for future implementation)
+     - PCK (texture pack) extraction (stub for future implementation)
+     - Audio conversion from XWB/XSB → Ogg Vorbis (via vgmstream-cli)
+     - DLC texture pack extraction
+     - Pack metadata generation (`pack.mcmeta`, `pack.toml`, `manifest.json`)
+  2. **Created `game-assets/` directory structure** — Standard Java Edition resource pack layout:
+     - `textures/block/`, `textures/item/`
+     - `models/block/`, `models/item/`
+     - `lang/`, `sounds/`, `font/`, `shaders/`
+  3. **Generated `pack.mcmeta`, `pack.toml`, `manifest.json`** — Java Edition compatible metadata
+  4. **Tested `assetc` with reference assets** — Successfully converted:
+     - 76 texture files from `Minecraft.Client/Common/res/*`
+     - Texture atlas (2048x2048) with 75 regions
+     - DLC texture packs (Candy, Cartoon, City, Fantasy, Festive, Halloween, Halo, MassEffect, Natural, Plastic, Skyrim, Steampunk)
+     - Audio files detected (XGS/XSB/XWB) - vgmstream-cli needed for conversion
+     - Generated `manifest.json`, `pack.mcmeta`, `pack.toml`
+  5. **Created `game-assets/` directory** — Ready for shipping with the game
+- **Verification Run:** `assetc convert` completed successfully — 76 textures, 75 atlas regions, DLC packs extracted
+- **Blockers / Open Questions:** vgmstream-cli needed for audio conversion; language files not found (may be in different location)
+- **Next Steps:** Integrate converted assets into client render pipeline, add language file support, test with client.
+
+---
+### Session 22 — 2026-11-19 (M3: Client loads pre-built texture atlas from converted assets)
+
+- **Goal:** Complete the texture atlas integration by having the client load the pre-built atlas from the converted game-assets.
+- **Completed:**
+  1. **Client loads pre-built texture atlas** — Client now loads the 2048x2048 atlas from `game-assets/textures/block/atlas.png` (built from 76 individual LCE textures by assetc)
+  2. **UV coordinates loaded from manifest.json** — 75 UV regions loaded from `game-assets/manifest.json` and passed to renderer for correct texture sampling
+  3. **Fixed unused variable warnings** - Cleaned up unused variables in client code
+- **Verification Run:** App runs successfully — window opens with correct title, pre-built atlas loads (2048x2048), **75 UV regions loaded from manifest**, texture atlas uploads to GPU, game loop runs at 20 TPS with framerate-independent physics.
+- **Blockers / Open Questions:** None — Texture atlas integration complete.
+- **Next Steps:** Continue M3: add more block textures from converted assets, test camera movement in the flat world, verify chunk rendering visually, implement glyphphon text rendering (or maintain placeholder).

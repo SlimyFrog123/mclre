@@ -13,6 +13,8 @@ workspace = true
 [dependencies]
 mclre-core.workspace = true
 mclre-render.workspace = true
+mclre-assets.workspace = true
+mclre-input.workspace = true
 thiserror.workspace = true
 glyphon.workspace = true
 image.workspace = true
