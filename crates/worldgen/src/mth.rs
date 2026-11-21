@@ -6,8 +6,7 @@ pub use mclre_core::Mth;
 
 /// World generation math helpers
 pub mod worldgen_math {
-    use mclre_core::{Mth, GameRandom};
-    use mclre_world::{ChunkPos, WorldSizePreset};
+    use mclre_core::GameRandom;
 
     /// Seed mixing function matching reference
     pub fn mix_seed(seed: i64, seed_mixup: i64) -> i64 {

@@ -1,7 +1,5 @@
 //! Biome layer stack matching LCE reference exactly
 
-use mclre_core::GameRandom;
-
 /// Generator type for world generation
 #[derive(Debug, Clone, Copy)]
 pub enum GeneratorType { Normal, Flat, LargeBiomes }

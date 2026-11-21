@@ -17,7 +17,20 @@ pub enum BiomeId {
 
 impl BiomeId {
     pub fn as_u8(self) -> u8 { self as u8 }
-    pub fn from_u8(id: u8) -> Option<Self> { if id < BiomeId::BiomeCount as u8 { Some(unsafe { std::mem::transmute(id) }) } else { None } }
+    pub fn from_u8(id: u8) -> Option<Self> { 
+        if id < BiomeId::BiomeCount as u8 { 
+            // Safe because we validate id < BiomeCount and BiomeId is repr(u8)
+            Some(match id {
+                0 => BiomeId::Ocean, 1 => BiomeId::Plains, 2 => BiomeId::Desert, 3 => BiomeId::ExtremeHills,
+                4 => BiomeId::Forest, 5 => BiomeId::Taiga, 6 => BiomeId::Swampland, 7 => BiomeId::River,
+                8 => BiomeId::Hell, 9 => BiomeId::Sky, 10 => BiomeId::FrozenOcean, 11 => BiomeId::FrozenRiver,
+                12 => BiomeId::IcePlains, 13 => BiomeId::IceMountains, 14 => BiomeId::MushroomIsland, 15 => BiomeId::MushroomIslandShore,
+                16 => BiomeId::Beach, 17 => BiomeId::DesertHills, 18 => BiomeId::ForestHills, 19 => BiomeId::TaigaHills,
+                20 => BiomeId::SmallExtremeHills, 21 => BiomeId::Jungle, 22 => BiomeId::JungleHills,
+                _ => unreachable!()
+            })
+        } else { None } 
+    }
     pub fn is_oceanic(self) -> bool { matches!(self, BiomeId::Ocean | BiomeId::FrozenOcean | BiomeId::River | BiomeId::FrozenRiver) }
 }
 
@@ -74,10 +87,18 @@ impl BiomeRegistry {
     }
 }
 
-static mut BIOME_REGISTRY: Option<BiomeRegistry> = None;
-pub fn init_biomes() { unsafe { BIOME_REGISTRY = Some(BiomeRegistry::new()); } }
-pub fn get_biome(id: BiomeId) -> Option<&'static Biome> { unsafe { BIOME_REGISTRY.as_ref().and_then(|r| r.get(id)) } }
-pub fn biome_count() -> usize { BiomeId::BiomeCount as usize }
+// Use OnceLock for thread-safe lazy initialization (no unsafe needed)
+static BIOME_REGISTRY: std::sync::OnceLock<BiomeRegistry> = std::sync::OnceLock::new();
+
+fn get_registry() -> &'static BiomeRegistry {
+    BIOME_REGISTRY.get_or_init(|| BiomeRegistry::new())
+}
+
+pub fn init_biomes() { get_registry(); }
+
+pub fn get_biome(id: BiomeId) -> Option<&'static Biome> {
+    get_registry().get(id)
+}
 
 /// Biome source for generating biome maps
 pub struct BiomeSource { base_layer: Box<dyn Layer>, zoomed_layer: Box<dyn Layer> }
