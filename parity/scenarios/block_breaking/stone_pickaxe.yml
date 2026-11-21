@@ -1,0 +1,77 @@
+# Parity test: Stone pickaxe effectiveness on stone
+# [REF: ToolRecipies.cpp:30-42] - Tool recipes and materials
+# [REF: Tile.cpp] - Block hardness definitions
+
+scenario: "stone_pickaxe_vs_stone"
+description: "Stone pickaxe breaks stone at correct speed with correct drops"
+profile: "lce:141217"
+category: "block_breaking"
+
+# Reference values from LCE source:
+# Stone hardness = 1.5 (Tile.cpp)
+# Stone pickaxe mining speed = 4.0 (ToolRecipies.cpp, stone tier)
+# Expected break time = hardness * 30 / mining_speed = 1.5 * 30 / 4.0 = 11.25 ticks
+
+setup:
+  player:
+    gamemode: Survival
+    held_item: "minecraft:stone_pickaxe"
+    position: [0, 64, 0]
+    yaw: 0.0
+    pitch: 0.0
+  world:
+    block_at_0_64_0: "minecraft:stone"
+    block_at_1_64_0: "minecraft:cobblestone"
+
+action:
+  type: "break_block"
+  target_position: [0, 64, 0]
+  # Hold left-click for this many ticks
+  duration_ticks: 12
+
+expected:
+  # Block should be broken after ~11.25 ticks
+  block_broken: true
+  resulting_block: "minecraft:air"
+  drops:
+    - item: "minecraft:cobblestone"
+      count: 1
+  tool_damage: 1
+  break_particles: true
+  break_sound: "minecraft:dig.stone"
+
+# Verification: Tool should have mining speed 4.0 for stone tier
+# [REF: ToolRecipies.cpp:33-36] - Stone tier materials
+# [REF: ToolRecipies.cpp:9] - Tool shapes (pickaxe = index 1)
+# [REF: ToolRecipies.cpp:30] - Shape for pickaxe: 3x3 "XXX", " # ", " # "
+
+---
+
+# Additional test: Pickaxe vs non-effective block
+scenario: "stone_pickaxe_vs_dirt"
+description: "Stone pickaxe is not effective on dirt (uses hand speed)"
+profile: "lce:141217"
+category: "block_breaking"
+
+setup:
+  player:
+    gamemode: Survival
+    held_item: "minecraft:stone_pickaxe"
+  world:
+    block_at_0_64_0: "minecraft:dirt"
+
+action:
+  type: "break_block"
+  target_position: [0, 64, 0]
+  duration_ticks: 20
+
+expected:
+  block_broken: true
+  resulting_block: "minecraft:air"
+  drops:
+    - item: "minecraft:dirt"
+      count: 1
+  tool_damage: 1  # Still takes damage even if not effective
+
+# Reference: Dirt is not in pickaxe's effective_on list
+# [REF: ToolRecipies.cpp:88-90] - Effective on check for tile vs item

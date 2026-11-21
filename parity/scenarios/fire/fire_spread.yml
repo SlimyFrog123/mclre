@@ -1,0 +1,110 @@
+# Parity test: Fire spread mechanics
+# [REF: FireTile.cpp] - Fire spread logic
+# [REF: Tile.cpp] - Block flammability definitions
+
+scenario: "fire_spread_horizontal"
+description: "Fire spreads horizontally up to 4 blocks from source"
+profile: "lce:141217"
+category: "fire"
+
+# Reference: Fire spreads to flammable blocks within 4 blocks horizontally
+# Catch chance and burn time vary by block type
+
+setup:
+  world:
+    # Fire source at center
+    block_at_0_64_0: "minecraft:fire"
+    # Flammable blocks around (wood, leaves, wool)
+    block_at_1_64_0: "minecraft:oak_log"
+    block_at_2_64_0: "minecraft:oak_log"
+    block_at_3_64_0: "minecraft:oak_log"
+    block_at_4_64_0: "minecraft:oak_log"
+    block_at_5_64_0: "minecraft:oak_log"  # Beyond 4 blocks - should not catch
+    # Non-flammable barrier
+    block_at_1_64_1: "minecraft:stone"
+    block_at_1_64_-1: "minecraft:stone"
+
+action:
+  type: "tick"
+  ticks: 100  # Allow time for spread
+
+expected:
+  # Fire should spread to adjacent flammable blocks
+  block_at_1_64_0: "minecraft:fire"  # Caught fire
+  block_at_2_64_0: "minecraft:fire"  # Spread from 1
+  block_at_3_64_0: "minecraft:fire"  # Spread from 2
+  block_at_4_64_0: "minecraft:fire"  # Spread from 3 (max 4 blocks)
+  # Beyond 4 blocks should not catch
+  block_at_5_64_0: "minecraft:oak_log"  # Still log, no fire
+
+# Reference: FireTile.cpp - spread algorithm
+# Max horizontal spread = 4 blocks
+# Catch chance based on block flammability
+
+---
+
+scenario: "fire_burn_time"
+description: "Different blocks burn for correct duration"
+profile: "lce:141217"
+category: "fire"
+
+# Burn times from Tile.cpp flammability definitions
+# Wood/logs: burn time ~15-30 seconds
+# Leaves: burn time ~5-10 seconds
+# Wool: burn time ~10-20 seconds
+
+setup:
+  world:
+    block_at_0_64_0: "minecraft:fire"
+    block_at_1_64_0: "minecraft:oak_log"
+    block_at_2_64_0: "minecraft:oak_leaves"
+    block_at_3_64_0: "minecraft:wool"  # white wool
+
+action:
+  type: "tick"
+  ticks: 600  # 30 seconds at 20 TPS
+
+expected:
+  # Log should still be burning or just burnt out
+  # Leaves should burn faster
+  # Wool intermediate
+  block_at_1_64_0: "minecraft:air"    # Log burnt away
+  block_at_2_64_0: "minecraft:air"    # Leaves burnt away faster
+  block_at_3_64_0: "minecraft:air"    # Wool burnt away
+
+# Reference: Tile.cpp flammability burn times
+# [REF: Tile.cpp] - setBurnTime and getFlammability
+
+---
+
+scenario: "fire_ignition_sources"
+description: "Fire can be ignited by flint and steel, lava, lightning"
+profile: "lce:141217"
+category: "fire"
+
+setup:
+  world:
+    block_at_0_64_0: "minecraft:oak_log"
+    block_at_1_64_0: "minecraft:oak_log"
+    block_at_2_64_0: "minecraft:oak_log"
+
+action:
+  type: "ignite"
+  # Test 1: Flint and steel on log at 0,64,0
+  position: [0, 64, 0]
+  tool: "minecraft:flint_and_steel"
+
+expected:
+  block_at_0_64_0: "minecraft:fire"
+
+# Test 2: Lava adjacent to flammable block
+action2:
+  type: "place"
+  item: "minecraft:lava_bucket"
+  position: [5, 64, 0]
+
+expected2:
+  block_at_4_64_0: "minecraft:fire"  # Lava ignites adjacent flammable
+
+# Reference: FireTile.cpp ignition sources
+# Flint & steel, fire charges, lava, lightning, ghast fireballs

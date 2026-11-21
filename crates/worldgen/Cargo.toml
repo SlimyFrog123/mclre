@@ -9,3 +9,8 @@ description = "Versioned world generators (per Game Profile): biomes, terrain, c
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core = { path = "../core" }
+mclre-world = { path = "../world" }
+mclre-profiles = { path = "../profiles" }

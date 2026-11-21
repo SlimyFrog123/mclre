@@ -10,6 +10,11 @@ description = "Authoritative server simulation: fixed 20 TPS tick, entities, phy
 [lints]
 workspace = true
 
+[features]
+# Faithful bugs feature flag (SPEC §3.3): enables documented deviations from reference behavior
+# that are known bugs in the baseline but must be preserved for world/compatibility.
+faithful_bugs = []
+
 [dependencies]
 mclre-core = { path = "../core" }
 mclre-world = { path = "../world" }
@@ -19,6 +24,8 @@ thiserror = { workspace = true }
 tracing = { workspace = true }
 parking_lot = { workspace = true }
 bevy_ecs = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 
 [dev-dependencies]
 uuid = { workspace = true }

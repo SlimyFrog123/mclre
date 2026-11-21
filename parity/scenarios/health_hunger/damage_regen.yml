@@ -1,0 +1,168 @@
+# Parity test: Health, hunger, and regeneration
+# [REF: Player.cpp] - Health/hunger logic
+# [REF: DamageSource.cpp] - Damage types
+
+scenario: "natural_regeneration"
+description: "Player regenerates health when hunger >= 18 and saturation > 0"
+profile: "lce:141217"
+category: "health_hunger"
+
+# Regeneration: 1 health per 4 seconds (80 ticks) when hunger >= 18
+# Costs 1 saturation per health point healed
+
+setup:
+  player:
+    health: 10.0      # Half health (10/20)
+    hunger: 19        # High hunger (19/20)
+    saturation: 5.0   # Some saturation
+  world:
+    block_at_0_64_0: "minecraft:bedrock"  # Safe ground
+
+action:
+  type: "tick"
+  ticks: 320  # 16 seconds at 20 TPS = 4 health regenerated
+
+expected:
+  # Should regenerate 4 health (1 per 80 ticks)
+  health: 14.0  # 10 + 4
+  # Saturation decreased by 4 (1 per health)
+  saturation: 1.0  # 5 - 4
+  hunger: 19      # Unchanged (saturation covers cost)
+
+---
+
+scenario: "starvation_damage"
+description: "Player takes damage when hunger = 0"
+profile: "lce:141217"
+category: "health_hunger"
+
+# Starvation: 1 damage per 4 seconds when hunger = 0
+# On Hard difficulty: damages until death
+# On Normal: damages to 1 health (0.5 hearts)
+# On Easy: damages to 5 health (2.5 hearts)
+
+setup:
+  player:
+    health: 10.0
+    hunger: 0
+    saturation: 0.0
+  world:
+    difficulty: "Normal"
+
+action:
+  type: "tick"
+  ticks: 640  # 32 seconds = 8 damage intervals
+
+expected:
+  # On Normal, damages to 1 health (10 hearts = 5 hearts remaining = 1 health point? No, 10 health = 5 hearts, min 1 health = 0.5 hearts)
+  # Wait: health is 0-20, so 1 health = 0.5 hearts
+  # On Normal, starvation stops at 1 health (0.5 hearts)
+  health: 1.0  # Minimum on Normal
+  hunger: 0
+  saturation: 0.0
+
+# Reference: Player.cpp starvation logic
+# [REF: Player.cpp] - starvation damage
+
+---
+
+scenario: "damage_types"
+description: "Different damage sources apply correctly"
+profile: "lce:141217"
+category: "health_hunger"
+
+# Damage types with different properties:
+# - Fall: reduced by Feather Falling, armor
+# - Fire: sets on fire, reduced by Fire Protection
+# - Lava: high damage, sets on fire
+# - Drowning: 2 damage per tick after air runs out
+# - Suffocation: 1 damage per tick
+# - Magic: bypasses armor (mostly)
+# - Explosion: knockback, reduced by Blast Protection
+
+setup:
+  player:
+    health: 20.0
+    armor: []  # No armor
+
+action:
+  type: "damage"
+  source: "fall"
+  amount: 10.0  # High fall
+
+expected:
+  health: 10.0  # Full damage (no armor)
+
+---
+
+action2:
+  type: "equip_armor"
+  items:
+    - slot: "feet"
+      item: "minecraft:iron_boots"
+    - slot: "legs"
+      item: "minecraft:iron_leggings"
+    - slot: "chest"
+      item: "minecraft:iron_chestplate"
+    - slot: "head"
+      item: "minecraft:iron_helmet"
+
+action3:
+  type: "damage"
+  source: "fall"
+  amount: 10.0
+
+expected2:
+  # Iron armor: 15 protection points (helmet=2, chest=6, legs=5, boots=2)
+  # Protection reduces damage by up to 80% (25 * protection / 100)
+  # 15 protection = 37.5% reduction
+  # 10 * 0.625 = 6.25 damage
+  health: 13.75  # ~14 health
+
+# Reference: Damage calculation in Player.cpp
+# [REF: Player.cpp] - applyArmorReduction()
+
+---
+
+scenario: "food_exhaustion"
+description: "Actions consume hunger/saturation correctly"
+profile: "lce:141217"
+category: "health_hunger"
+
+# Exhaustion values:
+# Sprinting: 0.1 per meter
+# Jumping: 0.05 per jump
+# Attacking: 0.1 per attack
+# Breaking block: 0.005 per block
+# Swimming: 0.015 per meter
+
+setup:
+  player:
+    hunger: 20
+    saturation: 10.0
+
+action:
+  type: "sprint"
+  distance: 100  # meters
+
+expected:
+  # 100 * 0.1 = 10 exhaustion
+  # 10 exhaustion = 10 saturation lost (at 1:1)
+  saturation: 0.0
+  hunger: 19  # 1 hunger lost when saturation hits 0
+
+---
+
+action2:
+  type: "attack"
+  count: 20  # 20 attacks
+
+expected2:
+  # 20 * 0.1 = 2 exhaustion
+  # 2 saturation lost
+  # No hunger lost (saturation covers it)
+  saturation: 8.0
+  hunger: 20
+
+# Reference: Player.cpp exhaustion values
+# [REF: Player.cpp] - addExhaustion()

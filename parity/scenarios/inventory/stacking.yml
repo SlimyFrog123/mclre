@@ -1,0 +1,227 @@
+# Parity test: Inventory management and stacking
+# [REF: Inventory.cpp] - Slot operations
+# [REF: Container.cpp] - Container interactions
+
+scenario: "item_stacking"
+description: "Items stack up to max_stack_size, overflow creates new stack"
+profile: "lce:141217"
+category: "inventory"
+
+# Default max stack size = 64
+# Tools/armor = 1
+# Some items have custom limits (e.g., snowballs = 16, ender pearls = 16)
+
+setup:
+  player:
+    inventory:
+      main:
+        - slot: 0
+          item: "minecraft:stone"
+          count: 64
+        - slot: 1
+          item: "minecraft:dirt"
+          count: 32
+
+action:
+  type: "add_item"
+  item: "minecraft:stone"
+  count: 10
+
+expected:
+  # First stack is full (64), overflow to new stack
+  slot_0: { item: "minecraft:stone", count: 64 }
+  slot_1: { item: "minecraft:dirt", count: 32 }
+  slot_2: { item: "minecraft:stone", count: 10 }  # New stack
+
+---
+
+action2:
+  type: "add_item"
+  item: "minecraft:dirt"
+  count: 40
+
+expected2:
+  # Dirt stack: 32 + 40 = 72, first fills to 64, overflow 8
+  slot_0: { item: "minecraft:stone", count: 64 }
+  slot_1: { item: "minecraft:dirt", count: 64 }
+  slot_2: { item: "minecraft:stone", count: 10 }
+  slot_3: { item: "minecraft:dirt", count: 8 }
+
+---
+
+scenario: "tool_no_stacking"
+description: "Tools and armor don't stack (max_stack_size = 1)"
+profile: "lce:141217"
+category: "inventory"
+
+setup:
+  player:
+    inventory:
+      main:
+        - slot: 0
+          item: "minecraft:iron_pickaxe"
+          count: 1
+
+action:
+  type: "add_item"
+  item: "minecraft:iron_pickaxe"
+  count: 1
+
+expected:
+  # New slot created, no stacking
+  slot_0: { item: "minecraft:iron_pickaxe", count: 1 }
+  slot_1: { item: "minecraft:iron_pickaxe", count: 1 }
+
+# Reference: Item properties - tools have max_stack_size = 1
+
+---
+
+scenario: "container_transfer"
+description: "Shift-click transfers between player inventory and container"
+profile: "lce:141217"
+category: "inventory"
+
+# Shift-click behavior:
+# Player inventory -> Container: fills container first, then player
+# Container -> Player inventory: fills player first, then container
+
+setup:
+  player:
+    inventory:
+      main:
+        - slot: 0
+          item: "minecraft:stone"
+          count: 64
+        - slot: 1
+          item: "minecraft:dirt"
+          count: 64
+  chest:
+    inventory:
+      - slot: 0
+        item: null
+      - slot: 1
+        item: null
+      - slot: 2
+        item: null
+      # ... 24 more empty slots
+
+action:
+  type: "shift_click"
+  from: "player_inventory"
+  to: "chest"
+  slot: 0  # Stone stack
+
+expected:
+  # Stone moved to chest first available slot
+  chest_slot_0: { item: "minecraft:stone", count: 64 }
+  player_slot_0: { item: null }
+
+---
+
+action2:
+  type: "shift_click"
+  from: "player_inventory"
+  to: "chest"
+  slot: 1  # Dirt stack
+
+expected2:
+  chest_slot_1: { item: "minecraft:dirt", count: 64 }
+  player_slot_1: { item: null }
+
+---
+
+# Reverse: container to player
+setup2:
+  player:
+    inventory:
+      main:
+        - slot: 0
+          item: null
+        - slot: 1
+          item: null
+  chest:
+    inventory:
+      - slot: 0
+        item: "minecraft:cobblestone"
+        count: 64
+      - slot: 1
+        item: "minecraft:cobblestone"
+        count: 32
+
+action3:
+  type: "shift_click"
+  from: "chest"
+  to: "player_inventory"
+  slot: 0
+
+expected3:
+  # Cobblestone fills player inventory first
+  player_slot_0: { item: "minecraft:cobblestone", count: 64 }
+  chest_slot_0: { item: "minecraft:cobblestone", count: 32 }
+
+---
+
+scenario: "armor_slots"
+description: "Armor equip/unequip works correctly"
+profile: "lce:141217"
+category: "inventory"
+
+# Armor slots: 0=feet, 1=legs, 2=chest, 3=head
+# Shift-click armor from inventory equips to correct slot
+# Shift-click equipped armor unequips to inventory
+
+setup:
+  player:
+    inventory:
+      main:
+        - slot: 0
+          item: "minecraft:iron_helmet"
+          count: 1
+        - slot: 1
+          item: "minecraft:iron_chestplate"
+          count: 1
+        - slot: 2
+          item: "minecraft:iron_leggings"
+          count: 1
+        - slot: 3
+          item: "minecraft:iron_boots"
+          count: 1
+
+action:
+  type: "shift_click"
+  from: "player_inventory"
+  to: "armor"
+  slot: 0  # Helmet
+
+expected:
+  armor_head: { item: "minecraft:iron_helmet", count: 1 }
+  player_slot_0: { item: null }
+
+---
+
+action2:
+  type: "shift_click"
+  from: "player_inventory"
+  to: "armor"
+  slot: 1  # Chestplate (now at slot 0 after shift)
+
+expected2:
+  armor_chest: { item: "minecraft:iron_chestplate", count: 1 }
+  player_slot_0: { item: null }
+
+---
+
+action3:
+  type: "shift_click"
+  from: "armor"
+  to: "player_inventory"
+  slot: "head"  # Unequip helmet
+
+expected3:
+  armor_head: { item: null }
+  # Finds first empty inventory slot
+  player_inventory_has_helmet: true
+
+# Reference: Inventory.cpp slot mapping
+# Armor slots: 0=feet, 1=legs, 2=chest, 3=head
+# Shift-click logic in Container.cpp

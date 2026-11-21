@@ -11,6 +11,18 @@ description = "Developer tools: reference-data extractors, registry dumpers, wor
 name = "extract-legacy"
 path = "src/bin/extract_legacy.rs"
 
+[[bin]]
+name = "extract-legacy-recipes"
+path = "src/bin/extract_legacy_recipes.rs"
+
+[[bin]]
+name = "extract-legacy-furnace"
+path = "src/bin/extract_legacy_furnace.rs"
+
+[[bin]]
+name = "extract-legacy-items"
+path = "src/bin/extract_legacy_items.rs"
+
 [lints]
 workspace = true
 
@@ -18,6 +30,8 @@ workspace = true
 anyhow.workspace = true
 clap.workspace = true
 toml.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 
 [dev-dependencies]
 serde_json.workspace = true

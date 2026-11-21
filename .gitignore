@@ -5,6 +5,10 @@
 # Isolated by policy (SPEC.md 11.3/16); only added to the repo by explicit owner decision.
 /game-assets/
 
+# Generated debug tiles from assetc
+/debug_tiles/
+/debug_base_tiles/
+
 # Local logs and crash reports
 /*.log
 /crash-reports/

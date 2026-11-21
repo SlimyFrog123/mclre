@@ -2093,6 +2093,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "serde",
  "serde_json",
  "toml",
 ]
@@ -2200,6 +2201,8 @@ dependencies = [
  "mclre-protocol",
  "mclre-world",
  "parking_lot",
+ "serde",
+ "serde_json",
  "thiserror 2.0.21",
  "tracing",
  "uuid",
@@ -2234,6 +2237,11 @@ dependencies = [
 [[package]]
 name = "mclre-worldgen"
 version = "0.1.0"
+dependencies = [
+ "mclre-core",
+ "mclre-profiles",
+ "mclre-world",
+]
 
 [[package]]
 name = "memchr"

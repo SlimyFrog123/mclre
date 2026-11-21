@@ -48,6 +48,11 @@ module_name_repetitions = { level = "allow", priority = 1 }
 missing_errors_doc = { level = "allow", priority = 1 }
 must_use_candidate = { level = "allow", priority = 1 }
 
+[workspace.features]
+# Faithful bugs feature flag (SPEC §3.3): enables documented deviations from reference behavior
+# that are known bugs in the baseline but must be preserved for world/compatibility.
+faithful_bugs = []
+
 [workspace.dependencies]
 # Shared, version-pinned dependencies. Crates adopt these via `dep.workspace = true`.
 bytes = "1"

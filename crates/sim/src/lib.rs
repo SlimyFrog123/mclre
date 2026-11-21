@@ -2,13 +2,16 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use parking_lot::Mutex;
 use bevy_ecs::prelude::*;
-use mclre_core::{GameRandom, Identifier, BlockStateId};
+use mclre_core::{GameRandom, Identifier, BlockStateId, BlockId};
 use mclre_core::mth::Vec3;
-use mclre_world::{ChunkPos, ChunkColumn};
+use mclre_world::{ChunkPos, ChunkColumn, BlockPos};
 use mclre_protocol::play::{PlayerPosition, PlayerPositionAndLook, PlayerLook};
 use mclre_identity::PlayerIdentity;
 use thiserror::Error;
 use tracing::{info, warn};
+
+pub mod faithful_bugs;
+pub mod gameplay;
 
 /// Fixed timestep: 20 TPS = 50ms per tick
 pub const TICK_RATE: u64 = 20;
@@ -45,6 +48,53 @@ pub struct SimPlayer {
     pub health: f32,
     pub food: f32,
     pub food_saturation: f32,
+    pub xp_total: u32,
+    pub level: u32,
+    /// Player's inventory.
+    pub inventory: crate::gameplay::inventory::PlayerInventory,
+    /// Current block breaking state.
+    pub block_break_state: Option<crate::gameplay::block_breaking::BlockBreakState>,
+    /// Whether the player is underwater.
+    pub underwater: bool,
+    /// Whether the player has Aqua Affinity enchantment.
+    pub has_aqua_affinity: bool,
+    /// Exhaustion tracker for hunger depletion.
+    pub exhaustion: Option<crate::gameplay::health_hunger::Exhaustion>,
+    /// Whether the player is on fire.
+    pub on_fire: bool,
+    /// Remaining fire ticks (0 = not on fire).
+    pub fire_ticks: i16,
+    /// Whether the player is in lava.
+    pub in_lava: bool,
+    /// Remaining air supply (ticks, max 300 = 15 seconds).
+    pub air: i16,
+    /// Whether the player is suffocating (inside solid block).
+    pub suffocating: bool,
+    /// Wither effect ticks remaining.
+    pub wither_ticks: u16,
+    /// Poison effect ticks remaining.
+    pub poison_ticks: u16,
+    /// Regeneration effect ticks remaining.
+    pub regen_ticks: u16,
+    /// Fire resistance effect ticks remaining.
+    pub fire_resistance_ticks: u16,
+}
+
+impl SimPlayer {
+    /// Get the item in the main hand.
+    pub fn held_item(&self) -> &crate::gameplay::inventory::ItemStack {
+        self.inventory.main_hand()
+    }
+    
+    /// Check if the player is underwater.
+    pub fn is_underwater(&self) -> bool {
+        self.underwater
+    }
+    
+    /// Check if the player has Aqua Affinity enchantment.
+    pub fn has_aqua_affinity(&self) -> bool {
+        self.has_aqua_affinity
+    }
 }
 
 /// Game mode for simulation.
@@ -117,6 +167,10 @@ pub struct SimWorld {
     pub rng: GameRandom,
     /// Pending player position updates from clients
     pub pending_positions: Vec<(PlayerIdentity, PlayerPositionUpdate)>,
+    /// Next entity ID to assign
+    pub next_entity_id: i32,
+    /// XP orb system for managing experience orbs in the world
+    pub xp_orb_system: crate::gameplay::xp::XpOrbSystem,
 }
 
 /// Player position update from client.
@@ -138,6 +192,8 @@ impl SimWorld {
             tick_count: 0,
             rng: GameRandom::with_seed(seed),
             pending_positions: Vec::new(),
+            next_entity_id: 1,
+            xp_orb_system: crate::gameplay::xp::XpOrbSystem::new(),
         }
     }
 
@@ -156,6 +212,9 @@ impl SimWorld {
         
         // Update block ticks (redstone, fluids, etc.)
         self.update_block_ticks()?;
+        
+        // Run gameplay systems (lighting, fluids, fire, redstone, TNT, block breaking, health/hunger, XP)
+        crate::gameplay::tick_all(self)?;
         
         Ok(())
     }
@@ -243,6 +302,22 @@ impl SimWorld {
             health: 20.0,
             food: 20.0,
             food_saturation: 5.0,
+            xp_total: 0,
+            level: 0,
+            inventory: crate::gameplay::inventory::PlayerInventory::default(),
+            block_break_state: None,
+            underwater: false,
+            has_aqua_affinity: false,
+            exhaustion: Some(crate::gameplay::health_hunger::Exhaustion::default()),
+            on_fire: false,
+            fire_ticks: 0,
+            in_lava: false,
+            air: 300,
+            suffocating: false,
+            wither_ticks: 0,
+            poison_ticks: 0,
+            regen_ticks: 0,
+            fire_resistance_ticks: 0,
         };
         self.ecs_world.spawn(player);
     }
@@ -291,6 +366,122 @@ impl SimWorld {
     /// Get current tick count.
     pub fn tick_count(&self) -> u64 {
         self.tick_count
+    }
+    
+    /// Get and increment the next entity ID.
+    pub fn next_entity_id(&mut self) -> i32 {
+        let id = self.next_entity_id;
+        self.next_entity_id += 1;
+        id
+    }
+    
+    /// Get block properties for a block state.
+    pub fn block_properties(&self, state: mclre_core::BlockStateId) -> &mclre_core::block_state::BlockProperties {
+        // Get the block state model from the world
+        // For now, return a default - in real implementation this would look up from the block state model
+        fn default_props() -> mclre_core::block_state::BlockProperties {
+            mclre_core::block_state::BlockProperties::none()
+        }
+        static DEFAULT_PROPS: std::sync::OnceLock<mclre_core::block_state::BlockProperties> = std::sync::OnceLock::new();
+        DEFAULT_PROPS.get_or_init(|| mclre_core::block_state::BlockProperties::none())
+    }
+    
+    /// Get mutable reference to RNG.
+    pub fn rng_mut(&mut self) -> &mut mclre_core::random::GameRandom {
+        &mut self.rng
+    }
+    
+    /// Get mutable reference to XP orb system.
+    pub fn get_xp_orb_system(&mut self) -> &mut crate::gameplay::xp::XpOrbSystem {
+        &mut self.xp_orb_system
+    }
+    
+    /// Run a closure with mutable access to the RNG.
+    /// This limits the mutable borrow of `self` to the closure scope.
+    pub fn with_rng_mut<F, R>(&mut self, f: F) -> R
+    where
+        F: FnOnce(&mut mclre_core::random::GameRandom) -> R,
+    {
+        f(&mut self.rng)
+    }
+    
+    /// Run a closure with mutable access to both the RNG and the ECS world.
+    /// This limits the mutable borrow of `self` to the closure scope,
+    /// allowing simultaneous access to RNG and ECS world without borrow conflicts.
+    pub fn with_rng_and_ecs_mut<F, R>(&mut self, f: F) -> R
+    where
+        F: FnOnce(&mut mclre_core::random::GameRandom, &mut bevy_ecs::world::World) -> R,
+    {
+        f(&mut self.rng, &mut self.ecs_world)
+    }
+    
+    /// Get mutable access to all players.
+    pub fn players_mut(&mut self) -> Vec<bevy_ecs::change_detection::Mut<crate::SimPlayer>> {
+        let mut query = self.ecs_world.query::<&mut crate::SimPlayer>();
+        query.iter_mut(&mut self.ecs_world).collect()
+    }
+    
+    /// Get block state at position.
+    pub fn get_block_state(&self, pos: mclre_world::BlockPos) -> mclre_core::BlockStateId {
+        // For now, return AIR - in real implementation this would look up from chunk storage
+        mclre_core::BlockStateId(0)
+    }
+    
+    /// Set block state at position.
+    pub fn set_block_state(&mut self, pos: mclre_world::BlockPos, state: mclre_core::BlockStateId) {
+        // TODO: Implement block setting
+    }
+    
+    /// Get chunk at position.
+    pub fn get_chunk(&self, chunk_pos: mclre_world::ChunkPos) -> Option<mclre_world::ChunkColumn> {
+        let chunks = self.chunks.lock();
+        chunks.get(&chunk_pos).cloned()
+    }
+    
+    /// Get mutable chunk at position.
+    pub fn get_chunk_mut(&mut self, chunk_pos: mclre_world::ChunkPos) -> Option<mclre_world::ChunkColumn> {
+        let mut chunks = self.chunks.lock();
+        chunks.get_mut(&chunk_pos).cloned()
+    }
+    
+    /// Set chunk at position.
+    pub fn set_chunk(&mut self, chunk_pos: mclre_world::ChunkPos, chunk: mclre_world::ChunkColumn) {
+        let mut chunks = self.chunks.lock();
+        chunks.insert(chunk_pos, chunk);
+    }
+    
+    /// Get current time of day (ticks since start of day, 0-23999).
+    pub fn get_time_of_day(&self) -> u32 {
+        // 20 minute day cycle = 24000 ticks
+        (self.tick_count % 24000) as u32
+    }
+    
+    /// Get maximum build height.
+    pub fn get_max_build_height(&self) -> i32 {
+        256 // LCE baseline
+    }
+    
+    /// Set sky light at position.
+    pub fn set_sky_light(&mut self, pos: mclre_world::BlockPos, level: u8) {
+        // TODO: Implement sky light setting in chunk
+        let _ = (pos, level);
+    }
+    
+    /// Set block light at position.
+    pub fn set_block_light(&mut self, pos: mclre_world::BlockPos, level: u8) {
+        // TODO: Implement block light setting in chunk
+        let _ = (pos, level);
+    }
+    
+    /// Get player by entity ID.
+    pub fn get_player_by_entity_id(&mut self, entity_id: i32) -> Option<bevy_ecs::change_detection::Mut<crate::SimPlayer>> {
+        let mut query = self.ecs_world.query::<&mut crate::SimPlayer>();
+        for mut player in query.iter_mut(&mut self.ecs_world) {
+            if player.entity_id == entity_id {
+                return Some(player);
+            }
+        }
+        None
     }
 }
 

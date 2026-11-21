@@ -13,7 +13,7 @@ pub mod registry;
 
 pub use block_state::{
     BlockId, BlockProperties, BlockStateId, BlockStateModel, PropertyDefinition, PropertyValue,
-    StateError,
+    StateError, ItemId,
 };
 pub use identifier::{DEFAULT_NAMESPACE, Identifier, InternedStr, ParseError};
 pub use mth::{AABB, Mth, Vec3};

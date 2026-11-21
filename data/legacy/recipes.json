@@ -1,0 +1,7125 @@
+[
+  {
+    "id": "recipe_0001",
+    "name": "wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:tree_trunk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 54
+  },
+  {
+    "id": "recipe_0002",
+    "name": "wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:tree_trunk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 62
+  },
+  {
+    "id": "recipe_0003",
+    "name": "wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:tree_trunk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 69
+  },
+  {
+    "id": "recipe_0004",
+    "name": "wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:tree_trunk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 76
+  },
+  {
+    "id": "recipe_0005",
+    "name": "stick",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "#",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stick",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 83
+  },
+  {
+    "id": "recipe_0006",
+    "name": "bed",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "XXX"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bed",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 98
+  },
+  {
+    "id": "recipe_0007",
+    "name": "enchant table",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " B ",
+      "D#D",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:book",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:diamond",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:diamond",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:enchant_table",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 105
+  },
+  {
+    "id": "recipe_0008",
+    "name": "anvil",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "III",
+      " i ",
+      "iii"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:anvil",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 114
+  },
+  {
+    "id": "recipe_0009",
+    "name": "ladder",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "# #",
+      "###",
+      "# #"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:ladder",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 124
+  },
+  {
+    "id": "recipe_0010",
+    "name": "fence gate",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "#W#",
+      "#W#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fence_gate",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 133
+  },
+  {
+    "id": "recipe_0011",
+    "name": "fence",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fence",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 141
+  },
+  {
+    "id": "recipe_0012",
+    "name": "nether fence",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:nether_fence",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 149
+  },
+  {
+    "id": "recipe_0013",
+    "name": "iron fence",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:iron_fence",
+      "count": 16,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 157
+  },
+  {
+    "id": "recipe_0014",
+    "name": "cobble wall",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:cobble_wall",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 165
+  },
+  {
+    "id": "recipe_0015",
+    "name": "cobble wall",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:mossy_cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:cobble_wall",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 173
+  },
+  {
+    "id": "recipe_0016",
+    "name": "door wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 3,
+    "pattern": [
+      "##",
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:door_wood",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 181
+  },
+  {
+    "id": "recipe_0017",
+    "name": "door iron",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 3,
+    "pattern": [
+      "##",
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:door_iron",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 190
+  },
+  {
+    "id": "recipe_0018",
+    "name": "stairs wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_wood",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 199
+  },
+  {
+    "id": "recipe_0019",
+    "name": "trapdoor",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:trapdoor",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 208
+  },
+  {
+    "id": "recipe_0020",
+    "name": "stairs stone",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_stone",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 215
+  },
+  {
+    "id": "recipe_0021",
+    "name": "stairs bricks",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_bricks",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 224
+  },
+  {
+    "id": "recipe_0022",
+    "name": "stairs stone brick smooth",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_stone_brick_smooth",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 233
+  },
+  {
+    "id": "recipe_0023",
+    "name": "stairs nether bricks",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_nether_bricks",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 242
+  },
+  {
+    "id": "recipe_0024",
+    "name": "stairs sandstone",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_sandstone",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 251
+  },
+  {
+    "id": "recipe_0025",
+    "name": "wood stairs birch",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_stairs_birch",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 260
+  },
+  {
+    "id": "recipe_0026",
+    "name": "wood stairs dark",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_stairs_dark",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 269
+  },
+  {
+    "id": "recipe_0027",
+    "name": "wood stairs jungle",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_stairs_jungle",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 278
+  },
+  {
+    "id": "recipe_0028",
+    "name": "stairs quartz",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "#  ",
+      "## ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stairs_quartz",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 287
+  },
+  {
+    "id": "recipe_0029",
+    "name": "snow",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:snow_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:snow_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:snow_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:snow_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:snow",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 302
+  },
+  {
+    "id": "recipe_0030",
+    "name": "top snow",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:snow",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:snow",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:snow",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:top_snow",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 310
+  },
+  {
+    "id": "recipe_0031",
+    "name": "clay",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:clay",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:clay",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 317
+  },
+  {
+    "id": "recipe_0032",
+    "name": "red brick",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:red_brick",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 325
+  },
+  {
+    "id": "recipe_0033",
+    "name": "wool",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wool",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 333
+  },
+  {
+    "id": "recipe_0034",
+    "name": "tnt",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "X#X",
+      "#X#",
+      "X#X"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:tnt",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 341
+  },
+  {
+    "id": "recipe_0035",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 351
+  },
+  {
+    "id": "recipe_0036",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 358
+  },
+  {
+    "id": "recipe_0037",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 364
+  },
+  {
+    "id": "recipe_0038",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 371
+  },
+  {
+    "id": "recipe_0039",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 378
+  },
+  {
+    "id": "recipe_0040",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 385
+  },
+  {
+    "id": "recipe_0041",
+    "name": "stone slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 392
+  },
+  {
+    "id": "recipe_0042",
+    "name": "wood slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 399
+  },
+  {
+    "id": "recipe_0043",
+    "name": "wood slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 407
+  },
+  {
+    "id": "recipe_0044",
+    "name": "wood slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 415
+  },
+  {
+    "id": "recipe_0045",
+    "name": "wood slab half",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wood_slab_half",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 422
+  },
+  {
+    "id": "recipe_0046",
+    "name": "cake",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "AAA",
+      "BEB",
+      "CCC"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:bucket_milk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:bucket_milk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:bucket_milk",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sugar",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:egg",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sugar",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:cake",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 435
+  },
+  {
+    "id": "recipe_0047",
+    "name": "sugar",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:reeds",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:sugar",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 446
+  },
+  {
+    "id": "recipe_0048",
+    "name": "rail",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "X X",
+      "X#X",
+      "X X"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:rail",
+      "count": 16,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 453
+  },
+  {
+    "id": "recipe_0049",
+    "name": "golden rail",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "X X",
+      "X#X",
+      "XRX"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:golden_rail",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 463
+  },
+  {
+    "id": "recipe_0050",
+    "name": "activator rail",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "XSX",
+      "X#X",
+      "XSX"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:activator_rail",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 474
+  },
+  {
+    "id": "recipe_0051",
+    "name": "detector rail",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "X X",
+      "X#X",
+      "XRX"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:pressure_plate_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:detector_rail",
+      "count": 6,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 485
+  },
+  {
+    "id": "recipe_0052",
+    "name": "minecart",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:minecart",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 496
+  },
+  {
+    "id": "recipe_0053",
+    "name": "minecart chest",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "A",
+      "B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:chest",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:minecart",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:minecart_chest",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 504
+  },
+  {
+    "id": "recipe_0054",
+    "name": "minecart furnace",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "A",
+      "B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:furnace",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:minecart",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:minecart_furnace",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 512
+  },
+  {
+    "id": "recipe_0055",
+    "name": "minecart tnt",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "A",
+      "B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:tnt",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:minecart",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:minecart_tnt",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 520
+  },
+  {
+    "id": "recipe_0056",
+    "name": "minecart hopper",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "A",
+      "B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:hopper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:minecart",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:minecart_hopper",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 528
+  },
+  {
+    "id": "recipe_0057",
+    "name": "boat",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:boat",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 536
+  },
+  {
+    "id": "recipe_0058",
+    "name": "fishing rod",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "  #",
+      " #X",
+      "# X"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fishing_rod",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 544
+  },
+  {
+    "id": "recipe_0059",
+    "name": "carrot on astick",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "# ",
+      " X"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:fishing_rod",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:carrots",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:carrot_on_astick",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 553
+  },
+  {
+    "id": "recipe_0060",
+    "name": "flint and steel",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "A ",
+      " B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:flint",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:flint_and_steel",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 561
+  },
+  {
+    "id": "recipe_0061",
+    "name": "bread",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bread",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 569
+  },
+  {
+    "id": "recipe_0062",
+    "name": "bow",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " #X",
+      "# X",
+      " #X"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bow",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 577
+  },
+  {
+    "id": "recipe_0063",
+    "name": "arrow",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 3,
+    "pattern": [
+      "X",
+      "#",
+      "Y"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:flint",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:feather",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:arrow",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 587
+  },
+  {
+    "id": "recipe_0064",
+    "name": "bucket empty",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bucket_empty",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 600
+  },
+  {
+    "id": "recipe_0065",
+    "name": "bowl",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bowl",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 608
+  },
+  {
+    "id": "recipe_0066",
+    "name": "glass bottle",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:glass_bottle",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 616
+  },
+  {
+    "id": "recipe_0067",
+    "name": "flower pot",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "# #",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:brick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:flower_pot",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 624
+  },
+  {
+    "id": "recipe_0068",
+    "name": "torch",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "X",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:coal",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:torch",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 633
+  },
+  {
+    "id": "recipe_0069",
+    "name": "torch",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "X",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:coal",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:torch",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 642
+  },
+  {
+    "id": "recipe_0070",
+    "name": "glowstone",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:yellow_dust",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:yellow_dust",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:yellow_dust",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:yellow_dust",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:glowstone",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 650
+  },
+  {
+    "id": "recipe_0071",
+    "name": "quartz block",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:quartz_block",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 658
+  },
+  {
+    "id": "recipe_0072",
+    "name": "lever",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "X",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:lever",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 666
+  },
+  {
+    "id": "recipe_0073",
+    "name": "trip wire source",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 3,
+    "pattern": [
+      "I",
+      "S",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:trip_wire_source",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 674
+  },
+  {
+    "id": "recipe_0074",
+    "name": "redstone torch on",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "X",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:redstone_torch_on",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 683
+  },
+  {
+    "id": "recipe_0075",
+    "name": "repeater",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "#X#",
+      "III"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:repeater",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 691
+  },
+  {
+    "id": "recipe_0076",
+    "name": "comparator",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " # ",
+      "#X#",
+      "III"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:redstone_torch_on",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:comparator",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 699
+  },
+  {
+    "id": "recipe_0077",
+    "name": "daylight detector",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "GGG",
+      "QQQ",
+      "WWW"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_quartz",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:daylight_detector",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 708
+  },
+  {
+    "id": "recipe_0078",
+    "name": "hopper",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "I I",
+      "ICI",
+      " I "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:chest",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:hopper",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 717
+  },
+  {
+    "id": "recipe_0079",
+    "name": "clock",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " # ",
+      "#X#",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:clock",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 726
+  },
+  {
+    "id": "recipe_0080",
+    "name": "lead",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "~~ ",
+      "~O ",
+      "  ~"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:slime_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:string",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:lead",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 749
+  },
+  {
+    "id": "recipe_0081",
+    "name": "compass",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " # ",
+      "#X#",
+      " # "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:compass",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 759
+  },
+  {
+    "id": "recipe_0082",
+    "name": "map",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:compass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:map",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 768
+  },
+  {
+    "id": "recipe_0083",
+    "name": "button",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:button",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 777
+  },
+  {
+    "id": "recipe_0084",
+    "name": "button wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:button_wood",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 784
+  },
+  {
+    "id": "recipe_0085",
+    "name": "pressure plate wood",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:pressure_plate_wood",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 791
+  },
+  {
+    "id": "recipe_0086",
+    "name": "pressure plate stone",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:pressure_plate_stone",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 797
+  },
+  {
+    "id": "recipe_0087",
+    "name": "weighted plate heavy",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:weighted_plate_heavy",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 803
+  },
+  {
+    "id": "recipe_0088",
+    "name": "weighted plate light",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:weighted_plate_light",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 810
+  },
+  {
+    "id": "recipe_0089",
+    "name": "dispenser",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "#R#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:bow",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:dispenser",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 817
+  },
+  {
+    "id": "recipe_0090",
+    "name": "dropper",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "# #",
+      "#R#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:dropper",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 825
+  },
+  {
+    "id": "recipe_0091",
+    "name": "cauldron",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "# #",
+      "# #",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:cauldron",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 834
+  },
+  {
+    "id": "recipe_0092",
+    "name": "brewing stand",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      " B ",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:blaze_rod",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:brewing_stand",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 843
+  },
+  {
+    "id": "recipe_0093",
+    "name": "lit pumpkin",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "A",
+      "B"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:pumpkin",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:torch",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:lit_pumpkin",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 852
+  },
+  {
+    "id": "recipe_0094",
+    "name": "jukebox",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:diamond",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:jukebox",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 861
+  },
+  {
+    "id": "recipe_0095",
+    "name": "paper",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:reeds",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:reeds",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:reeds",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:paper",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 870
+  },
+  {
+    "id": "recipe_0096",
+    "name": "noteblock",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:noteblock",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 888
+  },
+  {
+    "id": "recipe_0097",
+    "name": "bookshelf",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "XXX",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:book",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:book",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:book",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:bookshelf",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 897
+  },
+  {
+    "id": "recipe_0098",
+    "name": "painting",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:painting",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 906
+  },
+  {
+    "id": "recipe_0099",
+    "name": "frame",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:leather",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:frame",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 916
+  },
+  {
+    "id": "recipe_0100",
+    "name": "gold ingot",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:gold_ingot",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 927
+  },
+  {
+    "id": "recipe_0101",
+    "name": "gold nugget",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:gold_nugget",
+      "count": 9,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 936
+  },
+  {
+    "id": "recipe_0102",
+    "name": "sign",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "###",
+      " X "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:sign",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 943
+  },
+  {
+    "id": "recipe_0103",
+    "name": "piston base",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "TTT",
+      "#X#",
+      "#R#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:piston_base",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 953
+  },
+  {
+    "id": "recipe_0104",
+    "name": "piston sticky base",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "S",
+      "P"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:slime_ball",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:piston_base",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:piston_sticky_base",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 962
+  },
+  {
+    "id": "recipe_0105",
+    "name": "fireworks",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      " P ",
+      " G "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:paper",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fireworks",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 972
+  },
+  {
+    "id": "recipe_0106",
+    "name": "fireworks charge",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      " D ",
+      " G "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dye_powder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gunpowder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fireworks_charge",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 980
+  },
+  {
+    "id": "recipe_0107",
+    "name": "fireworks charge",
+    "category": "Miscellaneous",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      " D ",
+      " C "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:dye_powder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:fireworks_charge",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:fireworks_charge",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 988
+  },
+  {
+    "id": "recipe_0108",
+    "name": "eye of ender",
+    "category": "Miscellaneous",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:eye_of_ender",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 734
+  },
+  {
+    "id": "recipe_0109",
+    "name": "fireball",
+    "category": "Miscellaneous",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:fireball",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 739
+  },
+  {
+    "id": "recipe_0110",
+    "name": "fireball",
+    "category": "Miscellaneous",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:fireball",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 744
+  },
+  {
+    "id": "recipe_0111",
+    "name": "book",
+    "category": "Miscellaneous",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:book",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "Recipes.cpp",
+    "source_line": 877
+  },
+  {
+    "id": "recipe_0112",
+    "name": "shears",
+    "category": "Tools",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      " #",
+      "# "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:iron_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:shears",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "ToolRecipies.cpp",
+    "source_line": 106
+  },
+  {
+    "id": "recipe_0113",
+    "name": "apple gold",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:apple",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_ingot",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:apple_gold",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 12
+  },
+  {
+    "id": "recipe_0114",
+    "name": "apple gold",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:apple",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:apple_gold",
+      "count": 1,
+      "damage": 1
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 20
+  },
+  {
+    "id": "recipe_0115",
+    "name": "speckled melon",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:speckled_melon",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 28
+  },
+  {
+    "id": "recipe_0116",
+    "name": "cookie",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 1,
+    "pattern": [
+      "#X#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:dye_powder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wheat",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:cookie",
+      "count": 8,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 42
+  },
+  {
+    "id": "recipe_0117",
+    "name": "melon",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "MMM",
+      "MMM",
+      "MMM"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:melon",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 50
+  },
+  {
+    "id": "recipe_0118",
+    "name": "seeds melon",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "M"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:melon",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:seeds_melon",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 59
+  },
+  {
+    "id": "recipe_0119",
+    "name": "seeds pumpkin",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 1,
+    "pattern": [
+      "M"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:pumpkin",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:seeds_pumpkin",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 66
+  },
+  {
+    "id": "recipe_0120",
+    "name": "carrot golden",
+    "category": "Food",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:carrots",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:gold_nugget",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:carrot_golden",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 78
+  },
+  {
+    "id": "recipe_0121",
+    "name": "mushroom stew",
+    "category": "Food",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:mushroom_stew",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 37
+  },
+  {
+    "id": "recipe_0122",
+    "name": "pumpkin pie",
+    "category": "Food",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:pumpkin_pie",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 73
+  },
+  {
+    "id": "recipe_0123",
+    "name": "fermented spider eye",
+    "category": "Food",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:fermented_spider_eye",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 87
+  },
+  {
+    "id": "recipe_0124",
+    "name": "blaze powder",
+    "category": "Food",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:blaze_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 92
+  },
+  {
+    "id": "recipe_0125",
+    "name": "magma cream",
+    "category": "Food",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:magma_cream",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "FoodRecipies.cpp",
+    "source_line": 97
+  },
+  {
+    "id": "recipe_0126",
+    "name": "sand stone",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:sand_stone",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 10
+  },
+  {
+    "id": "recipe_0127",
+    "name": "sand stone",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:sand_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:sand_stone",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 18
+  },
+  {
+    "id": "recipe_0128",
+    "name": "sand stone",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "#",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:sand_stone",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 26
+  },
+  {
+    "id": "recipe_0129",
+    "name": "quartz block",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "#",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone_slab_half",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:quartz_block",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 34
+  },
+  {
+    "id": "recipe_0130",
+    "name": "quartz block",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 1,
+    "height": 2,
+    "pattern": [
+      "#",
+      "#"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:quartz_block",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:quartz_block",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 42
+  },
+  {
+    "id": "recipe_0131",
+    "name": "work bench",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:work_bench",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 52
+  },
+  {
+    "id": "recipe_0132",
+    "name": "furnace",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "# #",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:cobblestone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:furnace",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 60
+  },
+  {
+    "id": "recipe_0133",
+    "name": "chest",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "# #",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wood",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:chest",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 69
+  },
+  {
+    "id": "recipe_0134",
+    "name": "chest trap",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "#-"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:chest",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:trip_wire_source",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:chest_trap",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 78
+  },
+  {
+    "id": "recipe_0135",
+    "name": "ender chest",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#E#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:eye_of_ender",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:ender_chest",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 85
+  },
+  {
+    "id": "recipe_0136",
+    "name": "stone brick",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "##",
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stone_brick",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 94
+  },
+  {
+    "id": "recipe_0137",
+    "name": "thin glass",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:thin_glass",
+      "count": 16,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 111
+  },
+  {
+    "id": "recipe_0138",
+    "name": "nether brick",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 2,
+    "pattern": [
+      "NN",
+      "NN"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:netherbrick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:netherbrick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:netherbrick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:netherbrick",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:nether_brick",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 119
+  },
+  {
+    "id": "recipe_0139",
+    "name": "redstone light",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      " R ",
+      "RGR",
+      " R "
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:red_stone",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:redstone_light",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 127
+  },
+  {
+    "id": "recipe_0140",
+    "name": "beacon",
+    "category": "BuildingBlocks",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "GGG",
+      "GSG",
+      "OOO"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:nether_star",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:obsidian",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:beacon",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "StructureRecipies.cpp",
+    "source_line": 135
+  },
+  {
+    "id": "recipe_0141",
+    "name": "clay hardened colored",
+    "category": "Decorations",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:dye_powder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:clay_hardened",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:clay_hardened_colored",
+      "count": 8,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 16
+  },
+  {
+    "id": "recipe_0142",
+    "name": "stained glass",
+    "category": "Decorations",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 3,
+    "pattern": [
+      "###",
+      "#X#",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:dye_powder",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stained_glass",
+      "count": 8,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 25
+  },
+  {
+    "id": "recipe_0143",
+    "name": "stained glass pane",
+    "category": "Decorations",
+    "shape": "Shaped",
+    "width": 3,
+    "height": 2,
+    "pattern": [
+      "###",
+      "###"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:stained_glass",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:stained_glass_pane",
+      "count": 16,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 32
+  },
+  {
+    "id": "recipe_0144",
+    "name": "wool carpet",
+    "category": "Decorations",
+    "shape": "Shaped",
+    "width": 2,
+    "height": 1,
+    "pattern": [
+      "##"
+    ],
+    "ingredients": [
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      },
+      {
+        "item": "minecraft:wool",
+        "count": 1,
+        "damage": null,
+        "is_tag": false
+      }
+    ],
+    "result": {
+      "item": "minecraft:wool_carpet",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 119
+  },
+  {
+    "id": "recipe_0145",
+    "name": "wool",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:wool",
+      "count": 1,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 13
+  },
+  {
+    "id": "recipe_0146",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 41
+  },
+  {
+    "id": "recipe_0147",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 45
+  },
+  {
+    "id": "recipe_0148",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 49
+  },
+  {
+    "id": "recipe_0149",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 53
+  },
+  {
+    "id": "recipe_0150",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 58
+  },
+  {
+    "id": "recipe_0151",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 63
+  },
+  {
+    "id": "recipe_0152",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 68
+  },
+  {
+    "id": "recipe_0153",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 73
+  },
+  {
+    "id": "recipe_0154",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 78
+  },
+  {
+    "id": "recipe_0155",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 84
+  },
+  {
+    "id": "recipe_0156",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 89
+  },
+  {
+    "id": "recipe_0157",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 94
+  },
+  {
+    "id": "recipe_0158",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 2,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 99
+  },
+  {
+    "id": "recipe_0159",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 3,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 104
+  },
+  {
+    "id": "recipe_0160",
+    "name": "dye powder",
+    "category": "Decorations",
+    "shape": "Shapeless",
+    "width": 0,
+    "height": 0,
+    "ingredients": [],
+    "result": {
+      "item": "minecraft:dye_powder",
+      "count": 4,
+      "damage": 0
+    },
+    "source_file": "ClothDyeRecipes.cpp",
+    "source_line": 110
+  }
+]

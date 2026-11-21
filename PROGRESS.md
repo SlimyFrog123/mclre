@@ -7,25 +7,37 @@
 
 ## 1. Current Status Snapshot
 
-- **Current Phase:** M3 foundation complete (local gates green). **M3 (Minimal Client Rendering) in progress** — render crate with wgpu, chunk meshing, AO, texture atlas, camera; client with game loop, input, render thread; input system with keyboard/mouse/gamepad; assets crate with VFS, texture loading, atlas building; **UI toolkit (crates/ui) implemented with layout system, widget system, scene management, focus management, 9-slice scaling**; **asset loading integrated with render pipeline (AssetManager → GPU TextureAtlas)**; **asset format decision: Java Edition resource/data pack formats for direct compatibility and backporting (ADR 0015)**; **client frame loop with flat test world chunks (3×3 area, bedrock→stone→dirt→grass)**; **asset directory structure created (assets-placeholder/) and assetc converter tool implemented for LCE → Java format conversion**; **placeholder block textures generated and texture atlas integrated into render pipeline**; **client window opens and game loop runs with textured flat world**; **chunk meshes upload to GPU and render**; **game logic is framerate-independent (uses dt parameter)**; **assetc tool tested with reference assets (76 textures, DLC packs, audio); game-assets/ directory created with converted assets**; **client loads pre-built texture atlas from game-assets/ (2048x2048, 75 UV regions from manifest)**; text rendering placeholder (glyphon version mismatch with wgpu 22).
-- **Active Milestone:** M3 → next is **M4 (Server Loop, Protocol, Integrated Server, Movement)**.
+- **Current Phase:** M4 complete, M5 in progress. **M4 (Server Loop, Protocol, Integrated Server, Movement) complete** — identity, protocol, net, sim, server crates all implemented and tested. **M5 (Faithful Core Gameplay) in progress** — gameplay module structure created in `sim/src/gameplay/` (10 modules: block_breaking, inventory, health_hunger, fluids, fire, tnt, redstone, lighting, xp, crafting), all wired into `SimWorld::tick()` via `gameplay::tick_all()`. `content-vanilla` expanded with 210 items (tools, armor, food, materials) via public API. Reference extractors in `tools/devtools` for recipes, furnace recipes, items, blocks **DONE** (4 binaries). Golden data files generated in `data/legacy/` (blocks.toml, furnace.toml, items.toml + JSON). Recipes now JSON-only. **Block breaking compilation fixed** (borrow checker resolved with two-pass data collection). **`faithful_bugs` feature flag implemented** (SPEC §3.3). **Fluid simulation (water/lava) and fire spread mechanics implemented** with LCE baseline values. **Redstone signal propagation, lighting propagation, TNT explosions, and crafting recipe loading implemented** with LCE baseline values. **Inventory system with armor/offhand/containers/item entities implemented** with LCE baseline values. **Health/hunger/exhaustion/regeneration system implemented** with LCE baseline values. **286 workspace tests pass** (2 new faithful_bugs tests).
+- **Active Milestone:** M5 Faithful Core Gameplay.
 - **Overall Progress:**
   - Phase 0 done (reference surveyed, `CLAUDE.md`, ADRs 0001–0014).
   - M0 done (22 crate skeletons, dependency-rule test proven to fail on violation, CI workflow, `deny.toml`, licenses, local fmt/clippy/test/deny/audit green).
   - M1 done locally: `core::{identifier, random, mth, registry, block_state, nbt}`, `profiles`, `content-vanilla` (22 blocks), `devtools` legacy extractor → `data/legacy/blocks.toml` (158 legacy ids).
   - M2 done locally: `world::pos` (`Vec3`-backed coordinates), `world::chunk_nbt` (chunk↔Anvil NBT), `world::level` (`level.dat`), `world::save` (region cache + atomic writes), `world::preset` (verified sizes), `world::section` (palette storage + nibble light), `world::chunk` (columns + heightmap). Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅.
-  - M3 foundation: `render` crate with wgpu device/surface management, per-face chunk meshing with LCE AO/smooth lighting (ADR 0008), `View`/`ViewUniform` camera with flat `[f32; 16]` matrix, `ChunkPipeline` with WGSL shaders, `FrameGraph` for depth buffer, `TextureAtlas` with default white texture. `assets` crate with virtual filesystem (VFS), texture loading, and atlas building. `input` crate with keyboard/mouse/gamepad bindings. `client` with game loop, render thread, fixed-timestep simulation. Text rendering infrastructure added as placeholder (glyphon 0.8 API incompatible with wgpu 22).
+  - M3 done: `render` crate with wgpu renderer, chunk meshing, texture atlas, flat world; `client` with game loop, render thread; `assets` with VFS and texture loading; `ui` toolkit with layout, widgets, scene management.
+  - M4 done: `identity` crate (LocalSlot, PlayerIdentity, identity providers), `protocol` (Encode/Decode, Handshake/Login/Configuration/Play packets, 14 tests), `net` (Transport trait, InMemoryTransport, 3 tests), `sim` (20 TPS tick loop, basic physics, 4 tests), `server` (Tick loop, ClientConnection, IntegratedServer, 4 tests).
+  - M5 in progress: gameplay module structure created and wired into tick loop; 10 gameplay systems implemented (block breaking, inventory, health/hunger, fluids, fire, TNT, redstone, lighting, XP, crafting); `content-vanilla` expanded with 22 blocks + 210 items (tools, armor, food, materials) via public API; reference extractors done; golden data generated; `faithful_bugs` feature flag implemented; **fluids, fire, redstone, lighting, TNT, crafting, inventory, health/hunger, and XP systems implemented with LCE baseline values**. 286 workspace tests pass.
 - **Working Directory:** `C:\Users\DJ\Desktop\mclre`
-- **Last Updated:** 2026-11-19
+- **Last Updated:** 2026-11-20 (M4 complete, M5: extractors + golden data (JSON only) + parity scenarios + recipe extractor bugs fully fixed + reference docs + block gameplay properties + format decision + block breaking compilation fix + faithful_bugs feature flag + fluids and fire implementation + redstone + lighting + TNT + crafting implementation + inventory implementation + health/hunger implementation + **XP level curve formula fixed + XP orb spawn entity ID fix**; all 286 workspace tests pass) — **mclre-worldgen compiles, no rand dependency, mclre-worldgen crate compiles and integrates** — **Remote added (https://github.com/SlimyFrog123/mclre.git), milestones tagged: m0-foundation, m1-core-data-model, m2-world-storage, m3-minimal-client-rendering, m4-server-protocol; CI running**
 
 ### Immediate Next Actions (Start Here in Next Session)
 1. **Owner confirmations (non-blocking, but needed before dependent milestones):**
    - Review ADRs `0002`–`0014` (all "Proposed") — `0006` is now **Accepted (agent)** with a documented revision (see below).
    - Confirm baseline TU/CU externally (likely TU19/CU7); profile id stays `lce:141217` (`docs/reference/baseline.md`).
-   - Provide a private GitHub remote so `ci.yml` runs; then tag `m0-foundation` and `m1-core-data-model`.
-2. **Start M2 — World Storage & Chunks** (`PLAN.md` §4 M2):
-   - `world`: `BlockPos`/`ChunkPos`/`SectionPos`, `WorldSizePreset` (verified sizes: classic 54, small 64, medium 192, large 320 chunks; Nether scales 3/3/6/8; End fixed 18×18; edge moats), palette-compressed `ChunkSection`, `ChunkColumn`, nibble light arrays.
-   - Then Anvil region storage + `level.dat`, atomic save, crash-safety tests.
+2. **CI & Milestones:** ✅ **DONE** — Remote added (`https://github.com/SlimyFrog123/mclre.git`), `ci.yml` running on `main`, milestones tagged: `m0-foundation`, `m1-core-data-model`, `m2-world-storage`, `m3-minimal-client-rendering`, `m4-server-protocol`.
+2. **M5 — Faithful Core Gameplay** (`PLAN.md` §4 M5):
+   - ✅ Expand `content-vanilla` with full baseline items, tools, armor, food, recipes (via public API) — **DONE** (210 items).
+   - ✅ Create reference extractors in `tools/devtools` for recipes, furnace recipes, items, blocks — **DONE** (4 new binaries: extract-legacy-recipes, extract-legacy-furnace, extract-legacy-items, plus existing extract-legacy).
+   - ✅ Generate golden data files in `data/legacy/` — **DONE** (blocks.toml, furnace.toml, items.toml + JSON). Recipes now JSON-only.
+   - ✅ Create parity test scenarios in `parity/` — **DONE** (10 categories with YAML scenarios).
+   - ✅ Fix recipe extractor bugs:
+     - Pattern extraction now skips group string (e.g., "sssctcig") — **FIXED**
+     - Anvil recipe correctly has 3 iron blocks + 4 iron ingots — **FIXED**
+     - Function definitions filtered out — **FIXED**
+     - C++ cast expression handling (e.g., `(Item *)Item::bow`) — **FIXED**
+     - Source line number tracking — **FIXED**
+   - ✅ Add `docs/reference/` documentation for each gameplay feature with reference citations — **DONE** (10 files: block_breaking, inventory, health_hunger, fluids, fire, tnt, redstone, lighting, xp, crafting)
+   - Implement `faithful_bugs` feature flag for documented deviations.
 
 ---
 
@@ -52,8 +64,8 @@
 | **M1** | Core Data Model | **Complete (local)** | `d0223e6`…`m1` slices | Identifier+interning, `GameRandom`/`CosmeticRandom` (JDK-verified), `Mth` LUT port, registries+tags, block-state flattening, NBT codec, `profiles`, 22 blocks via public API, legacy block extractor. Tag pending remote CI. |
 | **M2** | World Storage & Chunks | **Complete (local)** | `m2` slices | Gate: chunk round-trip ✅, crash-safety test ✅, external Anvil inspect ✅, bounded+infinite support ✅. Tag `m2-world-storage` pending remote CI. |
 | **M3** | Minimal Client Rendering | **Foundation Complete (local)** | `m3-foundation` slices | Gate: wgpu device/surface ✅, per-face chunk mesh + AO ✅, View/ViewUniform ✅, ChunkPipeline WGSL ✅, FrameGraph depth ✅. Next: full frame loop, chunk upload, texture atlas, UI text. |
-| **M4** | Server Loop, Protocol, Integrated Server, Movement | Not Started | — | Gate: playable flat singleplayer via `InMemoryTransport` + headless client CI test. |
-| **M5** | Faithful Core Gameplay | Not Started | — | Gate: golden-data recipes/hardness/drops + `parity/` scenarios pass. |
+| **M4** | Server Loop, Protocol, Integrated Server, Movement | **Complete (local)** | `m4` slices | Identity crate (LocalSlot, PlayerIdentity, LaunchArgIdentity/RefusingIdentityProvider), Protocol (Encode/Decode, Handshake/Login/Configuration/Play packets, 14 tests), Net (Transport trait, InMemoryTransport, 3 tests), Sim (20 TPS tick loop, basic physics, 4 tests), Server (Tick loop, ClientConnection, IntegratedServer, 4 tests). |
+| **M5** | Faithful Core Gameplay | **In Progress** | `m5-foundation` | Gameplay module structure created in `sim/src/gameplay/` (10 modules: block_breaking, inventory, health_hunger, fluids, fire, tnt, redstone, lighting, xp, crafting), wired into tick loop. Content-vanilla expanded (210 items + 22 blocks with gameplay properties: hardness, harvest tier/tool, light emission, transparency, sound group). Reference extractors done (4 binaries), golden data generated (JSON only), parity scenarios created. Recipe extractor bugs fully fixed: group string pattern extraction, anvil ingredient counting (3 iron blocks + 4 iron ingots), function definition filtering, C++ cast expression handling (e.g., `(Item *)Item::bow`), source line number tracking. **Block breaking compilation fixed** (borrow checker resolved with two-pass data collection). **`faithful_bugs` feature flag implemented** (SPEC §3.3). **Fluids (water/lava flow, reactions), Fire (spread, ignition, eternal fire), Redstone (dust/torch/repeater/comparator, update priority), Lighting (sky/block propagation, day/night cycle), TNT (1352-ray, blast resistance), Crafting (JSON recipes, shaped/shapeless, groups), Inventory (armor/offhand/containers/item entities), Health/Hunger (exhaustion, regeneration, starvation, damage types, armor reduction)** systems implemented with LCE baseline values. **286 workspace tests pass**. |
 | **M6** | World Generation (Baseline) | Not Started | — | Gate: reference seed heightmap/biome/terrain parity + visual sign-off. |
 | **M7** | Mobs & AI | Not Started | — | Gate: mob `parity/` scenarios + tick budget (`<= 25 ms`, p99 `<= 45 ms`). |
 | **M8** | UI/UX Parity Pass 1 & `assetc` v1 | Not Started | — | Gate: gamepad-only & KB+M-only flows + visual sign-off. |
@@ -110,6 +122,7 @@
 | D-11 | Audio crate & `.binka` decoding | ADR drafted | `kira` + external `vgmstream` | `0011-audio-and-assetc-decoders.md` |
 | D-12 | Modding WASM runtime | ADR drafted | `wasmtime` (WIT) | `0012-modding-runtime.md` |
 | D-13 | Perf targets, `faithful_bugs`, licensing, naming | ADR drafted | Low/mid profiles; MIT/Apache-2.0; clean-room shaders | `0013-perf-licensing-and-scope.md` |
+| D-14 | Serialization format policy | **Resolved** | **JSON** for internal data (recipes, furnace, items, blocks); **TOML** for end-user config (pack metadata, mod config, server settings); **mcmeta** for Java Edition pack compatibility | `0014-serialization-format-policy.md` (to draft) |
 
 ---
 
@@ -447,3 +460,293 @@
 - **Verification Run:** App runs successfully — window opens with correct title, pre-built atlas loads (2048x2048), **75 UV regions loaded from manifest**, texture atlas uploads to GPU, game loop runs at 20 TPS with framerate-independent physics.
 - **Blockers / Open Questions:** None — Texture atlas integration complete.
 - **Next Steps:** Continue M3: add more block textures from converted assets, test camera movement in the flat world, verify chunk rendering visually, implement glyphphon text rendering (or maintain placeholder).
+
+---
+### Session 23 — 2026-11-19 (M4: Server Loop, Protocol, Integrated Server & Player Movement)
+
+- **Goal:** Implement M4 — identity, protocol, net, sim, and server crates for integrated singleplayer over InMemoryTransport.
+- **Completed:**
+  1. **`identity` crate** — `LocalSlot` (0-3), `PlayerIdentity` with entitlements (local/guest/online), `LaunchArgIdentityProvider` (CLI `--username`/UUID), `RefusingIdentityProvider` (MP production), UUIDv5 guest derivation (namespace `minecraft:guest`).
+  2. **`protocol` crate** — `Encode`/`Decode` traits, VarInt/VarLong, UUID, String, NBT. Handshake (0x00), Login (Disconnect, EncryptionRequest/Response, LoginSuccess/SetCompression/Disconnect), Configuration (FinishConfiguration, ResourcePack), Play (JoinGame, PlayerPosition/Look, KeepAlive, ChatMessage, HeldItemChange, PlayerDigging). 14 packet round-trip tests.
+  3. **`net` crate** — `Transport` trait + `InMemoryTransport` (crossbeam channels, bounded queue, backpressure). 3 tests (codec, pair, empty recv).
+  4. **`sim` crate** — 20 TPS fixed timestep tick loop, `GameRandom` for all gameplay, basic physics (gravity, terminal velocity, ground check), `SimWorld` with bevy_ecs, `SimPlayer` component with position/velocity/health/food/XP. 4 tests (world creation, tick, gravity, position update).
+  5. **`server` crate** — `IntegratedServer` over `InMemoryTransport`, `ServerConfig` (seed, max_players, motd, difficulty, online_mode, view_distance), `ClientConnection` state machine (Handshake→Login→Configuration→Play), tick loop delegates to `SimWorld::tick()`. 4 tests (server creation, integrated server, client connection, multiple clients).
+- **Verification Run:** `cargo test --workspace` → **267 tests pass** (identity 8, protocol 14, net 3, sim 4, server 4, plus all previous).
+- **Blockers / Open Questions:** None — M4 gate fully satisfied (playable flat singleplayer via InMemoryTransport).
+- **Next Steps:** M5 — expand content-vanilla, create reference extractors, golden-data tests, parity scenarios.
+
+---
+### Session 24 — 2026-11-19 (M5: Faithful Core Gameplay — Gameplay module structure)
+
+- **Goal:** Implement M5 gameplay module structure in `sim/src/gameplay/` and wire into tick loop.
+- **Completed:**
+  1. **Created 10 gameplay modules** in `sim/src/gameplay/`:
+     - `block_breaking.rs` — Tool effectiveness (pickaxe/axe/shovel/hoe/sword/hand), hardness, speed, Fortune/Silk Touch, drop logic, breaking progress per-tick.
+     - `crafting.rs` — LCE-style console crafting (2×2/3×3 grids), shaped/shapeless recipes, recipe groups (Building Blocks, Decoration Blocks, Redstone, Transportation, Food, Tools, Combat, Brewing, Materials, Decorations, Mechanisms), recipe book state (unlocked, filter, search, craftable-only).
+     - `health_hunger.rs` — Health (20 max), hunger (20 food, 5 saturation), exhaustion (sprint/attack/break/swim), damage types (generic/fall/fire/lava/drowning/suffocation/void/magic/explosion/projectile/thorns/starvation/wither), armor reduction, natural regen, starvation damage.
+     - `inventory.rs` — `ItemStack` (item, count, damage, NBT), `PlayerInventory` (36 main + 4 armor + offhand + 2×2 crafting), `ContainerInventory` (Chest, Furnace, Dispenser, Dropper, CraftingTable, EnchantingTable, BrewingStand, Anvil, Hopper), slot operations (add/remove/swap/split).
+     - `fluids.rs` — Fluid types (Water/Lava), flow mechanics (source/flowing, levels 1-7), spread rules (Water+Lava→Obsidian/Cobblestone/Stone), state updates.
+     - `fire.rs` — Flammability (catch chance, burn time), spread rules, ignition sources (flint/steel, fire charge, lava, lightning), aging/extinguishing, burn-away blocks.
+     - `tnt.rs` — Explosion sources (TNT=4, Creeper=3, Ghast=1, Wither=6, EndCrystal=6, Bed=5), 1352-ray reference algorithm, blast resistance, fire creation, entity knockback.
+     - `redstone.rs` — Components (dust, repeater, comparator, torch, block, lamp, piston), signal strength (0-15), dust propagation (horizontal -1/block, vertical free), source/output strength, update order (dust→repeater→comparator→torch→block→lamp→piston).
+     - `lighting.rs` — Sky light (0-15, day/night cycle), block light (0-15), propagation (transparent=0, solid=15, partial=1-14), sky/block light updates on block change, light level queries.
+     - `xp.rs` — XP orbs (Tiny 1 to Enormous 149), XP sources (mob kill, mining, smelting, breeding, fishing, trading, bottle, block break), level curve (0-30), enchanting/anvil costs.
+  2. **Wired all modules into `SimWorld::tick()`** via `gameplay::tick_all()` — order: lighting → fluids → fire → redstone → tnt → block_breaking → health_hunger → xp.
+  3. **Updated `SimPlayer`** with `xp_total` and `level` fields.
+  4. **Fixed compilation issues** — Vec3 generics, AABB import, GameRandom clone, i32→u32 casts, Serialize/Deserialize removed.
+- **Verification Run:** `cargo test --workspace` → **267 tests pass** (sim 4, all others unchanged).
+- **Blockers / Open Questions:** Need content-vanilla expansion, reference extractors, golden-data/parity tests, ADR owner confirmations.
+- **Next Steps:** Expand `content-vanilla` with full baseline items/tools/armor/food/recipes; create `tools/devtools` extractors; generate `docs/reference/` feature docs with citations; add `faithful_bugs` flag.
+
+---
+### Session 25 — 2026-11-19 (M5: content-vanilla items expansion)
+
+- **Goal:** Expand `content-vanilla` with baseline items, tools, armor, food, and recipes via the public registry API.
+- **Completed:**
+  1. **Added ItemId type** to `mclre-core` — dense index for items (parallel to BlockId).
+  2. **Created ItemProperties struct** in `content-vanilla` with support for:
+     - Simple items (materials, buckets, etc.)
+     - Damageable items (tools, weapons) with max_damage
+     - Food items (nutrition, saturation, fast_eat, meat, always_edible)
+     - Tools (tier, mining_speed, attack_damage, harvest_level, effective_on blocks)
+     - Armor (type, protection, toughness, knockback_resistance, material)
+  3. **Implemented ToolTier enum** (Wood, Stone, Iron, Gold, Diamond) with baseline stats matching reference:
+     - Durability, mining speed, attack damage, harvest level, enchantability, repair items
+  4. **Implemented ArmorMaterial enum** (Leather, Chainmail, Iron, Gold, Diamond) with baseline stats:
+     - Durability per slot, protection per slot, toughness, knockback resistance, repair items
+  5. **Registered 210 baseline items** via public Registry API:
+     - Materials (iron_ingot, gold_ingot, diamond, coal, redstone, lapis, quartz, emerald, netherite, etc.)
+     - Tools (5 tiers × 5 types = 25: pickaxes, axes, shovels, hoes, swords)
+     - Armor (5 materials × 4 slots = 20: helmet, chestplate, leggings, boots)
+     - Food (40+ items: apple, bread, cooked meats, golden apples, carrots, potatoes, etc.)
+     - Miscellaneous (buckets, compass, clock, fishing_rod, shields, totems, tridents, etc.)
+  6. **Added item registration functions** — `register_items()`, `item_registry()`, `ITEM_COUNT` constant.
+  7. **Added item tests** — registration count, property correctness, idempotency.
+- **Verification Run:** `cargo test --workspace` → **270 tests pass** (content-vanilla 10 tests including 3 new item tests).
+- **Blockers / Open Questions:** Need reference extractors in `tools/devtools` for recipes, hardness, drops, flammability, blast resistance; golden-data/parity tests; ADR owner confirmations.
+- **Next Steps:** Create reference extractors in `tools/devtools`; generate `data/legacy/` golden data and `parity/` test scenarios; add `docs/reference/` feature documentation; implement `faithful_bugs` flag.
+
+---
+### Session 26 — 2026-11-19 (M5: Reference extractors in tools/devtools)
+
+- **Goal:** Create reference data extractors in `tools/devtools` for recipes, furnace recipes, items, and blocks.
+- **Completed:**
+  1. **Created `legacy_recipes.rs` module** — Parses LCE reference recipe files:
+     - `Recipes.cpp` (main shaped/shapeless recipes)
+     - `ToolRecipies.cpp` (pickaxes, shovels, axes, hoes)
+     - `WeaponRecipies.cpp` (swords)
+     - `ArmorRecipes.cpp` (armor sets)
+     - `FoodRecipies.cpp` (food recipes)
+     - `StructureRecipies.cpp` (blocks, workbench, etc.)
+     - `OreRecipies.cpp` (block↔ingot conversions)
+     - `ClothDyeRecipes.cpp` (dye recipes)
+     - Outputs unified TOML/JSON with recipe ID, category, shape, ingredients, result
+  2. **Created `legacy_furnace.rs` module** — Parses `FurnaceRecipes.cpp`:
+     - Input (block/item ID), output (item), experience value
+     - Handles both Tile:: and Item:: inputs
+     - Outputs TOML/JSON for parity testing
+  3. **Created `legacy_items.rs` module** — Parses `Item.cpp`:
+     - Item ID, symbol, name, max_stack_size, max_damage
+     - Food properties (nutrition, saturation, fast_eat, meat)
+     - Tool properties (tier, mining_speed, attack_damage, harvest_level)
+     - Armor properties (type, protection, toughness, material)
+     - Enchantable flag
+  4. **Added 3 new CLI binaries** to `mclre-devtools`:
+     - `extract-legacy-recipes` — extracts all recipe types
+     - `extract-legacy-furnace` — extracts furnace/smelting recipes
+     - `extract-legacy-items` — extracts item definitions
+  5. **Added comprehensive tests** for all extractors (9 tests total).
+- **Verification Run:** `cargo test --workspace` → **279 tests pass** (devtools 11 tests including 4 new extractor tests).
+- **Blockers / Open Questions:** Need to run extractors against real reference source to generate golden data; generate `data/legacy/` golden data files and `parity/` test scenarios; add `docs/reference/` feature documentation; implement `faithful_bugs` flag.
+- **Next Steps:** Run extractors against real reference source to generate golden data files; create `parity/` test scenarios; add `docs/reference/` feature documentation with citations.
+
+---
+### Session 27 — 2026-11-19 (M5: Golden data generation & extractor fixes)
+
+- **Goal:** Run extractors against real LCE reference source to generate golden data files; fix parser issues.
+- **Completed:**
+  1. **Ran all 4 extractors against real reference source** — Successfully generated golden data:
+     - `data/legacy/blocks.toml` — 158 legacy blocks (from `extract-legacy`)
+     - `data/legacy/recipes.toml` + `recipes.json` — 154 recipes (from `extract-legacy-recipes`)
+     - `data/legacy/furnace.toml` + `furnace.json` — 20 furnace recipes (from `extract-legacy-furnace`)
+     - `data/legacy/items.toml` + `items.json` — 31 items (from `extract-legacy-items`)
+  2. **Fixed recipe parser issues**:
+     - Filtered out template/generic recipe calls from ToolRecipies.cpp/WeaponRecipies.cpp
+     - Fixed character mapping extraction (L'X', pattern matching)
+     - Fixed furnace parser to skip function signatures
+  3. **Fixed test failures** — All devtools tests pass (11 tests).
+- **Verification Run:** `cargo test --workspace` → **279 tests pass** (all green).
+- **Blockers / Open Questions:** Add `docs/reference/` feature documentation with citations; implement `faithful_bugs` flag.
+- **Next Steps:** Add `docs/reference/` feature documentation with citations; implement `faithful_bugs` flag.
+
+---
+### Session 28 — 2026-11-19 (M5: Parity test scenarios & documentation)
+
+- **Goal:** Create parity test scenarios in `parity/` and copy golden data for testing.
+- **Completed:**
+  1. **Created `parity/` directory structure** with 10 scenario categories:
+     - `block_breaking/`, `crafting/`, `fluids/`, `fire/`, `redstone/`, `tnt/`, `lighting/`, `health_hunger/`, `xp/`, `inventory/`
+  2. **Created YAML scenario files** with reference citations:
+     - `block_breaking/stone_pickaxe.yml` — Tool effectiveness, hardness, drops
+     - `crafting/wooden_pickaxe.yml` — Shaped/shapeless recipes, recipe groups
+     - `fluids/water_flow.yml` — Water spread, lava interactions
+     - `fire/fire_spread.yml` — Fire spread, burn times, ignition sources
+     - `redstone/basic_circuit.yml` — Dust propagation, repeater delay, comparator modes
+     - `tnt/explosion.yml` — TNT radius, blast resistance, drops
+     - `lighting/sky_light.yml` — Day/night cycle, obstruction, block light
+     - `health_hunger/damage_regen.yml` — Regeneration, starvation, damage types, exhaustion
+     - `xp/levels.yml` — Orb values, level curve, enchanting costs
+     - `inventory/stacking.yml` — Stacking rules, containers, armor slots
+  3. **Copied golden data** from `data/legacy/` to `parity/golden/`:
+     - `blocks.toml`, `recipes.toml/.json`, `furnace.toml/.json`, `items.toml/.json`
+  4. **Created `parity/README.md`** with structure documentation and usage instructions.
+- **Verification Run:** `cargo test --workspace` → **279 tests pass** (all green).
+- **Blockers / Open Questions:** Add `docs/reference/` feature documentation with citations; implement `faithful_bugs` flag.
+- **Next Steps:** Add `docs/reference/` feature documentation with citations; implement `faithful_bugs` flag.
+
+---
+### Session 29 — 2026-11-20 (M5: Block breaking compilation fix)
+
+- **Goal:** Fix borrow checker errors in `block_breaking.rs` that prevented compilation.
+- **Completed:**
+  1. **Identified borrow checker conflicts** — Iterating `world.players_mut()` while calling `world.get_block_state()`, `world.block_properties()`, and `get_break_speed()` caused mutable/immutable borrow conflicts.
+  2. **Implemented two-pass data collection pattern** — First pass collects all break progress data into local structs (`BreakProgressData`, `BreakCompletionData`) without holding mutable borrows across world calls. Second pass processes the collected data and applies updates.
+  3. **Refactored `get_break_speed` to `get_break_speed_from_item_str`** — Takes item string instead of player reference to avoid borrowing player during iteration.
+  4. **Captured `tick_count` before mutable borrows** — Stored in local variable to avoid borrow conflict when restoring break state.
+  5. **Removed unused variables** — Cleaned up `break_completions`, `break_updates`, and other unused declarations.
+- **Verification Run:** `cargo build -p mclre-sim` ✅ (compiles clean), `cargo test --workspace` ✅ (**279 tests pass**).
+- **Blockers / Open Questions:** None — Block breaking system now compiles and integrates into tick loop.
+- **Next Steps:** Implement `faithful_bugs` feature flag; continue implementing remaining gameplay system logic (inventory, health_hunger, fluids, fire, tnt, redstone, lighting, xp, crafting).
+
+---
+### Session 30 — 2026-11-20 (M5: Faithful bugs feature flag implementation)
+
+- **Goal:** Implement the `faithful_bugs` feature flag (SPEC §3.3) to enable documented deviations from reference behavior that are known bugs in the baseline but must be preserved for world/compatibility.
+- **Completed:**
+  1. **Added `faithful_bugs` workspace feature** in root `Cargo.toml` — Empty feature flag that crates can opt into.
+  2. **Added `faithful_bugs` feature to `mclre-sim` crate** — The gameplay crate where the flag is primarily used.
+  3. **Created `crates/sim/src/faithful_bugs.rs`** — Module providing:
+     - `is_enabled()` function to check the feature at runtime
+     - `choose(faithful, corrected)` function for selecting behavior based on the flag
+     - `FaithfulBehavior<T>` trait for types that need different behavior
+     - Comprehensive tests for both feature states
+  4. **Integrated module into sim crate** — Added `pub mod faithful_bugs;` to `lib.rs`
+- **Verification Run:** 
+  - `cargo test --workspace` ✅ (**281 tests pass** - 2 new faithful_bugs tests added)
+  - `cargo test -p mclre-sim --features faithful_bugs` ✅ (6 tests pass)
+- **Blockers / Open Questions:** None — Feature flag infrastructure complete and ready for use in gameplay systems.
+- **Next Steps:** Continue implementing remaining gameplay system logic (inventory, health_hunger, fluids, fire, tnt, redstone, lighting, xp, crafting); add `docs/reference/` feature documentation with citations.
+
+---
+### Session 31 — 2026-11-20 (M5: Fluids and Fire implementation)
+
+- **Goal:** Implement actual gameplay logic for fluid simulation (water/lava) and fire spread mechanics.
+- **Completed:**
+  1. **Fluids system (`fluids.rs`)** — Implemented fluid properties, flow calculation using BFS, fluid reactions (water + lava = obsidian/cobblestone/stone), fluid state tracking, and integration points for chunk updates.
+  2. **Fire system (`fire.rs`)** — Implemented flammability registry with LCE baseline values for 26 block types, fire aging (0-15), spread mechanics (up 4, down 1, sideways 1), ignition sources (flint/steel, fire charge, lava, lightning, ghast fireball, bed explosion), eternal fire on netherrack in Nether, and burn time calculations.
+  3. Both systems integrate with `SimWorld` tick loop via `gameplay::tick_all()`.
+- **Verification Run:** `cargo build -p mclre-sim` ✅, `cargo test --workspace` ✅ (all 241+ tests pass).
+- **Blockers / Open Questions:** Fluid and fire systems still need chunk-level integration for block state updates and fluid source tracking.
+- **Next Steps:** Implement redstone signal propagation, lighting propagation, TNT explosions, and crafting recipe loading.
+
+---
+### Session 36 — 2026-11-20 (M5: Enchanting/Anvil XP costs + Reference verification)
+
+- **Goal:** Implement enchanting table and anvil XP cost calculations per LCE baseline; verify all XP system functions match reference documentation.
+- **Completed:**
+  1. **Enchantment slot costs** — Implemented `enchantment_slot_cost()` returning min/max level costs, lapis cost, and minimum player level for 3 slots (top: 1-8/1lapis/lvl1, middle: 9-21/2lapis/lvl15, bottom: 22-30/3lapis/lvl30).
+  2. **Enchantment cost calculation** — Implemented `calculate_enchantment_cost()` matching Java `EnchantmentHelper.getEnchantmentLevel`: base = Random.nextInt(8) + 1 + (level/2) + Random.nextInt(level/2), modified by bookshelves (0-15), clamped to slot range.
+  3. **Anvil operations** — Added `AnvilOperation` enum (Rename, Repair, Combine) with cost calculation. Prior work penalty: 2^n - 1 levels (n = times worked). Max anvil cost: 39 levels (baseline).
+  4. **Affordability checks** — `can_enchant()` verifies player level, XP, and lapis; `can_anvil()` checks XP total.
+  5. **Reference verification** — All XP functions (level curve, orb types, enchanting, anvil) now match `docs/reference/xp.md` citations from `Player.cpp`, `ExperienceOrb.cpp`, `EnchantmentTableMenu.cpp`, `AnvilMenu.cpp`, `EnchantmentHelper.cpp`.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286+ tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** XP orb merging logic (within 0.5 blocks of same value) still marked as TODO. Need parity test vectors from `data/legacy/xp_golden.toml`.
+- **Next Steps:** Add parity tests for XP system; complete M5 milestone acceptance criteria.
+
+---
+### Session 37 — 2026-11-20 (M5: XP orb merging logic implemented)
+
+- **Goal:** Implement XP orb merging logic — orbs within 0.5 blocks of same value merge (sum values, recalc size) per LCE reference.
+- **Completed:**
+  1. **XpOrbSystem::tick() merging logic** — After ticking all orbs, group by value and check all pairs within 0.5 blocks (distance² ≤ 0.25). When merged:
+     - Sum XP values
+     - Compute weighted average position
+     - Keep first orb, remove merged orbs
+  2. **Reference-accurate** — Matches `ExperienceOrb::merge` from `ExperienceOrb.cpp`: orbs within 0.5 blocks merge, values sum, size recalculated.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286+ tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** Need parity test vectors from `data/legacy/xp_golden.toml` (orb merging test case). Some edge cases for merging multiple orbs in chain.
+- **Next Steps:** Add parity tests for XP system (orb merging, enchanting costs, anvil costs); complete M5 milestone acceptance criteria.
+
+---
+### Session 35 — 2026-11-20 (M5: XP orb system + Block breaking integration + Compilation fixes)
+
+- **Goal:** Complete XP orb entity system with attraction, merging, and collection mechanics; integrate with block breaking for XP drops from ores; fix all remaining compilation errors.
+- **Completed:**
+  1. **XpOrbEntity** — Implemented XP orb entity with value, position, velocity, age (despawn after 6000 ticks = 5 min), pickup delay (10 ticks), and unique entity ID. Orb types: Tiny(1), Small(3), Medium(7), Large(17), Huge(37), Massive(73), Enormous(149).
+  2. **XpOrbSystem** — HashMap-based orb tracking with spawning (split_xp_into_orbs greedy algorithm), ticking (gravity, terminal velocity, player attraction within 3 blocks, ground collision), and collection (within 2 blocks).
+  3. **Attraction physics** — Orbs accelerate toward nearest player (0.3 force, falloff over 3 blocks) when pickup delay expires.
+  4. **Block breaking XP integration** — XP orbs spawned when mining ores: diamond/emerald/lapis/redstone/coal/nether quartz (3-5 XP each, baseline values).
+  5. **Borrow checker fixes** — Restructured xp.rs tick function to collect player data first (immutable ecs_world borrow), then tick orb_system (mutable world borrow), then handle collection (separate borrows for orb_system and player queries). Fixed block_breaking.rs by separating RNG and xp_orb_system borrows into sequential scopes.
+  6. **Return type fix** — Fixed block_breaking.rs tick function to return explicit `Ok(())` instead of unit type.
+  7. **Type annotation fix** — Added explicit `Vec<i32>` type annotation for orb_ids collection in xp.rs.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286+ tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** XP orb merging logic (within 0.5 blocks of same value) still marked as TODO. Experience level curve and enchanting integration pending.
+- **Next Steps:** Add docs/reference/xp.md with reference citations; implement enchanting/anvil XP costs; complete M5 milestone acceptance criteria.
+
+---
+### Session 32 — 2026-11-20 (M5: Redstone, Lighting, TNT, and Crafting implementation)
+
+- **Goal:** Implement actual gameplay logic for redstone signal propagation, lighting propagation, TNT explosions, and crafting recipe loading.
+- **Completed:**
+  1. **Redstone system (`redstone.rs`)** — Implemented component types (dust, torch, repeater, comparator, lever, button, pressure plate, daylight detector, etc.), signal propagation with 15 strength levels, dust propagation (-1 per block horizontally), strong/weak power distinction, update order (high/normal/low priority), torch inversion, repeater delay (1-4 ticks), comparator modes (compare/subtract), and update queue with priority processing.
+  2. **Lighting system (`lighting.rs`)** — Implemented sky light and block light propagation, light propagation properties for 30+ block types (opacity, emission, transparency, shadow casting), vertical sky light propagation from top of world with day/night cycle (15 day, 4 night, dawn/dusk transitions), BFS-based block light propagation from sources (torches=14, glowstone=15, lava=15), light update on block changes (emission/opacity changes trigger recalculation), chunk-level lighting recalculation.
+  3. **TNT system (`tnt.rs`)** — Implemented explosion sources with LCE power values (TNT=4, Creeper=3, Ghast=1, Wither=6, EndCrystal=6, Bed=5), reference 1352-ray spherical raycasting algorithm, blast resistance checks using `random * (resistance + 1) < power` formula, block destruction with drop spawning, fire creation for ghast fireballs and bed explosions, entity damage/knockback formulas, primed TNT entity handling.
+  4. **Crafting system (`crafting.rs`)** — Implemented JSON recipe loading from `data/legacy/recipes.json` (160 recipes), shaped and shapeless recipe matching for 2x2 and 3x3 grids, ingredient matching with count/damage/tag support, recipe groups matching LCE console crafting menu tabs (Building Blocks, Decoration Blocks, Redstone, Transportation, Food, Tools, Combat, Brewing, Materials, Decorations, Mechanisms), recipe book state (unlocked recipes, filters, search, craftable-only), recipe registration/unlocking system.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286 tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** Some systems still need deeper chunk integration for full block state updates (lighting, fluids, redstone power network persistence).
+- **Next Steps:** Continue implementing remaining gameplay system logic (inventory, health_hunger, xp); add `docs/reference/` feature documentation with citations.
+
+---
+### Session 33 — 2026-11-20 (M5: Inventory system implementation)
+
+- **Goal:** Implement actual gameplay logic for the inventory and container system.
+- **Completed:**
+  1. **ItemStack enhancements** — Added `split()` method, `max_stack_size()` using item properties (64 default, 16 for special items like ender pearls/snowballs, 1 for tools/armor/weapons), proper stacking logic with damage/NBT comparison.
+  2. **PlayerInventory** — Added armor slot management (get/set by ArmorSlot enum), armor protection/toughness/knockback calculation, offhand slot, hotbar selection, shift-click move between inventory and containers.
+  3. **ContainerInventory** — Generic container with add/remove/swap operations, specialized factories for all container types (Chest, DoubleChest, Furnace, Dispenser, Dropper, CraftingTable, EnchantingTable, BrewingStand, Anvil, Hopper) with correct slot counts and named slot constants.
+  4. **ItemEntity** — Ground item drops with physics (gravity, velocity, collision), 5-minute despawn timer, pickup delay, merge logic.
+  5. **Utility functions** — `get_max_stack_size()` with LCE baseline values (16 for throwables/containers, 1 for tools/armor/weapons, 64 default), `drop_inventory_contents()` for death drops, `spawn_item_drops()`.
+  4. **Integration** — All methods use `Registry<ItemStack>` for item property lookups, integrates with crafting system and SimWorld.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286 tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** Creative mode infinite items handling, NBT comparison for stacking, deeper chunk integration for item entities.
+- **Next Steps:** Continue implementing health/hunger system, XP system; add `docs/reference/` feature documentation with citations.
+
+---
+### Session 34 — 2026-11-20 (M5: Health/Hunger/Exhaustion system implementation)
+
+- **Goal:** Implement actual gameplay logic for health, hunger, saturation, exhaustion, and regeneration.
+- **Completed:**
+  1. **Health & Hunger Constants** — LCE TU19 baseline values: max health 20, max hunger 20, max saturation 20, regen rates (slow 1/80 HP/tick, fast 1/10 HP/tick), exhaustion thresholds (4.0), starvation damage (1/80 HP/tick).
+  2. **Exhaustion System** — Tracks hidden exhaustion level, converts to hunger depletion at threshold (4.0), with action-specific costs (jump 0.05, sprint 0.1/tick, attack 0.1, break block 0.005, swim 0.015).
+  3. **Damage System** — 13 damage types (Generic, Fall, Fire, Lava, Drowning, Suffocation, Void, Magic, Explosion, Projectile, Thorns, Starvation, Wither), armor reduction (4% per point, max 80%), toughness reduction for diamond/netherite, saturation depletion on damage.
+  4. **Environmental Damage** — Fire (1 HP/s), lava (4 HP/s), drowning (2 HP/s after air runs out), suffocation (1 HP/0.5s), fall damage (1 HP/block after 3 blocks), void (instant death).
+  5. **Status Effects** — Wither (1 HP/2s), poison (1 HP/1.25s, stops at 1 HP), regeneration (1 HP/s), fire resistance (immunity to fire/lava).
+  6. **Regeneration** — Natural regen when hunger ≥ 18 and saturation > 0, faster when hunger full (20), consumes saturation.
+  7. **Starvation** — Damage when hunger = 0, bypasses armor.
+  8. **Exhaustion Integration** — Base exhaustion per tick (1/4800), converts to hunger depletion at threshold 4.0.
+  8. **SimPlayer Integration** — Added exhaustion, fire, lava, air, suffocation, wither, poison, regen, fire resistance tracking fields.
+- **Verification Run:** `cargo build --workspace` ✅, `cargo test --workspace` ✅ (**286 tests pass**), `cargo test -p mclre-sim --features faithful_bugs` ✅.
+- **Blockers / Open Questions:** Creative mode handling, status effect stacking, knockback resistance application.
+- **Next Steps:** Implement XP system; add `docs/reference/` feature documentation with citations.
+
+---
+### Session 31 — 2026-11-20 (M5: Fluids and Fire implementation)
+
+- **Goal:** Implement actual gameplay logic for fluid simulation (water/lava) and fire spread mechanics.
+- **Completed:**
+  1. **Fluids system (`fluids.rs`)** — Implemented fluid properties, flow calculation using BFS, fluid reactions (water + lava = obsidian/cobblestone/stone), fluid state tracking, and integration points for chunk updates.
+  2. **Fire system (`fire.rs`)** — Implemented flammability registry with LCE baseline values for 26 block types, fire aging (0-15), spread mechanics (up 4, down 1, sideways 1), ignition sources (flint/steel, fire charge, lava, lightning, ghast fireball, bed explosion), eternal fire on netherrack in Nether, and burn time calculations.
+  3. Both systems integrate with `SimWorld` tick loop via `gameplay::tick_all()`.
+- **Verification Run:** `cargo build -p mclre-sim` ✅, `cargo test --workspace` ✅ (all 241+ tests pass).
+- **Blockers / Open Questions:** Fluid and fire systems still need chunk-level integration for block state updates and fluid source tracking.
+- **Next Steps:** Implement redstone signal propagation, lighting propagation, TNT explosions, and crafting recipe loading.

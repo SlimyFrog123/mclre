@@ -1,0 +1,182 @@
+[
+  {
+    "input": "minecraft:iron_ore",
+    "output": "minecraft:iron_ingot",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.7,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 20
+  },
+  {
+    "input": "minecraft:gold_ore",
+    "output": "minecraft:gold_ingot",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 1.0,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 21
+  },
+  {
+    "input": "minecraft:diamond_ore",
+    "output": "minecraft:diamond",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 1.0,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 22
+  },
+  {
+    "input": "minecraft:sand",
+    "output": "minecraft:glass",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.1,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 23
+  },
+  {
+    "input": "minecraft:pork_chop_raw",
+    "output": "minecraft:pork_chop_cooked",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 24
+  },
+  {
+    "input": "minecraft:beef_raw",
+    "output": "minecraft:beef_cooked",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 25
+  },
+  {
+    "input": "minecraft:chicken_raw",
+    "output": "minecraft:chicken_cooked",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 26
+  },
+  {
+    "input": "minecraft:fish_raw",
+    "output": "minecraft:fish_cooked",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 27
+  },
+  {
+    "input": "minecraft:cobblestone",
+    "output": "minecraft:stone",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.1,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 28
+  },
+  {
+    "input": "minecraft:clay",
+    "output": "minecraft:brick",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.3,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 29
+  },
+  {
+    "input": "minecraft:clay",
+    "output": "minecraft:clay_hardened",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 30
+  },
+  {
+    "input": "minecraft:cactus",
+    "output": "minecraft:dye_powder",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.2,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 31
+  },
+  {
+    "input": "minecraft:tree_trunk",
+    "output": "minecraft:coal",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.15,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 32
+  },
+  {
+    "input": "minecraft:emerald_ore",
+    "output": "minecraft:emerald",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 1.0,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 33
+  },
+  {
+    "input": "minecraft:potato",
+    "output": "minecraft:potato_baked",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.35,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 34
+  },
+  {
+    "input": "minecraft:nether_rack",
+    "output": "minecraft:netherbrick",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.1,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 35
+  },
+  {
+    "input": "minecraft:coal_ore",
+    "output": "minecraft:coal",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.1,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 38
+  },
+  {
+    "input": "minecraft:red_stone_ore",
+    "output": "minecraft:red_stone",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.7,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 39
+  },
+  {
+    "input": "minecraft:lapis_ore",
+    "output": "minecraft:dye_powder",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.2,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 40
+  },
+  {
+    "input": "minecraft:nether_quartz",
+    "output": "minecraft:nether_quartz",
+    "output_count": 1,
+    "output_damage": 0,
+    "experience": 0.2,
+    "source_file": "FurnaceRecipes.cpp",
+    "source_line": 41
+  }
+]

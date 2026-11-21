@@ -209,15 +209,131 @@ impl PropertyDefinition {
 // Block properties
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Gameplay enums (for block properties)
+// ---------------------------------------------------------------------------
+
+/// Tool type required to harvest a block.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum HarvestTool {
+    /// No specific tool required (hand works).
+    #[default]
+    Hand,
+    /// Pickaxe required.
+    Pickaxe,
+    /// Axe required.
+    Axe,
+    /// Shovel required.
+    Shovel,
+    /// Hoe required.
+    Hoe,
+    /// Sword required (rare, e.g., cobwebs).
+    Sword,
+    /// Shears required (leaves, wool, vines).
+    Shears,
+}
+
+/// Tool tier for harvest requirements.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum HarvestTier {
+    /// Harvestable by hand / wood tools.
+    #[default]
+    Wood = 0,
+    /// Stone tools or better.
+    Stone = 1,
+    /// Iron tools or better.
+    Iron = 2,
+    /// Diamond tools or better.
+    Diamond = 3,
+    /// Netherite tools (not in baseline, but reserved).
+    Netherite = 4,
+}
+
+impl HarvestTier {
+    /// Get the mining speed for this tool tier.
+    pub fn mining_speed(&self) -> f32 {
+        match self {
+            HarvestTier::Wood => 2.0,
+            HarvestTier::Stone => 4.0,
+            HarvestTier::Iron => 6.0,
+            HarvestTier::Diamond => 8.0,
+            HarvestTier::Netherite => 9.0,
+        }
+    }
+}
+
+/// Sound group for block breaking/placing footsteps.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum SoundGroup {
+    /// Stone, stone bricks, ores, etc.
+    #[default]
+    Stone,
+    /// Wood, planks, logs, etc.
+    Wood,
+    /// Grass, dirt, sand, gravel, etc.
+    Gravel,
+    /// Glass, glass panes, etc.
+    Glass,
+    /// Wool, carpet, etc.
+    Wool,
+    /// Metal (iron, gold, etc.).
+    Metal,
+    /// Plant (crops, flowers, leaves, etc.).
+    Plant,
+    /// Snow, snow layers.
+    Snow,
+    /// Ladder, vine, etc.
+    Ladder,
+    /// Anvil.
+    Anvil,
+}
+
 /// The property set of one block, declared at registration.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BlockProperties {
     /// Declared properties, in declaration order (canonical enumeration order).
     pub properties: Vec<PropertyDefinition>,
+    /// Block hardness scaled by 1000 (0 = instant break, higher = slower).
+    /// Negative = unbreakable in Survival (e.g., bedrock = -1000).
+    /// Stored as integer to maintain Eq derive.
+    pub hardness: i32,
+    /// Minimum tool tier required to harvest (0=hand/wood, 1=stone, 2=iron, 3=diamond).
+    pub harvest_tier: HarvestTier,
+    /// Tool type required to harvest effectively.
+    pub harvest_tool: HarvestTool,
+    /// Light emitted by this block (0-15).
+    pub light_emission: u8,
+    /// Whether this block is transparent to light (sky/block light passes through).
+    pub transparent: bool,
+    /// Whether this block can be replaced by fluids (e.g., tall grass, flowers).
+    pub replaceable: bool,
+    /// Sound group for breaking/placing.
+    pub sound_group: SoundGroup,
+    /// Whether this block drops itself when harvested with Silk Touch.
+    pub silk_touch_drop: bool,
+    /// Base block-breaking particles color (if different from block texture).
+    pub particle_color: Option<u32>,
+}
+
+impl Default for BlockProperties {
+    fn default() -> Self {
+        Self {
+            properties: Vec::new(),
+            hardness: 1500,        // Stone-like default (1.5 * 1000)
+            harvest_tier: HarvestTier::Wood,
+            harvest_tool: HarvestTool::Pickaxe,
+            light_emission: 0,
+            transparent: false,
+            replaceable: false,
+            sound_group: SoundGroup::Stone,
+            silk_touch_drop: true,
+            particle_color: None,
+        }
+    }
 }
 
 impl BlockProperties {
-    /// Creates a property-less block (e.g. stone-like).
+    /// Creates a property-less block with default stone-like properties.
     pub fn none() -> Self {
         Self::default()
     }
@@ -246,7 +362,39 @@ impl BlockProperties {
                 });
             }
         }
-        Ok(Self { properties })
+        Ok(Self { properties, ..Default::default() })
+    }
+
+    /// Creates a block with custom gameplay properties.
+    /// `hardness` is in normal float units (will be scaled by 1000 internally).
+    pub fn with_gameplay(
+        properties: Vec<PropertyDefinition>,
+        hardness: f32,
+        harvest_tier: HarvestTier,
+        harvest_tool: HarvestTool,
+        light_emission: u8,
+        transparent: bool,
+        replaceable: bool,
+        sound_group: SoundGroup,
+        silk_touch_drop: bool,
+        particle_color: Option<u32>,
+    ) -> Result<Self, StateError> {
+        let mut base = Self::new(properties)?;
+        base.hardness = (hardness * 1000.0).round() as i32;
+        base.harvest_tier = harvest_tier;
+        base.harvest_tool = harvest_tool;
+        base.light_emission = light_emission;
+        base.transparent = transparent;
+        base.replaceable = replaceable;
+        base.sound_group = sound_group;
+        base.silk_touch_drop = silk_touch_drop;
+        base.particle_color = particle_color;
+        Ok(base)
+    }
+
+    /// Get hardness as a float (for gameplay calculations).
+    pub fn hardness_f32(&self) -> f32 {
+        self.hardness as f32 / 1000.0
     }
 
     /// Total number of states this block has (product of value counts).
@@ -270,6 +418,15 @@ pub struct BlockStateId(pub u32);
 /// A block's registry index (dense; SPEC.md 5.3 `BlockId`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BlockId(pub u32);
+
+/// An item's registry index (dense; parallel to BlockId).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ItemId(pub u32);
+
+impl ItemId {
+    /// Invalid/uninitialized item ID.
+    pub const INVALID: Self = Self(u32::MAX);
+}
 
 /// The frozen block-state table: block registry + dense state enumeration.
 pub struct BlockStateModel {

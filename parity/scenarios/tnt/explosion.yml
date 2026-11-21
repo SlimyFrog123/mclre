@@ -1,0 +1,137 @@
+# Parity test: TNT and explosion mechanics
+# [REF: EntityTNTPrimed.cpp] - TNT entity behavior
+# [REF: Explosion.cpp] - Explosion algorithm (1352 rays)
+# [REF: Tile.cpp] - Block blast resistance
+
+scenario: "tnt_explosion_radius"
+description: "TNT explosion destroys blocks within radius 4, respects blast resistance"
+profile: "lce:141217"
+category: "tnt"
+
+# TNT power = 4, creates 1352 rays from center
+# Blast resistance check: random * (resistance + 1) < power
+# Blocks with resistance >= 4 * 5 = 20 survive (bedrock, obsidian, etc.)
+
+setup:
+  world:
+    # TNT at center
+    block_at_0_65_0: "minecraft:tnt"
+    # Various blocks around at different distances
+    # Distance 1: should be destroyed (unless high resistance)
+    block_at_1_65_0: "minecraft:stone"
+    block_at_0_66_0: "minecraft:cobblestone"
+    block_at_0_64_0: "minecraft:dirt"
+    # Distance 2
+    block_at_2_65_0: "minecraft:stone"
+    block_at_3_65_0: "minecraft:stone"
+    # Distance 4 (edge of radius)
+    block_at_4_65_0: "minecraft:stone"
+    # High resistance blocks (should survive)
+    block_at_1_66_0: "minecraft:obsidian"      # Resistance 6000
+    block_at_1_64_0: "minecraft:bedrock"       # Resistance 18000000
+    block_at_1_67_0: "minecraft:enchanting_table"  # Resistance 6000
+
+action:
+  type: "prime_tnt"
+  position: [0, 65, 0]
+  fuse_ticks: 80  # 4 seconds
+
+action2:
+  type: "tick"
+  ticks: 100
+
+expected:
+  # Blocks within radius 4 with low resistance destroyed
+  block_at_1_65_0: "minecraft:air"      # Stone destroyed
+  block_at_0_66_0: "minecraft:air"      # Cobblestone destroyed
+  block_at_0_64_0: "minecraft:air"      # Dirt destroyed
+  block_at_2_65_0: "minecraft:air"      # Stone at distance 2
+  block_at_3_65_0: "minecraft:air"      # Stone at distance 3
+  block_at_4_65_0: "minecraft:air"      # Stone at distance 4 (edge)
+
+  # High resistance blocks survive
+  block_at_1_66_0: "minecraft:obsidian"         # Survives
+  block_at_1_64_0: "minecraft:bedrock"          # Survives
+  block_at_1_67_0: "minecraft:enchanting_table" # Survives
+
+# Reference: Explosion.cpp - 1352-ray algorithm
+# Blast resistance check: random * (resistance + 1) < power
+# TNT power = 4, so resistance >= 15 survives (with max random)
+
+---
+
+scenario: "creeper_explosion"
+description: "Creeper explosion power 3, smaller radius"
+profile: "lce:141217"
+category: "tnt"
+
+setup:
+  world:
+    block_at_0_65_0: "minecraft:creeper"
+    block_at_1_65_0: "minecraft:stone"
+    block_at_2_65_0: "minecraft:stone"
+    block_at_3_65_0: "minecraft:stone"
+
+action:
+  type: "explode"
+  source: "creeper"
+  position: [0, 65, 0]
+
+action2:
+  type: "tick"
+  ticks: 50
+
+expected:
+  # Creeper power = 3, radius ~3
+  block_at_1_65_0: "minecraft:air"
+  block_at_2_65_0: "minecraft:air"
+  # Distance 3 may survive (edge)
+  # block_at_3_65_0 may survive
+
+# Reference: ExplosionSource::Creeper power = 3
+
+---
+
+scenario: "tnt_drops_items"
+description: "TNT explosion drops items from destroyed blocks"
+profile: "lce:141217"
+category: "tnt"
+
+setup:
+  world:
+    block_at_0_65_0: "minecraft:tnt"
+    block_at_1_65_0: "minecraft:diamond_ore"
+    block_at_2_65_0: "minecraft:chest"
+    block_at_2_65_1: "minecraft:chest"  # Double chest
+    # Fill chest with items
+    chest_contents:
+      - slot: 0
+        item: "minecraft:diamond"
+        count: 5
+      - slot: 1
+        item: "minecraft:iron_ingot"
+        count: 10
+
+action:
+  type: "prime_tnt"
+  position: [0, 65, 0]
+
+action2:
+  type: "tick"
+  ticks: 100
+
+expected:
+  # Items dropped from destroyed blocks
+  # Diamond ore drops diamond (unless silk touch)
+  entity_dropped_diamond: true
+  # Chest contents dropped
+  entity_dropped_chest_items:
+    - item: "minecraft:chest"
+      count: 2
+    - item: "minecraft:diamond"
+      count: 5
+    - item: "minecraft:iron_ingot"
+      count: 10
+
+# Reference: Explosion.cpp - drop items from destroyed blocks
+# Blocks drop their normal drops unless explosion suppresses them

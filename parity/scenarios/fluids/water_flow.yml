@@ -1,0 +1,91 @@
+# Parity test: Water flow mechanics
+# [REF: LiquidTile.cpp] - Liquid tile behavior
+# [REF: LiquidTileDynamic.cpp] - Dynamic liquid (water/lava)
+
+scenario: "water_source_spread"
+description: "Water source spreads up to 7 blocks horizontally on flat surface"
+profile: "lce:141217"
+category: "fluids"
+
+# Reference values:
+# Water level 0 = source, levels 1-7 = flowing
+# Spread distance = 7 blocks from source
+# Level decreases by 1 per block
+
+setup:
+  world:
+    # Flat surface at y=64
+    block_at_0_64_0: "minecraft:water"  # Source block (level 0)
+    block_at_1_64_0: "minecraft:air"
+    block_at_2_64_0: "minecraft:air"
+    block_at_3_64_0: "minecraft:air"
+    block_at_4_64_0: "minecraft:air"
+    block_at_5_64_0: "minecraft:air"
+    block_at_6_64_0: "minecraft:air"
+    block_at_7_64_0: "minecraft:air"
+    block_at_8_64_0: "minecraft:air"
+
+action:
+  type: "tick"
+  ticks: 20  # Allow fluid to spread
+
+expected:
+  # Water should spread 7 blocks from source
+  block_at_0_64_0: "minecraft:water"       # level 0 (source)
+  block_at_1_64_0: "minecraft:water"       # level 1
+  block_at_2_64_0: "minecraft:water"       # level 2
+  block_at_3_64_0: "minecraft:water"       # level 3
+  block_at_4_64_0: "minecraft:water"       # level 4
+  block_at_5_64_0: "minecraft:water"       # level 5
+  block_at_6_64_0: "minecraft:water"       # level 6
+  block_at_7_64_0: "minecraft:water"       # level 7 (flowing)
+  block_at_8_64_0: "minecraft:air"         # Beyond spread limit
+
+# Reference: LiquidTileDynamic.cpp - flow logic
+# Level 0 = source, 1-7 = flowing, spread distance = 7
+
+---
+
+scenario: "water_lava_interaction"
+description: "Water + Lava interactions produce correct blocks"
+profile: "lce:141217"
+category: "fluids"
+
+# Reference: LiquidTile.cpp - liquid interaction logic
+# Water + Lava source -> Obsidian
+# Water + Lava flowing -> Cobblestone
+# Water source + Lava flowing -> Stone
+
+setup:
+  world:
+    # Test 1: Water source + Lava source -> Obsidian
+    block_at_0_64_0: "minecraft:water"       # Source
+    block_at_1_64_0: "minecraft:lava"        # Source
+
+    # Test 2: Water flowing + Lava source -> Cobblestone
+    block_at_3_64_0: "minecraft:water"       # Level 1 (flowing)
+    block_at_4_64_0: "minecraft:lava"        # Source
+
+    # Test 3: Water source + Lava flowing -> Stone
+    block_at_6_64_0: "minecraft:water"       # Source
+    block_at_7_64_0: "minecraft:lava"        # Level 1 (flowing)
+
+action:
+  type: "tick"
+  ticks: 10
+
+expected:
+  # Test 1: Water source + Lava source -> Obsidian
+  block_at_0_64_0: "minecraft:obsidian"
+  block_at_1_64_0: "minecraft:obsidian"
+
+  # Test 2: Water flowing + Lava source -> Cobblestone
+  block_at_3_64_0: "minecraft:cobblestone"
+  block_at_4_64_0: "minecraft:cobblestone"
+
+  # Test 3: Water source + Lava flowing -> Stone
+  block_at_6_64_0: "minecraft:stone"
+  block_at_7_64_0: "minecraft:stone"
+
+# Reference: LiquidTile.cpp liquid interaction logic
+# [REF: LiquidTile.cpp] - liquid interaction rules

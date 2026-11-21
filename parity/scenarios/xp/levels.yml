@@ -1,0 +1,167 @@
+# Parity test: XP and level system
+# [REF: Player.cpp] - XP/level calculations
+# [REF: EnchantmentHelper.cpp] - Enchanting costs
+
+scenario: "xp_orb_collection"
+description: "Collecting XP orbs adds to total XP and levels up correctly"
+profile: "lce:141217"
+category: "xp"
+
+# XP orb values (from reference):
+# Tiny (green) = 1
+# Small (yellow) = 3
+# Medium (orange) = 7
+# Large (red) = 17
+# Huge (blue) = 37
+# Massive (purple) = 73
+# Enormous (white) = 149
+
+# Level curve (approximate):
+# Level 0: 0 XP
+# Level 1: 7 XP
+# Level 2: 17 XP
+# Level 3: 31 XP
+# Level 10: ~300 XP
+# Level 30: ~3723 XP
+
+setup:
+  player:
+    xp_total: 0
+    level: 0
+
+action:
+  type: "collect_xp"
+  orb: "small"  # 3 XP
+
+expected:
+  xp_total: 3
+  level: 0  # Still level 0
+
+---
+
+action2:
+  type: "collect_xp"
+  orb: "medium"  # 7 XP
+
+expected2:
+  xp_total: 10
+  level: 1  # Level 1 at 7 XP
+
+---
+
+action3:
+  type: "collect_xp"
+  orb: "huge"  # 37 XP
+
+expected3:
+  xp_total: 47
+  level: 3  # Level 3 at 31 XP
+
+---
+
+scenario: "level_curve"
+description: "XP required for each level matches reference curve"
+profile: "lce:141217"
+category: "xp"
+
+# Level formula from reference:
+# Level 0-15: cost = level * 2 + 7
+# Level 16-30: cost = level * 5 - 38
+# Level 31+: cost = level * 9 - 158
+# Total XP for level N = sum of costs
+
+setup:
+  player:
+    xp_total: 0
+    level: 0
+
+action:
+  type: "add_xp"
+  amount: 1000
+
+expected:
+  # Calculate expected level for 1000 XP
+  # Levels 0-15: sum = 7+9+11+13+15+17+19+21+23+25+27+29+31+33+35+37 = 312
+  # Levels 16-30: sum = 42+47+52+57+62+67+72+77+82+87+92+97+102+107+112 = 1140
+  # Total for 30 = 1452
+  # So 1000 XP = level ~23-24
+  level: 23  # Approximate
+  xp_total: 1000
+
+---
+
+scenario: "enchanting_cost"
+description: "Enchanting consumes correct XP levels"
+profile: "lce:141217"
+category: "xp"
+
+# Enchanting costs (levels):
+# Level 1: 1 lapis + 1 level
+# Level 2: 2 lapis + 2 levels
+# Level 3: 3 lapis + 3 levels
+
+setup:
+  player:
+    xp_total: 100
+    level: 10
+    inventory:
+      - slot: 0
+        item: "minecraft:diamond_sword"
+      - slot: 1
+        item: "minecraft:lapis_lazuli"
+        count: 3
+
+action:
+  type: "enchant"
+  item_slot: 0
+  enchantment_level: 2  # Costs 2 levels + 2 lapis
+
+expected:
+  level: 8  # 10 - 2
+  lapis_remaining: 1  # 3 - 2
+  sword_enchanted: true
+
+# Reference: EnchantmentHelper.cpp enchanting costs
+
+---
+
+scenario: "xp_orb_sizes"
+description: "Different XP orb types give correct XP values"
+profile: "lce:141217"
+category: "xp"
+
+# [REF: EntityXPOrb.cpp] - XP orb values
+# Tiny = 1 (green)
+# Small = 3 (yellow)
+# Medium = 7 (orange)
+# Large = 17 (red)
+# Huge = 37 (blue)
+# Massive = 73 (purple)
+# Enormous = 149 (white)
+
+setup:
+  player:
+    xp_total: 0
+    level: 0
+
+test_cases:
+  - orb: "tiny"
+    expected_xp: 1
+  - orb: "small"
+    expected_xp: 4  # 1 + 3
+  - orb: "medium"
+    expected_xp: 11  # 4 + 7
+  - orb: "large"
+    expected_xp: 28  # 11 + 17
+  - orb: "huge"
+    expected_xp: 65  # 28 + 37
+  - orb: "massive"
+    expected_xp: 138  # 65 + 73
+  - orb: "enormous"
+    expected_xp: 287  # 138 + 149
+
+expected:
+  xp_total: 287
+  level: 12  # Approximate for 287 XP
+
+# Reference: EntityXPOrb.cpp - getXpValue()

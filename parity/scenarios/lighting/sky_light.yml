@@ -1,0 +1,148 @@
+# Parity test: Sky light propagation
+# [REF: LightEngine.cpp] - Sky light propagation
+# [REF: Chunk.cpp] - Chunk light updates
+
+scenario: "sky_light_day_night_cycle"
+description: "Sky light level follows day/night cycle"
+profile: "lce:141217"
+category: "lighting"
+
+# Sky light at noon = 15, at midnight = 4 (with moonlight)
+# Light level decreases smoothly over day/night cycle
+# Total cycle = 24000 ticks (20 minutes)
+
+setup:
+  world:
+    # Open sky at y=64, bedrock at y=0
+    column_at_0_0:
+      y_0_to_63: "minecraft:bedrock"
+      y_64: "minecraft:air"
+      y_65_to_255: "minecraft:air"
+
+action:
+  type: "set_time"
+  time: 6000  # Noon
+
+action2:
+  type: "tick"
+  ticks: 1  # Update light
+
+expected:
+  # Sky light at surface should be 15 at noon
+  sky_light_at_0_64_0: 15
+  sky_light_at_0_100_0: 15
+  sky_light_at_0_150_0: 15
+
+---
+
+action3:
+  type: "set_time"
+  time: 18000  # Midnight
+
+action4:
+  type: "tick"
+  ticks: 1
+
+expected2:
+  # Sky light at surface should be 4 at midnight (moonlight)
+  sky_light_at_0_64_0: 4
+  sky_light_at_0_100_0: 4
+
+# Reference: LightEngine.cpp - sky light calculation
+# [REF: LightEngine.cpp] - calculateSkyLight()
+
+---
+
+scenario: "sky_light_obstruction"
+description: "Solid blocks block sky light, transparent blocks don't"
+profile: "lce:141217"
+category: "lighting"
+
+setup:
+  world:
+    # Column at x=0, z=0
+    block_at_0_64_0: "minecraft:air"
+    block_at_0_65_0: "minecraft:glass"      # Transparent
+    block_at_0_66_0: "minecraft:stone"      # Opaque
+    block_at_0_67_0: "minecraft:air"
+    block_at_0_68_0: "minecraft:water"      # Transparent (but reduces light)
+    block_at_0_69_0: "minecraft:air"
+
+action:
+  type: "set_time"
+  time: 6000  # Noon
+
+action2:
+  type: "tick"
+  ticks: 1
+
+expected:
+  # Glass transparent - sky light passes through
+  sky_light_at_0_65_0: 15
+  # Stone opaque - blocks sky light
+  sky_light_at_0_66_0: 0
+  # Below stone - no sky light
+  sky_light_at_0_67_0: 0
+  # Water transparent but reduces light by 1 per level
+  sky_light_at_0_68_0: 14  # Water level reduces by 1
+  # Above water
+  sky_light_at_0_69_0: 15
+
+# Reference: LightEngine.cpp - light propagation through transparent blocks
+# Water reduces sky light by 1 per block level
+
+---
+
+scenario: "block_light_propagation"
+description: "Block light sources emit and propagate correctly"
+profile: "lce:141217"
+category: "lighting"
+
+# Block light sources: glowstone=15, torch=14, redstone lamp=15, etc.
+# Decreases by 1 per block air, blocked by opaque blocks
+
+setup:
+  world:
+    # Glowstone at center
+    block_at_0_64_0: "minecraft:glowstone"
+    # Air around
+    block_at_1_64_0: "minecraft:air"
+    block_at_2_64_0: "minecraft:air"
+    block_at_3_64_0: "minecraft:air"
+    block_at_4_64_0: "minecraft:air"
+    block_at_5_64_0: "minecraft:air"
+    block_at_6_64_0: "minecraft:air"
+    block_at_7_64_0: "minecraft:air"
+    block_at_8_64_0: "minecraft:air"
+    block_at_9_64_0: "minecraft:air"
+    block_at_10_64_0: "minecraft:air"
+    block_at_11_64_0: "minecraft:air"
+    block_at_12_64_0: "minecraft:air"
+    block_at_13_64_0: "minecraft:air"
+    block_at_14_64_0: "minecraft:air"
+    block_at_15_64_0: "minecraft:air"
+    block_at_16_64_0: "minecraft:air"
+    # Wall at x=5
+    block_at_5_65_0: "minecraft:stone"
+    block_at_5_64_0: "minecraft:stone"
+    block_at_5_63_0: "minecraft:stone"
+
+action:
+  type: "tick"
+  ticks: 1
+
+expected:
+  # Glowstone emits block light 15
+  block_light_at_0_64_0: 15
+  # Decreases by 1 per block
+  block_light_at_1_64_0: 14
+  block_light_at_2_64_0: 13
+  block_light_at_3_64_0: 12
+  block_light_at_4_64_0: 11
+  block_light_at_5_64_0: 10
+  # Wall at x=5 blocks light
+  block_light_at_6_64_0: 0
+  block_light_at_7_64_0: 0
+
+# Reference: LightEngine.cpp - block light propagation
+# Decreases by 1 per air block, 0 through opaque

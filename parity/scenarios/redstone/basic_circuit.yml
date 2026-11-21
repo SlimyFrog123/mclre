@@ -1,0 +1,142 @@
+# Parity test: Basic redstone circuits
+# [REF: RedstoneDust.cpp] - Redstone dust propagation
+# [REF: RedstoneWire.cpp] - Dust signal strength
+# [REF: RedstoneRepeater.cpp] - Repeater delay
+# [REF: RedstoneComparator.cpp] - Comparator modes
+
+scenario: "redstone_dust_propagation"
+description: "Redstone dust propagates signal strength 15 down to 0 over 15 blocks"
+profile: "lce:141217"
+category: "redstone"
+
+# Signal strength decreases by 1 per block of dust
+# Vertical movement doesn't reduce signal (if supported by block)
+
+setup:
+  world:
+    # Power source at x=0
+    block_at_0_64_0: "minecraft:redstone_block"  # Power level 15
+    # Dust line from x=1 to x=15
+    block_at_1_64_0: "minecraft:redstone_wire"
+    block_at_2_64_0: "minecraft:redstone_wire"
+    block_at_3_64_0: "minecraft:redstone_wire"
+    block_at_4_64_0: "minecraft:redstone_wire"
+    block_at_5_64_0: "minecraft:redstone_wire"
+    block_at_6_64_0: "minecraft:redstone_wire"
+    block_at_7_64_0: "minecraft:redstone_wire"
+    block_at_8_64_0: "minecraft:redstone_wire"
+    block_at_9_64_0: "minecraft:redstone_wire"
+    block_at_10_64_0: "minecraft:redstone_wire"
+    block_at_11_64_0: "minecraft:redstone_wire"
+    block_at_12_64_0: "minecraft:redstone_wire"
+    block_at_13_64_0: "minecraft:redstone_wire"
+    block_at_14_64_0: "minecraft:redstone_wire"
+    block_at_15_64_0: "minecraft:redstone_wire"
+    # At x=16, signal should be 0 (no dust or unpowered)
+    block_at_16_64_0: "minecraft:redstone_wire"
+
+action:
+  type: "tick"
+  ticks: 5  # Allow signal to propagate
+
+expected:
+  # Signal strength at each position (15 - distance)
+  # Distance measured from power source
+  block_at_1_64_0_strength: 14
+  block_at_2_64_0_strength: 13
+  block_at_3_64_0_strength: 12
+  block_at_4_64_0_strength: 11
+  block_at_5_64_0_strength: 10
+  block_at_6_64_0_strength: 9
+  block_at_7_64_0_strength: 8
+  block_at_8_64_0_strength: 7
+  block_at_9_64_0_strength: 6
+  block_at_10_64_0_strength: 5
+  block_at_11_64_0_strength: 4
+  block_at_12_64_0_strength: 3
+  block_at_13_64_0_strength: 2
+  block_at_14_64_0_strength: 1
+  block_at_15_64_0_strength: 0  # Signal dies here
+  block_at_16_64_0_strength: 0  # No signal
+
+# Reference: RedstoneDust.cpp - signal propagation
+# Signal decreases by 1 per horizontal block
+# Vertical movement free if block supports it
+
+---
+
+scenario: "repeater_delay"
+description: "Repeater adds 1-4 ticks delay based on setting"
+profile: "lce:141217"
+category: "redstone"
+
+# Repeater has 4 settings (0-3) adding 1-4 ticks delay
+# Also repeats signal back to strength 15
+
+setup:
+  world:
+    block_at_0_64_0: "minecraft:redstone_block"
+    block_at_1_64_0: "minecraft:redstone_wire"
+    block_at_2_64_0: "minecraft:repeater"  # Default 1-tick delay
+    block_at_3_64_0: "minecraft:redstone_wire"
+    block_at_4_64_0: "minecraft:repeater"  # 4-tick delay (right-click 3x)
+    block_at_5_64_0: "minecraft:redstone_wire"
+    block_at_6_64_0: "minecraft:repeater"  # 2-tick delay (right-click 1x)
+    block_at_7_64_0: "minecraft:redstone_wire"
+    block_at_8_64_0: "minecraft:repeater"  # 3-tick delay (right-click 2x)
+    block_at_9_64_0: "minecraft:redstone_wire"
+    # Output at x=10
+
+action:
+  type: "tick"
+  ticks: 20
+
+expected:
+  # Signal should reach end after cumulative delay
+  # 1 + 4 + 2 + 3 = 10 ticks delay
+  # Signal strength refreshed to 15 at each repeater
+  block_at_9_64_0_strength: 15  # Output powered
+
+# Reference: RedstoneRepeater.cpp - delay and signal refresh
+# [REF: RedstoneRepeater.cpp] - getDelay() returns 1-4
+
+---
+
+scenario: "comparator_modes"
+description: "Comparator in compare vs subtract mode"
+profile: "lce:141217"
+category: "redstone"
+
+# Compare mode: output = max(0, input - side_input)
+# Subtract mode: output = max(0, main_input - side_input)
+# But compare mode only outputs if main >= side
+
+setup:
+  world:
+    # Comparator in compare mode
+    block_at_0_64_0: "minecraft:redstone_block"  # Main input (15)
+    block_at_1_64_0: "minecraft:comparator"      # Compare mode (default)
+    block_at_2_64_0: "minecraft:redstone_wire"
+    block_at_0_65_0: "minecraft:redstone_block"  # Side input (15)
+    # Output at x=2
+
+    # Second comparator in subtract mode
+    block_at_4_64_0: "minecraft:redstone_block"  # Main input (15)
+    block_at_5_64_0: "minecraft:comparator"      # Subtract mode (right-click)
+    block_at_6_64_0: "minecraft:redstone_wire"
+    block_at_4_65_0: "minecraft:repeater"        # Side input (1) -> delay 1 = strength 1
+    # Output at x=6
+
+action:
+  type: "tick"
+  ticks: 10
+
+expected:
+  # Compare mode: 15 >= 15 -> output 15
+  block_at_2_64_0_strength: 15
+
+  # Subtract mode: 15 - 1 = 14
+  block_at_6_64_0_strength: 14
+
+# Reference: RedstoneComparator.cpp - compare vs subtract
+# [REF: RedstoneComparator.cpp] - calculateOutputStrength()
