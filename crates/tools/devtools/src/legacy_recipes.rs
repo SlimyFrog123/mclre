@@ -129,13 +129,13 @@ impl RecipeParser {
     /// Parse a single source file.
     pub fn parse_file(&mut self, source: &str, file_name: &str) -> Result<(), String> {
         self.set_source_file(file_name);
-        
+
         // Preprocess: remove comments and join continuation lines, track line numbers
         let (processed, line_map) = self.preprocess_source(source);
-        
+
         // Find all recipe calls
         let calls = self.find_recipe_calls(&processed, &line_map);
-        
+
         for (line_num, call) in calls {
             self.current_line = line_num;
             if call.contains("addShapedRecipy") {
@@ -144,7 +144,7 @@ impl RecipeParser {
                 self.parse_shapeless_recipe(&call)?;
             }
         }
-        
+
         Ok(())
     }
 
@@ -154,16 +154,16 @@ impl RecipeParser {
         let mut result = String::new();
         let mut line_map = Vec::new(); // Maps each char position in result to original line number
         let mut in_block_comment = false;
-        
+
         for (line_num, line) in source.lines().enumerate() {
             let trimmed = line.trim();
             let original_line = line_num + 1; // 1-based
-            
+
             // Skip empty lines
             if trimmed.is_empty() {
                 continue;
             }
-            
+
             // Handle block comments
             if trimmed.starts_with("/*") {
                 in_block_comment = true;
@@ -178,19 +178,19 @@ impl RecipeParser {
                 }
                 continue;
             }
-            
+
             // Skip line comments
             if trimmed.starts_with("//") {
                 continue;
             }
-            
+
             // Remove inline comments
             let line_content = if let Some(idx) = trimmed.find("//") {
                 &trimmed[..idx]
             } else {
                 trimmed
             };
-            
+
             // Remove inline block comments /* ... */
             let mut clean_line = String::new();
             let mut in_inline_comment = false;
@@ -210,7 +210,7 @@ impl RecipeParser {
                     i += 1;
                 }
             }
-            
+
             if !clean_line.trim().is_empty() {
                 let start_pos = result.len();
                 result.push_str(&clean_line);
@@ -221,7 +221,7 @@ impl RecipeParser {
                 }
             }
         }
-        
+
         (result, line_map)
     }
 
@@ -229,21 +229,22 @@ impl RecipeParser {
     fn find_recipe_calls(&self, source: &str, line_map: &[usize]) -> Vec<(usize, String)> {
         let mut calls = Vec::new();
         let mut search_pos = 0;
-        
+
         while let Some(idx) = source[search_pos..].find("addShapedRecipy") {
             let start = search_pos + idx;
             let call = self.extract_full_call(&source[start..]);
-            
+
             // Skip function definitions (they contain "*result" or "...)")
             // Also skip function body calls where first arg is not a proper ItemInstance with "::"
-            if call.contains("*result") 
-                || call.contains("...)") 
+            if call.contains("*result")
+                || call.contains("...)")
                 || !call.contains("new ItemInstance(")
-                || !Self::looks_like_recipe_call(&call) {
+                || !Self::looks_like_recipe_call(&call)
+            {
                 search_pos = start + call.len();
                 continue;
             }
-            
+
             // Get line number from line_map
             let line_num = if start < line_map.len() {
                 line_map[start]
@@ -253,21 +254,22 @@ impl RecipeParser {
             calls.push((line_num, call.clone()));
             search_pos = start + call.len();
         }
-        
+
         search_pos = 0;
         while let Some(idx) = source[search_pos..].find("addShapelessRecipy") {
             let start = search_pos + idx;
             let call = self.extract_full_call(&source[start..]);
-            
+
             // Skip function definitions and body calls
-            if call.contains("*result") 
-                || call.contains("...)") 
+            if call.contains("*result")
+                || call.contains("...)")
                 || !call.contains("new ItemInstance(")
-                || !Self::looks_like_recipe_call(&call) {
+                || !Self::looks_like_recipe_call(&call)
+            {
                 search_pos = start + call.len();
                 continue;
             }
-            
+
             // Get line number from line_map
             let line_num = if start < line_map.len() {
                 line_map[start]
@@ -277,10 +279,10 @@ impl RecipeParser {
             calls.push((line_num, call.clone()));
             search_pos = start + call.len();
         }
-        
+
         calls
     }
-    
+
     /// Check if a call looks like a recipe call (first ItemInstance has proper type with ::)
     fn looks_like_recipe_call(call: &str) -> bool {
         // Find the first "new ItemInstance(" and check if the content has "::"
@@ -293,7 +295,7 @@ impl RecipeParser {
                 match c {
                     '(' => depth += 1,
                     ')' => {
-                        // Check if this is a cast closing "*)" 
+                        // Check if this is a cast closing "*)"
                         let mut is_cast_close = false;
                         if depth == 1 && i > 0 {
                             // Look back for "*" before this ")"
@@ -305,7 +307,7 @@ impl RecipeParser {
                                 is_cast_close = true;
                             }
                         }
-                        
+
                         if !is_cast_close {
                             if depth == 0 {
                                 let first_arg = &after[..i];
@@ -331,7 +333,7 @@ impl RecipeParser {
         let mut result = String::new();
         let mut depth = 0;
         let mut found_paren = false;
-        
+
         for c in source.chars() {
             result.push(c);
             match c {
@@ -348,7 +350,7 @@ impl RecipeParser {
                 _ => {}
             }
         }
-        
+
         result.trim().to_string()
     }
 
@@ -366,14 +368,17 @@ impl RecipeParser {
     fn parse_recipe(&mut self, call: &str, shape: RecipeShape) -> Result<(), String> {
         // DEBUG
         if call.contains("Item::bow") && call.contains("ssscicig") {
-            eprintln!("DEBUG BOW RECIPE: call = {}", &call[..std::cmp::min(300, call.len())]);
+            eprintln!(
+                "DEBUG BOW RECIPE: call = {}",
+                &call[..std::cmp::min(300, call.len())]
+            );
         }
         // Extract result (first ItemInstance)
         let result = self.extract_first_item_instance(call)?;
         if call.contains("Item::bow") && call.contains("ssscicig") {
             eprintln!("DEBUG BOW RECIPE: result = {:?}", result);
         }
-        
+
         // Extract pattern strings (for shaped recipes)
         let (width, height, pattern) = if shape == RecipeShape::Shaped {
             self.extract_pattern(call)?
@@ -383,7 +388,7 @@ impl RecipeParser {
 
         // Extract character-to-item mappings
         let char_mappings = self.extract_char_mappings(call)?;
-        
+
         // Build ingredients from pattern and mappings
         let ingredients = if shape == RecipeShape::Shaped && !pattern.is_empty() {
             self.build_ingredients_from_pattern(&pattern, &char_mappings)?
@@ -391,10 +396,10 @@ impl RecipeParser {
             // For shapeless, extract all ItemInstances after the first
             self.extract_remaining_item_instances(call)?
         };
-        
+
         // Determine category from source file
         let category = self.infer_category();
-        
+
         // Generate recipe ID
         self.current_id += 1;
         let id = format!("recipe_{:04}", self.current_id);
@@ -407,7 +412,11 @@ impl RecipeParser {
             shape,
             width,
             height,
-            pattern: if shape == RecipeShape::Shaped { pattern.clone() } else { Vec::new() },
+            pattern: if shape == RecipeShape::Shaped {
+                pattern.clone()
+            } else {
+                Vec::new()
+            },
             ingredients,
             result,
             source_file: self.current_file.clone(),
@@ -429,7 +438,7 @@ impl RecipeParser {
         let patterns = ["new ItemInstance(", "new ItemInstance ("];
         let mut earliest = None;
         let mut pattern_used = "";
-        
+
         for pat in &patterns {
             if let Some(idx) = call.find(pat) {
                 if earliest.is_none() || idx < earliest.unwrap() {
@@ -438,26 +447,29 @@ impl RecipeParser {
                 }
             }
         }
-        
+
         let start = earliest.ok_or("No ItemInstance found")?;
         let paren_start = start + pattern_used.len();
-        
+
         // Find matching closing parenthesis, handling C++ cast expressions like "(Item *)"
         // The cast has its own parens: new ItemInstance((Type *)Item::name, count)
-        // When we see a ")" that would close the ItemInstance (depth==1), 
+        // When we see a ")" that would close the ItemInstance (depth==1),
         // check if it's actually a cast closing "*)" - if so, skip it.
         let after_instance = &call[paren_start..];
         let mut depth = 1;
         let mut end = 0;
         let chars: Vec<char> = after_instance.chars().collect();
-        
-        eprintln!("DEBUG extract_first_item_instance: after_instance = {:?}", &after_instance[..std::cmp::min(100, after_instance.len())]);
-        
+
+        eprintln!(
+            "DEBUG extract_first_item_instance: after_instance = {:?}",
+            &after_instance[..std::cmp::min(100, after_instance.len())]
+        );
+
         for (i, c) in chars.iter().enumerate() {
             match c {
                 '(' => depth += 1,
                 ')' => {
-                    // Check if this is a cast closing "*)" 
+                    // Check if this is a cast closing "*)"
                     // Look back for "*" before this ")"
                     let mut is_cast_close = false;
                     if depth == 1 && i > 0 {
@@ -468,19 +480,28 @@ impl RecipeParser {
                         }
                         if chars[j] == '*' {
                             is_cast_close = true;
-                            eprintln!("DEBUG extract_first_item_instance: cast close at i={}, depth={}", i, depth);
+                            eprintln!(
+                                "DEBUG extract_first_item_instance: cast close at i={}, depth={}",
+                                i, depth
+                            );
                         }
                     }
-                    
+
                     if !is_cast_close {
                         depth -= 1;
                         if depth == 0 {
                             end = i + 1;
-                            eprintln!("DEBUG extract_first_item_instance: found end at i={}, end={}", i, end);
+                            eprintln!(
+                                "DEBUG extract_first_item_instance: found end at i={}, end={}",
+                                i, end
+                            );
                             break;
                         }
                     } else {
-                        eprintln!("DEBUG extract_first_item_instance: skipping cast close at i={}, depth stays={}", i, depth);
+                        eprintln!(
+                            "DEBUG extract_first_item_instance: skipping cast close at i={}, depth stays={}",
+                            i, depth
+                        );
                     }
                     // If it's a cast close, don't decrement depth (the cast's opening paren
                     // was already counted when we saw the "(" after ItemInstance opening)
@@ -488,13 +509,16 @@ impl RecipeParser {
                 _ => {}
             }
         }
-        
+
         if depth != 0 {
             return Err("Unmatched parentheses in ItemInstance".to_string());
         }
-        
+
         let instance_text = &call[start..paren_start + end];
-        eprintln!("DEBUG extract_first_item_instance: instance_text = {:?}", instance_text);
+        eprintln!(
+            "DEBUG extract_first_item_instance: instance_text = {:?}",
+            instance_text
+        );
         self.parse_item_instance(instance_text)
     }
 
@@ -510,12 +534,12 @@ impl RecipeParser {
             let mut depth = 1;
             let mut end = 0;
             let chars: Vec<char> = after_instance.chars().collect();
-            
+
             for (i, c) in chars.iter().enumerate() {
                 match c {
                     '(' => depth += 1,
                     ')' => {
-                        // Check if this is a cast closing "*)" 
+                        // Check if this is a cast closing "*)"
                         let mut is_cast_close = false;
                         if depth == 1 && i > 0 {
                             let mut j = i - 1;
@@ -526,7 +550,7 @@ impl RecipeParser {
                                 is_cast_close = true;
                             }
                         }
-                        
+
                         if !is_cast_close {
                             depth -= 1;
                             if depth == 0 {
@@ -538,7 +562,7 @@ impl RecipeParser {
                     _ => {}
                 }
             }
-            
+
             if depth == 0 {
                 &text[start..start + 17 + end]
             } else {
@@ -547,15 +571,16 @@ impl RecipeParser {
         } else {
             text
         };
-        
+
         // Remove "new ItemInstance(" prefix and trailing ")"
-        let after_prefix = instance_text.trim_start_matches("new ItemInstance(")
+        let after_prefix = instance_text
+            .trim_start_matches("new ItemInstance(")
             .trim_start_matches("new ItemInstance (");
         let mut content = after_prefix.trim_end_matches(')').trim(); // Trim whitespace
-        
+
         // DEBUG
         let is_bow = content.contains("Item::bow") || content.contains("(Item");
-        
+
         // Handle C++ cast expressions like "(Item *)Item::bow" at the start of content
         // These confuse the argument splitter because the "*)" looks like a closing paren
         if let Some(stripped) = content.strip_prefix('(') {
@@ -565,7 +590,7 @@ impl RecipeParser {
                 content = &stripped[cast_end + 2..].trim_start();
             }
         }
-        
+
         // Parse arguments with fallback for simple comma-separated values
         let parts = self.split_args(content)?;
         if parts.is_empty() {
@@ -586,7 +611,11 @@ impl RecipeParser {
 
         let item = self.cpp_id_to_namespaced(item_str);
 
-        Ok(RecipeResult { item, count, damage })
+        Ok(RecipeResult {
+            item,
+            count,
+            damage,
+        })
     }
 
     /// Split arguments respecting nested parentheses, with fallback for simple comma-separated values.
@@ -594,7 +623,7 @@ impl RecipeParser {
         let mut parts = Vec::new();
         let mut current = String::new();
         let mut depth = 0;
-        
+
         for c in content.chars() {
             match c {
                 '(' => {
@@ -616,18 +645,18 @@ impl RecipeParser {
                 }
             }
         }
-        
+
         if !current.trim().is_empty() {
             parts.push(current.trim().trim_end_matches(')').trim().to_string());
         }
-        
+
         Ok(parts)
     }
 
     /// Convert C++ identifier to namespaced ID.
     fn cpp_id_to_namespaced(&self, cpp_id: &str) -> String {
         let id = cpp_id.trim();
-        
+
         // Handle cast expressions like `(Item *)Item::bow`
         let id = if let Some(idx) = id.rfind("::") {
             &id[idx + 2..]
@@ -696,7 +725,7 @@ impl RecipeParser {
         let mut l_strings = Vec::new(); // (start, end, content)
         let mut l_char_positions = Vec::new(); // positions of L'X'
         let call_bytes = call.as_bytes();
-        
+
         let mut pos = 0;
         while let Some(idx) = call[pos..].find('L') {
             let start = pos + idx;
@@ -710,7 +739,11 @@ impl RecipeParser {
                 } else {
                     pos = start + 1;
                 }
-            } else if start + 4 < call.len() && &call[start..start + 2] == "L'" && call_bytes[start + 3] == b'\'' && call_bytes[start + 4] == b',' {
+            } else if start + 4 < call.len()
+                && &call[start..start + 2] == "L'"
+                && call_bytes[start + 3] == b'\''
+                && call_bytes[start + 4] == b','
+            {
                 // L'X', pattern
                 let ch_pos = start;
                 l_char_positions.push(ch_pos);
@@ -719,11 +752,11 @@ impl RecipeParser {
                 pos = start + 1;
             }
         }
-        
+
         // Pattern rows are L"..." strings that come after the first one (group string)
         // and before the first L'X' char mapping
         let first_char_mapping = l_char_positions.first().copied().unwrap_or(usize::MAX);
-        
+
         let mut pattern = Vec::new();
         for (i, (start, end, content)) in l_strings.iter().enumerate() {
             // Skip the first L"..." (group string)
@@ -738,11 +771,11 @@ impl RecipeParser {
                 pattern.push(content.to_string());
             }
         }
-        
+
         if pattern.is_empty() {
             return Err("No pattern found".to_string());
         }
-        
+
         let height = pattern.len() as u8;
         let width = pattern.iter().map(|p| p.len() as u8).max().unwrap_or(0);
         Ok((width, height, pattern))
@@ -754,19 +787,20 @@ impl RecipeParser {
         let mut mappings = HashMap::new();
         let mut pos = 0;
         let call_bytes = call.as_bytes();
-        
+
         while let Some(idx) = call[pos..].find("L'") {
             let start = pos + idx;
             // Check for L'X', pattern (5 chars: L ' X ' ,)
             // L'X', = L ' X ' , (5 chars: L ' X ' ,)
-            if start + 4 < call_bytes.len() 
-                && call_bytes[start] == b'L' 
-                && call_bytes[start + 1] == b'\'' 
-                && call_bytes[start + 3] == b'\'' 
-                && call_bytes[start + 4] == b',' {
+            if start + 4 < call_bytes.len()
+                && call_bytes[start] == b'L'
+                && call_bytes[start + 1] == b'\''
+                && call_bytes[start + 3] == b'\''
+                && call_bytes[start + 4] == b','
+            {
                 let ch = call[start + 2..start + 3].chars().next().unwrap_or('?');
                 let after = &call[start + 5..].trim_start();
-                
+
                 // Try to find the associated ItemInstance or Tile::/Item::
                 if after.starts_with("new ItemInstance(") {
                     // Find the full ItemInstance
@@ -805,16 +839,19 @@ impl RecipeParser {
                 pos = start + 1;
             }
         }
-        
+
         Ok(mappings)
     }
 
     /// Extract all remaining ItemInstances after the first (for shapeless recipes).
-    fn extract_remaining_item_instances(&self, call: &str) -> Result<Vec<RecipeIngredient>, String> {
+    fn extract_remaining_item_instances(
+        &self,
+        call: &str,
+    ) -> Result<Vec<RecipeIngredient>, String> {
         let mut ingredients = Vec::new();
         let mut search_pos = 0;
         let mut instance_count = 0;
-        
+
         while let Some(idx) = call[search_pos..].find("ItemInstance") {
             let start = search_pos + idx;
             // Check if this is "new ItemInstance("
@@ -823,11 +860,11 @@ impl RecipeParser {
                 search_pos = start + 1;
                 continue;
             }
-            
+
             // Find the opening parenthesis
             let paren_idx = after.find('(').ok_or("No parenthesis")?;
             let paren_start = start + paren_idx + 1;
-            
+
             // Find matching closing parenthesis
             let mut depth = 1;
             let mut end = paren_start;
@@ -844,12 +881,12 @@ impl RecipeParser {
                     _ => {}
                 }
             }
-            
+
             if depth != 0 {
                 search_pos = start + 1;
                 continue;
             }
-            
+
             instance_count += 1;
             // Skip the first instance (result)
             if instance_count > 1 {
@@ -858,15 +895,19 @@ impl RecipeParser {
                     ingredients.push(RecipeIngredient {
                         item: result.item,
                         count: result.count,
-                        damage: if result.damage > 0 { Some(result.damage) } else { None },
+                        damage: if result.damage > 0 {
+                            Some(result.damage)
+                        } else {
+                            None
+                        },
                         is_tag: false,
                     });
                 }
             }
-            
+
             search_pos = end;
         }
-        
+
         Ok(ingredients)
     }
     fn build_ingredients_from_pattern(
@@ -875,7 +916,7 @@ impl RecipeParser {
         char_mappings: &HashMap<char, String>,
     ) -> Result<Vec<RecipeIngredient>, String> {
         let mut ingredients = Vec::new();
-        
+
         for row in pattern {
             for ch in row.chars() {
                 if ch != ' ' && ch != '\t' {
@@ -890,13 +931,15 @@ impl RecipeParser {
                 }
             }
         }
-        
+
         Ok(ingredients)
     }
 
     /// Infer recipe category from source file.
     fn infer_category(&self) -> RecipeCategory {
-        if self.current_file.contains("ToolRecipies") || self.current_file.contains("WeaponRecipies") {
+        if self.current_file.contains("ToolRecipies")
+            || self.current_file.contains("WeaponRecipies")
+        {
             RecipeCategory::Tools
         } else if self.current_file.contains("ArmorRecipes") {
             RecipeCategory::Combat
@@ -928,11 +971,13 @@ impl RecipeParser {
     /// Render recipes as deterministic TOML.
     pub fn render_toml(&self, source_label: &str) -> String {
         let mut out = String::new();
-        out.push_str("# Generated by `cargo run -p mclre-devtools --bin extract-legacy-recipes`.\n");
+        out.push_str(
+            "# Generated by `cargo run -p mclre-devtools --bin extract-legacy-recipes`.\n",
+        );
         out.push_str("# Do not edit by hand: regenerate from the reference source.\n");
         let _ = writeln!(out, "# Source: {source_label}");
         let _ = writeln!(out, "\nrecipe_count = {}", self.recipes.len());
-        
+
         for recipe in &self.recipes {
             out.push_str("\n[[recipe]]\n");
             let _ = writeln!(out, "id = \"{}\"", recipe.id);
@@ -945,18 +990,24 @@ impl RecipeParser {
             }
             let _ = writeln!(out, "source_file = \"{}\"", recipe.source_file);
             let _ = writeln!(out, "source_line = {}", recipe.source_line);
-            
+
             out.push_str("ingredients = [\n");
             for ing in &recipe.ingredients {
                 out.push_str("  { ");
-                let _ = writeln!(out, "item = \"{}\", count = {}, damage = {:?}, is_tag = {} }},", 
-                    ing.item, ing.count, ing.damage, ing.is_tag);
+                let _ = writeln!(
+                    out,
+                    "item = \"{}\", count = {}, damage = {:?}, is_tag = {} }},",
+                    ing.item, ing.count, ing.damage, ing.is_tag
+                );
                 out.push_str("  },\n");
             }
             out.push_str("]\n");
-            
-            let _ = writeln!(out, "result = {{ item = \"{}\", count = {}, damage = {} }}", 
-                recipe.result.item, recipe.result.count, recipe.result.damage);
+
+            let _ = writeln!(
+                out,
+                "result = {{ item = \"{}\", count = {}, damage = {} }}",
+                recipe.result.item, recipe.result.count, recipe.result.damage
+            );
         }
         out
     }
@@ -980,7 +1031,7 @@ pub fn parse_all_recipe_files(
     cloth_dye_recipes_cpp: &str,
 ) -> Result<Vec<LegacyRecipe>, String> {
     let mut parser = RecipeParser::new();
-    
+
     parser.parse_file(recipes_cpp, "Recipes.cpp")?;
     parser.parse_file(tool_recipes_cpp, "ToolRecipies.cpp")?;
     parser.parse_file(weapon_recipes_cpp, "WeaponRecipies.cpp")?;
@@ -989,7 +1040,7 @@ pub fn parse_all_recipe_files(
     parser.parse_file(structure_recipes_cpp, "StructureRecipies.cpp")?;
     parser.parse_file(ore_recipes_cpp, "OreRecipies.cpp")?;
     parser.parse_file(cloth_dye_recipes_cpp, "ClothDyeRecipes.cpp")?;
-    
+
     Ok(parser.recipes)
 }
 
@@ -1001,16 +1052,27 @@ mod tests {
     fn cpp_to_namespaced() {
         let parser = RecipeParser::new();
         assert_eq!(parser.cpp_id_to_namespaced("Tile::wood"), "minecraft:wood");
-        assert_eq!(parser.cpp_id_to_namespaced("Item::stick"), "minecraft:stick");
-        assert_eq!(parser.cpp_id_to_namespaced("Tile::treeTrunk"), "minecraft:tree_trunk");
-        assert_eq!(parser.cpp_id_to_namespaced("DyePowderItem::BLUE"), "minecraft:blue");
+        assert_eq!(
+            parser.cpp_id_to_namespaced("Item::stick"),
+            "minecraft:stick"
+        );
+        assert_eq!(
+            parser.cpp_id_to_namespaced("Tile::treeTrunk"),
+            "minecraft:tree_trunk"
+        );
+        assert_eq!(
+            parser.cpp_id_to_namespaced("DyePowderItem::BLUE"),
+            "minecraft:blue"
+        );
     }
 
     #[test]
     fn parses_shaped_recipe_simple() {
         let mut parser = RecipeParser::new();
         let call = "addShapedRecipy(new ItemInstance(Tile::wood, 4, 0), L\"sczg\", L\"#\", L'#', new ItemInstance(Tile::treeTrunk, 1, 0), L'S')";
-        parser.parse_recipe(call, RecipeShape::Shaped).expect("parses");
+        parser
+            .parse_recipe(call, RecipeShape::Shaped)
+            .expect("parses");
         let recipes = parser.recipes();
         assert_eq!(recipes.len(), 1);
         let r = &recipes[0];
@@ -1024,7 +1086,9 @@ mod tests {
     fn parses_shapeless_recipe_simple() {
         let mut parser = RecipeParser::new();
         let call = "addShapelessRecipy(new ItemInstance(Item::mushroomStew), L\"ttig\", Tile::mushroom_brown, Tile::mushroom_red, Item::bowl, L'F')";
-        parser.parse_recipe(call, RecipeShape::Shapeless).expect("parses");
+        parser
+            .parse_recipe(call, RecipeShape::Shapeless)
+            .expect("parses");
         let recipes = parser.recipes();
         assert_eq!(recipes.len(), 1);
         let r = &recipes[0];

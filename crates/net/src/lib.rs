@@ -1,15 +1,29 @@
-use std::io;
 use bytes::BytesMut;
 use crossbeam_channel::{self, Receiver, Sender, TryRecvError};
 use mclre_protocol::{Decode, Encode, ProtocolError};
+use std::io;
 use thiserror::Error;
-use tracing::{debug, trace};
+use tracing::{debug, info, trace, warn};
+
+mod udp_transport;
+pub use udp_transport::*;
+mod upnp;
+pub use upnp::*;
+
+// Re-export ServiceInfo from mdns_sd for client use
+pub use mdns_sd::ServiceInfo;
 
 /// Transport trait for network communication.
 /// Implementations handle sending/receiving raw packet bytes.
 pub trait Transport: Send + Sync {
     /// Send a packet buffer to the remote endpoint.
     fn send(&self, buf: BytesMut) -> Result<(), TransportError>;
+
+    /// Send a packet buffer to a specific remote address (for UDP server mode).
+    /// Default implementation delegates to `send` for transports that don't support multiple remotes.
+    fn send_to(&self, buf: BytesMut, _remote: std::net::SocketAddr) -> Result<(), TransportError> {
+        self.send(buf)
+    }
 
     /// Try to receive a packet buffer from the remote endpoint.
     /// Returns Ok(Some(buf)) if a packet is available,
@@ -96,7 +110,9 @@ impl InMemoryTransport {
 impl Transport for InMemoryTransport {
     fn send(&self, buf: BytesMut) -> Result<(), TransportError> {
         trace!("Sending packet of {} bytes", buf.len());
-        self.outgoing.send(buf).map_err(|e| TransportError::SendFailed(e.to_string()))
+        self.outgoing
+            .send(buf)
+            .map_err(|e| TransportError::SendFailed(e.to_string()))
     }
 
     fn try_recv(&self) -> Result<Option<BytesMut>, TransportError> {

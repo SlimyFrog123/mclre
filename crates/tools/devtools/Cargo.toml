@@ -23,6 +23,14 @@ path = "src/bin/extract_legacy_furnace.rs"
 name = "extract-legacy-items"
 path = "src/bin/extract_legacy_items.rs"
 
+[[bin]]
+name = "datafixer"
+path = "src/bin/datafixer.rs"
+
+[[bin]]
+name = "worldgen-stress"
+path = "src/bin/worldgen_stress.rs"
+
 [lints]
 workspace = true
 
@@ -32,6 +40,11 @@ clap.workspace = true
 toml.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+chrono.workspace = true
+mclre-core = { workspace = true }
+mclre-world = { workspace = true }
+mclre-worldgen = { workspace = true }
+mclre-profiles = { workspace = true }
 
 [dev-dependencies]
 serde_json.workspace = true

@@ -1,15 +1,16 @@
+use bevy_ecs::prelude::*;
+use mclre_core::mth::Vec3;
+use mclre_core::{BlockId, BlockStateId, GameRandom, Identifier};
+use mclre_identity::PlayerIdentity;
+use mclre_protocol::play::{PlayerLook, PlayerPosition, PlayerPositionAndLook};
+use mclre_world::{BlockPos, ChunkColumn, ChunkPos};
+use parking_lot::Mutex;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use parking_lot::Mutex;
-use bevy_ecs::prelude::*;
-use mclre_core::{GameRandom, Identifier, BlockStateId, BlockId};
-use mclre_core::mth::Vec3;
-use mclre_world::{ChunkPos, ChunkColumn, BlockPos};
-use mclre_protocol::play::{PlayerPosition, PlayerPositionAndLook, PlayerLook};
-use mclre_identity::PlayerIdentity;
 use thiserror::Error;
 use tracing::{info, warn};
 
+pub mod entity;
 pub mod faithful_bugs;
 pub mod gameplay;
 
@@ -85,12 +86,12 @@ impl SimPlayer {
     pub fn held_item(&self) -> &crate::gameplay::inventory::ItemStack {
         self.inventory.main_hand()
     }
-    
+
     /// Check if the player is underwater.
     pub fn is_underwater(&self) -> bool {
         self.underwater
     }
-    
+
     /// Check if the player has Aqua Affinity enchantment.
     pub fn has_aqua_affinity(&self) -> bool {
         self.has_aqua_affinity
@@ -185,7 +186,7 @@ impl SimWorld {
     /// Create a new simulation world.
     pub fn new(seed: i64) -> Self {
         let mut ecs_world = bevy_ecs::world::World::new();
-        
+
         Self {
             chunks: Arc::new(Mutex::new(std::collections::HashMap::new())),
             ecs_world,
@@ -200,22 +201,22 @@ impl SimWorld {
     /// Run a single simulation tick (20 TPS fixed timestep).
     pub fn tick(&mut self) -> Result<(), SimError> {
         self.tick_count += 1;
-        
+
         // Process pending player position updates
         self.process_player_updates()?;
-        
+
         // Run physics for all entities
         self.run_physics()?;
-        
+
         // Run entity AI
         self.run_ai()?;
-        
+
         // Update block ticks (redstone, fluids, etc.)
         self.update_block_ticks()?;
-        
+
         // Run gameplay systems (lighting, fluids, fire, redstone, TNT, block breaking, health/hunger, XP)
         crate::gameplay::tick_all(self)?;
-        
+
         Ok(())
     }
 
@@ -254,17 +255,17 @@ impl SimWorld {
             // Apply gravity if not on ground
             if !player.on_ground {
                 player.velocity.y -= physics::GRAVITY;
-                
+
                 // Clamp to terminal velocity
                 if player.velocity.y < -physics::TERMINAL_VELOCITY {
                     player.velocity.y = -physics::TERMINAL_VELOCITY;
                 }
             }
-            
+
             // Apply velocity to position (copy velocity to avoid borrow conflict)
             let velocity = player.velocity;
             player.position += velocity;
-            
+
             // TODO: Collision detection with blocks
             // For now, simple ground check at Y=64 (flat world ground level)
             if player.position.y <= 64.0 && player.velocity.y <= 0.0 {
@@ -324,12 +325,15 @@ impl SimWorld {
 
     /// Remove a player from the simulation.
     pub fn remove_player(&mut self, identity: &PlayerIdentity) -> bool {
-        let mut query = self.ecs_world.query::<(Entity, &SimPlayer)>();
-        let entities: Vec<_> = query.iter(&self.ecs_world)
+        let mut query = self
+            .ecs_world
+            .query::<(bevy_ecs::entity::Entity, &SimPlayer)>();
+        let entities: Vec<_> = query
+            .iter(&self.ecs_world)
             .filter(|(_, p)| p.identity == *identity)
             .map(|(e, _)| e)
             .collect();
-        
+
         for entity in &entities {
             self.ecs_world.despawn(*entity);
         }
@@ -359,7 +363,11 @@ impl SimWorld {
     }
 
     /// Queue a player position update for the next tick.
-    pub fn queue_position_update(&mut self, identity: PlayerIdentity, update: PlayerPositionUpdate) {
+    pub fn queue_position_update(
+        &mut self,
+        identity: PlayerIdentity,
+        update: PlayerPositionUpdate,
+    ) {
         self.pending_positions.push((identity, update));
     }
 
@@ -367,35 +375,39 @@ impl SimWorld {
     pub fn tick_count(&self) -> u64 {
         self.tick_count
     }
-    
+
     /// Get and increment the next entity ID.
     pub fn next_entity_id(&mut self) -> i32 {
         let id = self.next_entity_id;
         self.next_entity_id += 1;
         id
     }
-    
+
     /// Get block properties for a block state.
-    pub fn block_properties(&self, state: mclre_core::BlockStateId) -> &mclre_core::block_state::BlockProperties {
+    pub fn block_properties(
+        &self,
+        state: mclre_core::BlockStateId,
+    ) -> &mclre_core::block_state::BlockProperties {
         // Get the block state model from the world
         // For now, return a default - in real implementation this would look up from the block state model
         fn default_props() -> mclre_core::block_state::BlockProperties {
             mclre_core::block_state::BlockProperties::none()
         }
-        static DEFAULT_PROPS: std::sync::OnceLock<mclre_core::block_state::BlockProperties> = std::sync::OnceLock::new();
+        static DEFAULT_PROPS: std::sync::OnceLock<mclre_core::block_state::BlockProperties> =
+            std::sync::OnceLock::new();
         DEFAULT_PROPS.get_or_init(|| mclre_core::block_state::BlockProperties::none())
     }
-    
+
     /// Get mutable reference to RNG.
     pub fn rng_mut(&mut self) -> &mut mclre_core::random::GameRandom {
         &mut self.rng
     }
-    
+
     /// Get mutable reference to XP orb system.
     pub fn get_xp_orb_system(&mut self) -> &mut crate::gameplay::xp::XpOrbSystem {
         &mut self.xp_orb_system
     }
-    
+
     /// Run a closure with mutable access to the RNG.
     /// This limits the mutable borrow of `self` to the closure scope.
     pub fn with_rng_mut<F, R>(&mut self, f: F) -> R
@@ -404,7 +416,7 @@ impl SimWorld {
     {
         f(&mut self.rng)
     }
-    
+
     /// Run a closure with mutable access to both the RNG and the ECS world.
     /// This limits the mutable borrow of `self` to the closure scope,
     /// allowing simultaneous access to RNG and ECS world without borrow conflicts.
@@ -414,67 +426,73 @@ impl SimWorld {
     {
         f(&mut self.rng, &mut self.ecs_world)
     }
-    
+
     /// Get mutable access to all players.
     pub fn players_mut(&mut self) -> Vec<bevy_ecs::change_detection::Mut<crate::SimPlayer>> {
         let mut query = self.ecs_world.query::<&mut crate::SimPlayer>();
         query.iter_mut(&mut self.ecs_world).collect()
     }
-    
+
     /// Get block state at position.
     pub fn get_block_state(&self, pos: mclre_world::BlockPos) -> mclre_core::BlockStateId {
         // For now, return AIR - in real implementation this would look up from chunk storage
         mclre_core::BlockStateId(0)
     }
-    
+
     /// Set block state at position.
     pub fn set_block_state(&mut self, pos: mclre_world::BlockPos, state: mclre_core::BlockStateId) {
         // TODO: Implement block setting
     }
-    
+
     /// Get chunk at position.
     pub fn get_chunk(&self, chunk_pos: mclre_world::ChunkPos) -> Option<mclre_world::ChunkColumn> {
         let chunks = self.chunks.lock();
         chunks.get(&chunk_pos).cloned()
     }
-    
+
     /// Get mutable chunk at position.
-    pub fn get_chunk_mut(&mut self, chunk_pos: mclre_world::ChunkPos) -> Option<mclre_world::ChunkColumn> {
+    pub fn get_chunk_mut(
+        &mut self,
+        chunk_pos: mclre_world::ChunkPos,
+    ) -> Option<mclre_world::ChunkColumn> {
         let mut chunks = self.chunks.lock();
         chunks.get_mut(&chunk_pos).cloned()
     }
-    
+
     /// Set chunk at position.
     pub fn set_chunk(&mut self, chunk_pos: mclre_world::ChunkPos, chunk: mclre_world::ChunkColumn) {
         let mut chunks = self.chunks.lock();
         chunks.insert(chunk_pos, chunk);
     }
-    
+
     /// Get current time of day (ticks since start of day, 0-23999).
     pub fn get_time_of_day(&self) -> u32 {
         // 20 minute day cycle = 24000 ticks
         (self.tick_count % 24000) as u32
     }
-    
+
     /// Get maximum build height.
     pub fn get_max_build_height(&self) -> i32 {
         256 // LCE baseline
     }
-    
+
     /// Set sky light at position.
     pub fn set_sky_light(&mut self, pos: mclre_world::BlockPos, level: u8) {
         // TODO: Implement sky light setting in chunk
         let _ = (pos, level);
     }
-    
+
     /// Set block light at position.
     pub fn set_block_light(&mut self, pos: mclre_world::BlockPos, level: u8) {
         // TODO: Implement block light setting in chunk
         let _ = (pos, level);
     }
-    
+
     /// Get player by entity ID.
-    pub fn get_player_by_entity_id(&mut self, entity_id: i32) -> Option<bevy_ecs::change_detection::Mut<crate::SimPlayer>> {
+    pub fn get_player_by_entity_id(
+        &mut self,
+        entity_id: i32,
+    ) -> Option<bevy_ecs::change_detection::Mut<crate::SimPlayer>> {
         let mut query = self.ecs_world.query::<&mut crate::SimPlayer>();
         for mut player in query.iter_mut(&mut self.ecs_world) {
             if player.entity_id == entity_id {
@@ -504,15 +522,15 @@ impl SimRunner {
     pub fn run(&self) {
         *self.running.lock() = true;
         info!("Starting simulation loop at {} TPS", TICK_RATE);
-        
+
         while *self.running.lock() {
             let tick_start = Instant::now();
-            
+
             // Run simulation tick
             if let Err(e) = self.sim_world.lock().tick() {
                 warn!("Simulation tick error: {}", e);
             }
-            
+
             // Calculate sleep time to maintain 20 TPS
             let elapsed = tick_start.elapsed();
             if elapsed < TICK_DURATION {
@@ -520,10 +538,14 @@ impl SimRunner {
                 std::thread::sleep(sleep_time);
             } else {
                 // Tick took too long, log warning
-                warn!("Tick took {}ms (budget: {}ms)", elapsed.as_millis(), TICK_DURATION_MS);
+                warn!(
+                    "Tick took {}ms (budget: {}ms)",
+                    elapsed.as_millis(),
+                    TICK_DURATION_MS
+                );
             }
         }
-        
+
         info!("Simulation loop stopped");
     }
 
@@ -552,13 +574,13 @@ mod tests {
     #[test]
     fn test_sim_tick() {
         let mut sim = SimWorld::new(12345);
-        
+
         let identity = PlayerIdentity::new(uuid::Uuid::now_v7(), "TestPlayer".to_string());
         sim.add_player(identity.clone(), 1, Vec3::new(0.0, 64.0, 0.0));
-        
+
         sim.tick().unwrap();
         assert_eq!(sim.tick_count, 1);
-        
+
         let player = sim.get_player(&identity).unwrap();
         assert_eq!(player.entity_id, 1);
     }
@@ -566,10 +588,10 @@ mod tests {
     #[test]
     fn test_player_position_update() {
         let mut sim = SimWorld::new(12345);
-        
+
         let identity = PlayerIdentity::new(uuid::Uuid::now_v7(), "TestPlayer".to_string());
         sim.add_player(identity.clone(), 1, Vec3::new(0.0, 64.0, 0.0));
-        
+
         let update = PlayerPosition {
             x: 10.0,
             y: 65.0,
@@ -578,7 +600,7 @@ mod tests {
         };
         sim.queue_position_update(identity.clone(), PlayerPositionUpdate::Position(update));
         sim.tick().unwrap();
-        
+
         let player = sim.get_player(&identity).unwrap();
         assert!((player.position.x - 10.0).abs() < 0.001);
         assert!((player.position.y - 65.0).abs() < 0.001);
@@ -588,10 +610,10 @@ mod tests {
     #[test]
     fn test_gravity() {
         let mut sim = SimWorld::new(12345);
-        
+
         let identity = PlayerIdentity::new(uuid::Uuid::now_v7(), "TestPlayer".to_string());
         sim.add_player(identity.clone(), 1, Vec3::new(0.0, 100.0, 0.0));
-        
+
         // Player starts in air
         {
             let mut query = sim.ecs_world.query::<&mut SimPlayer>();
@@ -599,12 +621,20 @@ mod tests {
                 player.on_ground = false;
             }
         }
-        
+
         sim.tick().unwrap();
-        
+
         let player = sim.get_player(&identity).unwrap();
         // Should have fallen due to gravity
         assert!(player.velocity.y < 0.0);
         assert!(player.position.y < 100.0);
     }
 }
+
+// Re-export entity module
+pub use entity::{
+    AnimalEntity, ControlFlag, ControlFlags, CreeperEntity, EndermanEntity, Entity, EntityType,
+    Goal, GoalSelector, GossipType, JumpControl, MobCategory, MobEntity, MobSpawnInfo, MobSpawner,
+    MonsterEntity, MoveControl, MoveOperation, Sensing, SimLevel, SkeletonEntity, SpiderEntity,
+    VillagerEntity, VillagerGossip, VillagerProfession, VillagerTrade, ZombieEntity,
+};

@@ -332,7 +332,19 @@ impl AssetVfs {
 pub struct AssetManager {
     pub vfs: AssetVfs,
     texture_cache: HashMap<Identifier, Arc<Texture>>,
+    font_cache: HashMap<Identifier, Arc<Vec<u8>>>,
     pub atlas: TextureAtlas,
+    /// Loaded resource packs (in priority order, first = highest)
+    resource_packs: Vec<ResourcePack>,
+}
+
+/// A loaded resource pack.
+#[derive(Debug)]
+pub struct ResourcePack {
+    pub name: String,
+    pub description: String,
+    pub pack_format: i32,
+    pub root: PathBuf,
 }
 
 impl AssetManager {
@@ -341,13 +353,165 @@ impl AssetManager {
         Self {
             vfs: AssetVfs::new(),
             texture_cache: HashMap::new(),
+            font_cache: HashMap::new(),
             atlas: TextureAtlas::with_padding(8192, 8192, 1), // 8192x8192 atlas with 1px padding
+            resource_packs: Vec::new(),
         }
     }
 
     /// Adds a root directory to the VFS.
     pub fn add_root(&mut self, path: PathBuf) {
         self.vfs.add_root(path);
+    }
+
+    /// Loads a resource pack from a directory.
+    /// Resource packs are added with priority - later packs override earlier ones.
+    pub fn load_resource_pack(&mut self, path: PathBuf) -> Result<()> {
+        // Read pack.mcmeta
+        let meta_path = path.join("pack.mcmeta");
+        let meta_data = std::fs::read_to_string(&meta_path).map_err(AssetError::Io)?;
+
+        #[derive(serde::Deserialize)]
+        struct PackMeta {
+            pack: PackInfo,
+        }
+
+        #[derive(serde::Deserialize)]
+        struct PackInfo {
+            pack_format: i32,
+            description: String,
+        }
+
+        let meta: PackMeta = serde_json::from_str(&meta_data)
+            .map_err(|e| AssetError::InvalidPath(format!("Invalid pack.mcmeta: {}", e)))?;
+
+        // Validate pack format (MCLRE uses format 15)
+        if meta.pack.pack_format != 15 {
+            return Err(AssetError::InvalidPath(format!(
+                "Unsupported pack format: {} (expected 15)",
+                meta.pack.pack_format
+            )));
+        }
+
+        let pack = ResourcePack {
+            name: path
+                .file_name()
+                .and_then(|s| s.to_str())
+                .unwrap_or("unknown")
+                .to_string(),
+            description: meta.pack.description,
+            pack_format: meta.pack.pack_format,
+            root: path.clone(),
+        };
+
+        // Add the resource pack root to VFS (insert at beginning for priority)
+        self.vfs.roots.insert(0, path);
+        self.resource_packs.push(pack);
+
+        Ok(())
+    }
+
+    /// Gets loaded resource packs.
+    pub fn resource_packs(&self) -> &[ResourcePack] {
+        &self.resource_packs
+    }
+
+    /// Preloads UI textures from resource packs into the atlas.
+    /// Loads textures from textures/gui/, textures/font/, and other UI-related paths.
+    pub fn preload_ui_textures(&mut self) -> Result<()> {
+        // Common UI texture paths in resource packs
+        let ui_texture_paths = ["textures/gui", "textures/font", "textures/misc"];
+
+        // Collect paths first to avoid borrow checker issues
+        let mut texture_dirs = Vec::new();
+        for pack in &self.resource_packs {
+            for ui_path in &ui_texture_paths {
+                let full_path = pack.root.join(ui_path);
+                if full_path.exists() && full_path.is_dir() {
+                    texture_dirs.push(full_path);
+                }
+            }
+        }
+
+        // Now load textures from collected directories
+        for dir in texture_dirs {
+            self.load_ui_textures_from_dir(&dir, "")?;
+        }
+
+        Ok(())
+    }
+
+    /// Loads UI textures and fonts from a directory into the atlas.
+    fn load_ui_textures_from_dir(&mut self, dir: &Path, _base_path: &str) -> Result<()> {
+        for entry in std::fs::read_dir(dir).map_err(AssetError::Io)? {
+            let entry = entry.map_err(AssetError::Io)?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                // Recurse into subdirectories
+                self.load_ui_textures_from_dir(&path, "")?;
+            } else if path.extension().map_or(false, |ext| ext == "png") {
+                // Load PNG texture - use path relative to VFS roots
+                let relative_path = self.find_relative_path(&path);
+
+                // Create identifier from path (e.g., "minecraft:gui/icons" from "textures/gui/icons.png")
+                let stem = path
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("unknown");
+                let parent = path
+                    .parent()
+                    .and_then(|p| p.file_name())
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("gui");
+
+                let id = Identifier::parse(&format!("minecraft:{}/{}", parent, stem))
+                    .unwrap_or_else(|_| Identifier::new("minecraft", "unknown").unwrap());
+
+                // Load into atlas
+                let _ = self.load_into_atlas(id, &relative_path);
+            } else if path
+                .extension()
+                .map_or(false, |ext| ext == "ttf" || ext == "otf")
+            {
+                // Load TTF/OTF font - use path relative to VFS roots
+                let relative_path = self.find_relative_path(&path);
+
+                // Create identifier from path (e.g., "minecraft:font/default" from "textures/font/default.ttf")
+                let stem = path
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("unknown");
+                let parent = path
+                    .parent()
+                    .and_then(|p| p.file_name())
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("font");
+
+                let id = Identifier::parse(&format!("minecraft:{}/{}", parent, stem))
+                    .unwrap_or_else(|_| Identifier::new("minecraft", "unknown").unwrap());
+
+                // Load font data into cache
+                let data = self.vfs.read_file(&relative_path)?;
+                self.font_cache.insert(id, Arc::new(data));
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Finds the relative path of a file from one of the VFS roots.
+    fn find_relative_path(&self, path: &Path) -> String {
+        for root in &self.vfs.roots {
+            if let Ok(relative) = path.strip_prefix(root) {
+                return relative.to_string_lossy().to_string();
+            }
+        }
+        // Fallback: use just the filename
+        path.file_name()
+            .and_then(|s| s.to_str())
+            .unwrap_or("unknown")
+            .to_string()
     }
 
     /// Loads a texture from the VFS.
@@ -385,6 +549,16 @@ impl AssetManager {
     /// Gets a cached texture.
     pub fn get_texture(&self, id: &Identifier) -> Option<Arc<Texture>> {
         self.texture_cache.get(id).cloned()
+    }
+
+    /// Gets cached font data by identifier.
+    pub fn get_font(&self, id: &Identifier) -> Option<Arc<Vec<u8>>> {
+        self.font_cache.get(id).cloned()
+    }
+
+    /// Returns an iterator over all cached font identifiers.
+    pub fn font_ids(&self) -> impl Iterator<Item = &Identifier> {
+        self.font_cache.keys()
     }
 }
 

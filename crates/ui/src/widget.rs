@@ -5,6 +5,7 @@ use super::{
     WidgetType,
 };
 use mclre_assets::Identifier;
+use std::any::Any;
 use std::sync::Arc;
 
 /// Trait for all widgets.
@@ -31,6 +32,15 @@ pub trait Widget {
     fn remove_child(&mut self, child: WidgetId) -> bool;
     fn parent(&self) -> Option<WidgetId>;
     fn set_parent(&mut self, parent: Option<WidgetId>);
+
+    /// Get the click handler if this widget is clickable.
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        None
+    }
+
+    /// Get as Any for downcasting.
+    fn as_any(&self) -> &dyn Any;
+    fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
 /// Base widget implementation.
@@ -160,12 +170,20 @@ impl Widget for BaseWidget {
     fn set_parent(&mut self, parent: Option<WidgetId>) {
         self.parent = parent;
     }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
 }
 
 /// Button widget.
 pub struct Button {
     base: BaseWidget,
-    label: String,
+    pub label: String,
     on_click: Option<Arc<dyn Fn() + Send + Sync>>,
     background_color: [u8; 4],
     text_color: [u8; 4],
@@ -251,6 +269,86 @@ impl std::ops::DerefMut for Button {
     }
 }
 
+impl Widget for Button {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.on_click.as_ref()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
+}
+
 /// Label widget for text display.
 #[derive(Debug, Clone)]
 pub struct Label {
@@ -320,6 +418,86 @@ impl std::ops::DerefMut for Label {
     }
 }
 
+impl Widget for Label {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.base.on_click_fn()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
+}
+
 /// Image widget for displaying textures.
 #[derive(Debug, Clone)]
 pub struct Image {
@@ -368,6 +546,86 @@ impl std::ops::Deref for Image {
 impl std::ops::DerefMut for Image {
     fn deref_mut(&mut self) -> &mut BaseWidget {
         &mut self.base
+    }
+}
+
+impl Widget for Image {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.base.on_click_fn()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
     }
 }
 
@@ -433,6 +691,86 @@ impl std::ops::DerefMut for Panel {
     }
 }
 
+impl Widget for Panel {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.base.on_click_fn()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
+}
+
 /// Container widget for grouping children.
 #[derive(Debug, Clone)]
 pub struct Container {
@@ -471,6 +809,86 @@ impl std::ops::Deref for Container {
 impl std::ops::DerefMut for Container {
     fn deref_mut(&mut self) -> &mut BaseWidget {
         &mut self.base
+    }
+}
+
+impl Widget for Container {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.base.on_click_fn()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
     }
 }
 
@@ -526,6 +944,86 @@ impl std::ops::Deref for ScrollView {
 impl std::ops::DerefMut for ScrollView {
     fn deref_mut(&mut self) -> &mut BaseWidget {
         &mut self.base
+    }
+}
+
+impl Widget for ScrollView {
+    fn id(&self) -> WidgetId {
+        self.base.id
+    }
+    fn widget_type(&self) -> WidgetType {
+        self.base.widget_type
+    }
+    fn state(&self) -> WidgetState {
+        self.base.state
+    }
+    fn set_state(&mut self, state: WidgetState) {
+        self.base.set_state(state)
+    }
+    fn rect(&self) -> Rect {
+        self.base.rect
+    }
+    fn set_rect(&mut self, rect: Rect) {
+        self.base.set_rect(rect)
+    }
+    fn margin(&self) -> Margin {
+        self.base.margin
+    }
+    fn set_margin(&mut self, margin: Margin) {
+        self.base.set_margin(margin)
+    }
+    fn padding(&self) -> Padding {
+        self.base.padding
+    }
+    fn set_padding(&mut self, padding: Padding) {
+        self.base.set_padding(padding)
+    }
+    fn visible(&self) -> bool {
+        self.base.visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.base.set_visible(visible)
+    }
+    fn enabled(&self) -> bool {
+        self.base.enabled
+    }
+    fn set_enabled(&mut self, enabled: bool) {
+        self.base.set_enabled(enabled)
+    }
+    fn z_index(&self) -> i32 {
+        self.base.z_index
+    }
+    fn set_z_index(&mut self, z: i32) {
+        self.base.set_z_index(z)
+    }
+    fn children(&self) -> &[WidgetId] {
+        self.base.children()
+    }
+    fn children_mut(&mut self) -> &mut Vec<WidgetId> {
+        self.base.children_mut()
+    }
+    fn add_child(&mut self, child: WidgetId) {
+        self.base.add_child(child)
+    }
+    fn remove_child(&mut self, child: WidgetId) -> bool {
+        self.base.remove_child(child)
+    }
+    fn parent(&self) -> Option<WidgetId> {
+        self.base.parent
+    }
+    fn set_parent(&mut self, parent: Option<WidgetId>) {
+        self.base.set_parent(parent)
+    }
+    fn on_click_fn(&self) -> Option<&Arc<dyn Fn() + Send + Sync>> {
+        self.base.on_click_fn()
+    }
+
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
     }
 }
 

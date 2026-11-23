@@ -150,6 +150,15 @@ fn mul_mat4(a: &[[f32; 4]; 4], b: &[[f32; 4]; 4]) -> [[f32; 4]; 4] {
     out
 }
 
+/// Viewport rectangle for split-screen rendering.
+#[derive(Debug, Clone, Copy)]
+pub struct Viewport {
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -180,5 +189,14 @@ mod tests {
         for row in mat {
             assert_eq!(row.len(), 4);
         }
+    }
+
+    #[test]
+    fn viewport_calculation() {
+        let viewports = crate::Renderer::calculate_viewports(2, 1920.0, 1080.0);
+        assert_eq!(viewports.len(), 2);
+        assert_eq!(viewports[0].width, 1920.0);
+        assert_eq!(viewports[0].height, 540.0);
+        assert_eq!(viewports[1].y, 540.0);
     }
 }

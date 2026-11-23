@@ -1,8 +1,8 @@
 //! Crafting system for MCLRE baseline profile (LCE-style console crafting).
 
-use crate::{SimWorld, SimError, SimPlayer};
-use mclre_core::{Identifier, BlockId};
+use crate::{SimError, SimPlayer, SimWorld};
 use mclre_core::registry::Registry;
+use mclre_core::{BlockId, Identifier};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
@@ -121,20 +121,20 @@ pub fn matches_recipe(
     if grid_size != recipe.grid_size {
         return false;
     }
-    
+
     let expected_slots = match grid_size {
         GridSize::Small => 4,
         GridSize::Large => 9,
     };
-    
+
     if grid.len() != expected_slots || recipe.ingredients.len() != expected_slots {
         return false;
     }
-    
+
     if recipe.shapeless {
         // For shapeless, just check if all ingredients are present (count matters)
         let mut available: Vec<_> = grid.iter().filter_map(|s| s.clone()).collect();
-        
+
         for ingredient in &recipe.ingredients {
             if let Some(ing) = ingredient {
                 let mut found = false;
@@ -177,21 +177,27 @@ pub fn matches_recipe(
 }
 
 /// Check if an item stack matches an ingredient.
-fn matches_ingredient(stack: &crate::gameplay::inventory::ItemStack, ingredient: &RecipeIngredient) -> bool {
+fn matches_ingredient(
+    stack: &crate::gameplay::inventory::ItemStack,
+    ingredient: &RecipeIngredient,
+) -> bool {
     if stack.is_empty() {
         return false;
     }
-    
+
     if ingredient.is_tag {
         // TODO: Check if item is in tag
         false
     } else {
-        stack.item == Some(ingredient.item) &&
-        (ingredient.damage.is_none() || stack.damage == ingredient.damage.unwrap())
+        stack.item == Some(ingredient.item)
+            && (ingredient.damage.is_none() || stack.damage == ingredient.damage.unwrap())
     }
 }
 
-fn matches_ingredient_opt(stack: Option<&crate::gameplay::inventory::ItemStack>, ingredient: &RecipeIngredient) -> bool {
+fn matches_ingredient_opt(
+    stack: Option<&crate::gameplay::inventory::ItemStack>,
+    ingredient: &RecipeIngredient,
+) -> bool {
     match stack {
         Some(s) => matches_ingredient(s, ingredient),
         None => false,
@@ -265,12 +271,15 @@ pub const RECIPE_GROUPS: &[(RecipeGroup, &str)] = &[
 ];
 
 /// Get all recipes for a group.
-pub fn recipes_for_group(
-    recipes: &[Recipe],
-    group: RecipeGroup,
-) -> Vec<&Recipe> {
-    recipes.iter()
-        .filter(|r| r.group.as_ref().map(|g| g == &group.to_string()).unwrap_or(false))
+pub fn recipes_for_group(recipes: &[Recipe], group: RecipeGroup) -> Vec<&Recipe> {
+    recipes
+        .iter()
+        .filter(|r| {
+            r.group
+                .as_ref()
+                .map(|g| g == &group.to_string())
+                .unwrap_or(false)
+        })
         .collect()
 }
 
@@ -326,7 +335,7 @@ struct JsonResult {
 /// Load recipes from JSON data files (baseline profile).
 pub fn load_recipes(registry: &Registry<crate::gameplay::inventory::ItemStack>) -> Vec<Recipe> {
     let mut recipes = Vec::new();
-    
+
     // Load from data/legacy/recipes.json
     let recipes_path = Path::new("data/legacy/recipes.json");
     if recipes_path.exists() {
@@ -340,7 +349,7 @@ pub fn load_recipes(registry: &Registry<crate::gameplay::inventory::ItemStack>) 
             }
         }
     }
-    
+
     recipes
 }
 
@@ -354,15 +363,15 @@ fn convert_json_recipe(json: JsonRecipe) -> Option<Recipe> {
         GridSize::Large
     };
     let shapeless = json.shape.to_lowercase() == "shapeless";
-    
+
     // Convert pattern to ingredients array
     let expected_slots = match grid_size {
         GridSize::Small => 4,
         GridSize::Large => 9,
     };
-    
+
     let mut ingredients = Vec::with_capacity(expected_slots);
-    
+
     // Fill ingredients based on pattern
     if shapeless {
         // For shapeless, ingredients order doesn't matter
@@ -378,7 +387,7 @@ fn convert_json_recipe(json: JsonRecipe) -> Option<Recipe> {
         // For shaped, we need to place ingredients in the grid according to pattern
         let mut pattern_chars = std::collections::HashMap::new();
         let mut char_index = 0;
-        
+
         for row in &json.pattern {
             for ch in row.chars() {
                 if ch != ' ' && !pattern_chars.contains_key(&ch) {
@@ -389,7 +398,7 @@ fn convert_json_recipe(json: JsonRecipe) -> Option<Recipe> {
                 }
             }
         }
-        
+
         // Build ingredients array in grid order
         for row in &json.pattern {
             for ch in row.chars() {
@@ -412,11 +421,11 @@ fn convert_json_recipe(json: JsonRecipe) -> Option<Recipe> {
                 }
             }
         }
-        
+
         // Pad or truncate to expected size
         ingredients.resize(expected_slots, None);
     }
-    
+
     // Parse result
     let result = RecipeResult {
         item: Identifier::parse(&json.result.item).ok()?,
@@ -424,7 +433,7 @@ fn convert_json_recipe(json: JsonRecipe) -> Option<Recipe> {
         damage: json.result.damage,
         nbt: None,
     };
-    
+
     Some(Recipe {
         id,
         group,
@@ -462,12 +471,13 @@ pub fn get_craftable_recipes<'a>(
         GridSize::Small => &manager.small_grid,
         GridSize::Large => &manager.large_grid,
     };
-    
-    recipes.iter()
+
+    recipes
+        .iter()
         .filter(|r| {
-            r.grid_size == grid_size && 
-            matches_recipe(grid, grid_size, r) &&
-            is_recipe_unlocked(manager, &r.id)
+            r.grid_size == grid_size
+                && matches_recipe(grid, grid_size, r)
+                && is_recipe_unlocked(manager, &r.id)
         })
         .collect()
 }

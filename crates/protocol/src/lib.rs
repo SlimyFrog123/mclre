@@ -2,9 +2,9 @@ use bytes::{Buf, BufMut, Bytes, BytesMut};
 use std::io;
 use thiserror::Error;
 
+pub mod configuration;
 pub mod handshake;
 pub mod login;
-pub mod configuration;
 pub mod play;
 
 /// Protocol version for LCE baseline (TU19)
@@ -113,7 +113,8 @@ pub fn read_uuid(buf: &mut BytesMut) -> Result<uuid::Uuid, ProtocolError> {
         return Err(ProtocolError::UnexpectedEof);
     }
     let bytes = buf.copy_to_bytes(16);
-    let uuid = uuid::Uuid::from_slice(&bytes).map_err(|_| ProtocolError::DecodeFailed("invalid UUID".into()))?;
+    let uuid = uuid::Uuid::from_slice(&bytes)
+        .map_err(|_| ProtocolError::DecodeFailed("invalid UUID".into()))?;
     Ok(uuid)
 }
 
@@ -123,7 +124,10 @@ pub fn write_uuid(buf: &mut BytesMut, uuid: uuid::Uuid) {
 }
 
 pub mod prelude {
-    pub use crate::{Encode, Decode, ProtocolError, read_varint, write_varint, read_string, write_string, read_uuid, write_uuid};
+    pub use crate::{
+        Decode, Encode, ProtocolError, read_string, read_uuid, read_varint, write_string,
+        write_uuid, write_varint,
+    };
     pub use bytes::{Buf, BufMut, Bytes, BytesMut};
 }
 
@@ -146,7 +150,13 @@ mod tests {
 
     #[test]
     fn test_string_roundtrip() {
-        let test_strings = ["", "hello", "hello world", "🎮", "Minecraft: Legacy Rust Edition"];
+        let test_strings = [
+            "",
+            "hello",
+            "hello world",
+            "🎮",
+            "Minecraft: Legacy Rust Edition",
+        ];
         for s in test_strings {
             let mut buf = BytesMut::new();
             write_string(&mut buf, s);

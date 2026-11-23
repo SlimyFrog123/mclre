@@ -247,6 +247,16 @@ impl TextureAtlas {
         (self.width, self.height)
     }
 
+    /// Returns a reference to the GPU texture.
+    pub fn texture(&self) -> &Texture {
+        &self.texture
+    }
+
+    /// Returns the texture view.
+    pub fn texture_view(&self) -> &wgpu::TextureView {
+        &self.view
+    }
+
     /// Creates a default texture atlas with a single white texture for testing.
     pub fn default(device: &Device, queue: &Queue) -> Result<Self, AtlasError> {
         let width = 16;

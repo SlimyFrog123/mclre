@@ -1,0 +1,15 @@
+[package]
+name = "mclre-protocol-fuzz"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+mclre-protocol = { path = ".." }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "fuzz_decode"
+path = "fuzz_targets/decode.rs"

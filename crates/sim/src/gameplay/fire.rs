@@ -1,6 +1,6 @@
 //! Fire spread and burn-out mechanics for MCLRE baseline profile.
 
-use crate::{SimWorld, SimError};
+use crate::{SimError, SimWorld};
 use mclre_core::{BlockId, BlockStateId, Identifier};
 use mclre_world::{BlockPos, ChunkPos};
 
@@ -27,31 +27,103 @@ pub struct Flammability {
 pub fn get_flammability(block_id: BlockId) -> Option<Flammability> {
     match block_id.0 {
         // Wood planks
-        5 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Planks
-        17 => Some(Flammability { catch_chance: 5, burn_rate: 5 }), // Logs
-        18 => Some(Flammability { catch_chance: 30, burn_rate: 60 }), // Leaves
-        35 => Some(Flammability { catch_chance: 30, burn_rate: 60 }), // Wool
-        31 => Some(Flammability { catch_chance: 60, burn_rate: 100 }), // Tall grass
-        32 => Some(Flammability { catch_chance: 60, burn_rate: 100 }), // Dead bush
-        106 => Some(Flammability { catch_chance: 15, burn_rate: 100 }), // Vines
-        65 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Ladder
-        47 => Some(Flammability { catch_chance: 30, burn_rate: 20 }), // Bookshelf
-        85 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Fence
-        107 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Fence gate
-        124 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Wooden stairs
-        125 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Wooden slab
-        64 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Wooden door
-        96 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Trapdoor
-        72 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Pressure plate (wood)
-        77 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Button (wood)
-        25 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Note block
-        84 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Jukebox
-        54 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Chest
-        146 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Trapped chest
-        58 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Crafting table
-        158 => Some(Flammability { catch_chance: 5, burn_rate: 20 }), // Daylight detector
+        5 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Planks
+        17 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 5,
+        }), // Logs
+        18 => Some(Flammability {
+            catch_chance: 30,
+            burn_rate: 60,
+        }), // Leaves
+        35 => Some(Flammability {
+            catch_chance: 30,
+            burn_rate: 60,
+        }), // Wool
+        31 => Some(Flammability {
+            catch_chance: 60,
+            burn_rate: 100,
+        }), // Tall grass
+        32 => Some(Flammability {
+            catch_chance: 60,
+            burn_rate: 100,
+        }), // Dead bush
+        106 => Some(Flammability {
+            catch_chance: 15,
+            burn_rate: 100,
+        }), // Vines
+        65 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Ladder
+        47 => Some(Flammability {
+            catch_chance: 30,
+            burn_rate: 20,
+        }), // Bookshelf
+        85 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Fence
+        107 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Fence gate
+        124 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Wooden stairs
+        125 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Wooden slab
+        64 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Wooden door
+        96 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Trapdoor
+        72 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Pressure plate (wood)
+        77 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Button (wood)
+        25 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Note block
+        84 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Jukebox
+        54 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Chest
+        146 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Trapped chest
+        58 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Crafting table
+        158 => Some(Flammability {
+            catch_chance: 5,
+            burn_rate: 20,
+        }), // Daylight detector
         // TNT catches fire and explodes
-        46 => Some(Flammability { catch_chance: 15, burn_rate: 100 }), // TNT
+        46 => Some(Flammability {
+            catch_chance: 15,
+            burn_rate: 100,
+        }), // TNT
         _ => None,
     }
 }
@@ -60,12 +132,12 @@ pub fn get_flammability(block_id: BlockId) -> Option<Flammability> {
 pub fn can_catch_fire(world: &crate::SimWorld, pos: BlockPos) -> bool {
     let block_state = world.get_block_state(pos);
     let block_id = get_block_id_from_state(block_state);
-    
+
     // Check if block is flammable
     if get_flammability(block_id).is_none() {
         return false;
     }
-    
+
     // Check if any neighbor has fire
     let neighbors = [
         (pos.x() + 1, pos.y(), pos.z()),
@@ -75,14 +147,14 @@ pub fn can_catch_fire(world: &crate::SimWorld, pos: BlockPos) -> bool {
         (pos.x(), pos.y(), pos.z() + 1),
         (pos.x(), pos.y(), pos.z() - 1),
     ];
-    
+
     for (x, y, z) in neighbors {
         let neighbor_pos = BlockPos::new(x, y, z);
         if has_fire(world, neighbor_pos) {
             return true;
         }
     }
-    
+
     false
 }
 
@@ -97,7 +169,7 @@ pub fn can_spread_to(world: &crate::SimWorld, from: BlockPos, to: BlockPos) -> b
     let dx = (from.x() - to.x()).abs();
     let dy = (from.y() - to.y()).abs();
     let dz = (from.z() - to.z()).abs();
-    
+
     // Check spread limits
     // Can spread down 1
     if to.y() < from.y() && dy > 1 {
@@ -111,7 +183,7 @@ pub fn can_spread_to(world: &crate::SimWorld, from: BlockPos, to: BlockPos) -> b
     if to.y() > from.y() && dy > 4 {
         return false;
     }
-    
+
     // Check if target block is flammable
     let block_state = world.get_block_state(to);
     let block_id = get_block_id_from_state(block_state);
@@ -122,19 +194,19 @@ pub fn can_spread_to(world: &crate::SimWorld, from: BlockPos, to: BlockPos) -> b
 pub fn try_ignite(world: &mut crate::SimWorld, pos: BlockPos) -> bool {
     let block_state = world.get_block_state(pos);
     let block_id = get_block_id_from_state(block_state);
-    
+
     // Check if block is flammable
     if get_flammability(block_id).is_none() {
         return false;
     }
-    
+
     // Check if block is air (replace with fire)
     if block_state == BlockStateId(0) {
         // Set fire block
         // TODO: world.set_block_state(pos, FIRE_STATE);
         return true;
     }
-    
+
     false
 }
 
@@ -142,19 +214,19 @@ pub fn try_ignite(world: &mut crate::SimWorld, pos: BlockPos) -> bool {
 pub fn age_fire(world: &mut crate::SimWorld, pos: BlockPos) -> bool {
     if let Some(mut fire_state) = get_fire_state(world, pos) {
         fire_state.age += 1;
-        
+
         if fire_state.age >= 15 {
             // Fire burns out
             extinguish_fire(world, pos);
             return false;
         }
-        
+
         // Update fire state
         set_fire_state(world, pos, fire_state.age);
-        
+
         // Try to spread
         spread_fire(world, pos, fire_state);
-        
+
         true
     } else {
         false
@@ -164,7 +236,7 @@ pub fn age_fire(world: &mut crate::SimWorld, pos: BlockPos) -> bool {
 /// Spread fire from a position.
 fn spread_fire(world: &mut crate::SimWorld, from: BlockPos, fire_state: FireState) {
     let _ = fire_state; // Suppress unused warning for now
-    
+
     // Fire spreads to neighboring flammable blocks
     let neighbors = [
         (from.x() + 1, from.y(), from.z()),
@@ -174,7 +246,7 @@ fn spread_fire(world: &mut crate::SimWorld, from: BlockPos, fire_state: FireStat
         (from.x(), from.y(), from.z() + 1),
         (from.x(), from.y(), from.z() - 1),
     ];
-    
+
     for (x, y, z) in neighbors {
         let to = BlockPos::new(x, y, z);
         if can_spread_to(world, from, to) {
@@ -184,7 +256,8 @@ fn spread_fire(world: &mut crate::SimWorld, from: BlockPos, fire_state: FireStat
             if let Some(flammability) = get_flammability(block_id) {
                 // Use catch_chance as probability (out of 300)
                 // TODO: Use RNG
-                if flammability.catch_chance > 150 { // Simplified: always spread for highly flammable
+                if flammability.catch_chance > 150 {
+                    // Simplified: always spread for highly flammable
                     try_ignite(world, to);
                 }
             }
@@ -249,7 +322,7 @@ pub fn tick(world: &mut crate::SimWorld) -> Result<(), crate::SimError> {
     // 2. Extinguish fire that reached max age
     // 3. Spread fire to neighboring flammable blocks
     // 4. Burn away flammable blocks that have been on fire long enough
-    
+
     // TODO: Iterate over all loaded chunks and process fire
     // For now, just return OK
     Ok(())
@@ -310,7 +383,7 @@ pub fn is_netherrack(block_id: BlockId) -> bool {
 pub fn is_eternal_fire(world: &crate::SimWorld, pos: BlockPos) -> bool {
     let block_state = world.get_block_state(pos);
     let block_id = get_block_id_from_state(block_state);
-    
+
     if is_netherrack(block_id) {
         // Check if in Nether
         is_nether(world, pos)

@@ -100,6 +100,25 @@ pub struct Identifier {
     path: InternedStr,
 }
 
+impl serde::Serialize for Identifier {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string_form())
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Identifier {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        Identifier::parse(&s).map_err(serde::de::Error::custom)
+    }
+}
+
 /// Errors produced when parsing or validating [`Identifier`]s.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseError {

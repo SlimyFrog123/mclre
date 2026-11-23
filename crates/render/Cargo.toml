@@ -14,6 +14,7 @@ workspace = true
 mclre-core.workspace = true
 mclre-world.workspace = true
 mclre-assets.workspace = true
+mclre-content-vanilla.workspace = true
 thiserror.workspace = true
 bytemuck.workspace = true
 wgpu.workspace = true

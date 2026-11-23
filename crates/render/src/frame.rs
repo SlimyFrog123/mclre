@@ -1,5 +1,8 @@
 //! Frame graph: render targets, depth buffer, transient resources.
 
+use std::collections::HashMap;
+
+use mclre_world::ChunkPos;
 use wgpu::{
     Device, Queue, Texture, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     TextureView, TextureViewDescriptor,
@@ -12,6 +15,8 @@ pub struct FrameGraph {
     depth_view: TextureView,
     width: u32,
     height: u32,
+    /// Chunk sections staged for rendering this frame.
+    chunk_sections: HashMap<ChunkPos, Vec<crate::resources::GpuChunkSection>>,
 }
 
 impl FrameGraph {
@@ -24,6 +29,7 @@ impl FrameGraph {
             depth_view,
             width: config.width,
             height: config.height,
+            chunk_sections: HashMap::new(),
         }
     }
 
@@ -35,6 +41,16 @@ impl FrameGraph {
         self.depth_view = self
             .depth_texture
             .create_view(&TextureViewDescriptor::default());
+        self.chunk_sections.clear();
+    }
+
+    /// Adds chunk sections to be rendered this frame.
+    pub fn add_chunk_sections(
+        &mut self,
+        pos: ChunkPos,
+        sections: Vec<crate::resources::GpuChunkSection>,
+    ) {
+        self.chunk_sections.insert(pos, sections);
     }
 
     /// Prepares the frame graph for rendering.

@@ -15,6 +15,7 @@ mclre-core.workspace = true
 thiserror.workspace = true
 flate2.workspace = true
 tracing.workspace = true
+chrono.workspace = true
 
 [dev-dependencies]
 proptest = "1"

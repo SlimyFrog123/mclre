@@ -1,8 +1,11 @@
 //! Block breaking mechanics: progress, tool effectiveness, fortune/silk touch.
 
-use crate::{SimWorld, SimError, SimPlayer};
-use mclre_core::{BlockId, BlockStateId, Identifier, block_state::{BlockProperties, HarvestTool, HarvestTier, SoundGroup}, GameRandom};
-use mclre_world::{BlockPos};
+use crate::{SimError, SimPlayer, SimWorld};
+use mclre_core::{
+    BlockId, BlockStateId, GameRandom, Identifier,
+    block_state::{BlockProperties, HarvestTier, HarvestTool, SoundGroup},
+};
+use mclre_world::BlockPos;
 use tracing::trace;
 
 /// Block breaking state tracked per player per block position.
@@ -71,70 +74,83 @@ pub fn get_break_speed(
     let hardness = block_props.hardness_f32();
     let harvest_tier = block_props.harvest_tier;
     let harvest_tool = block_props.harvest_tool;
-    
+
     // Get held item
     let held_item = player.held_item();
     let (tool_speed, tool_tier, tool_type) = match held_item.item {
         Some(item) => {
             let item_str = item.to_string();
             // Get tool properties from item
-            let tool_type = if item_str.contains("pickaxe") { HarvestTool::Pickaxe }
-                else if item_str.contains("axe") { HarvestTool::Axe }
-                else if item_str.contains("shovel") { HarvestTool::Shovel }
-                else if item_str.contains("hoe") { HarvestTool::Hoe }
-                else if item_str.contains("sword") { HarvestTool::Sword }
-                else if item_str.contains("shears") { HarvestTool::Shears }
-                else { HarvestTool::Hand };
-            
+            let tool_type = if item_str.contains("pickaxe") {
+                HarvestTool::Pickaxe
+            } else if item_str.contains("axe") {
+                HarvestTool::Axe
+            } else if item_str.contains("shovel") {
+                HarvestTool::Shovel
+            } else if item_str.contains("hoe") {
+                HarvestTool::Hoe
+            } else if item_str.contains("sword") {
+                HarvestTool::Sword
+            } else if item_str.contains("shears") {
+                HarvestTool::Shears
+            } else {
+                HarvestTool::Hand
+            };
+
             // Get tool tier from item name
-            let tier = if item_str.contains("diamond") { HarvestTier::Diamond }
-                else if item_str.contains("iron") { HarvestTier::Iron }
-                else if item_str.contains("stone") || item_str.contains("cobblestone") { HarvestTier::Stone }
-                else if item_str.contains("gold") { HarvestTier::Wood } // Gold is wood tier
-                else if item_str.contains("wood") { HarvestTier::Wood }
-                else { HarvestTier::Wood };
+            let tier = if item_str.contains("diamond") {
+                HarvestTier::Diamond
+            } else if item_str.contains("iron") {
+                HarvestTier::Iron
+            } else if item_str.contains("stone") || item_str.contains("cobblestone") {
+                HarvestTier::Stone
+            } else if item_str.contains("gold") {
+                HarvestTier::Wood
+            }
+            // Gold is wood tier
+            else if item_str.contains("wood") {
+                HarvestTier::Wood
+            } else {
+                HarvestTier::Wood
+            };
             let speed = tier.mining_speed();
             (speed, tier as u8, tool_type)
         }
         _ => (1.0, 0, HarvestTool::Hand), // Hand
     };
-    
+
     // Check if tool can harvest this block
     let can_harvest = tool_tier >= harvest_tier as u8 && tool_type == harvest_tool;
-    
+
     // If not in creative mode, can't break unbreakable blocks
     if hardness < 0.0 && player.gamemode != crate::GameMode::Creative {
         return (0.0, false);
     }
-    
+
     // Speed calculation
     let speed = if can_harvest {
         tool_speed
     } else {
         1.0 // Hand speed
     };
-    
+
     // Underwater penalty (5x slower)
     let speed = if player.is_underwater() && !player.has_aqua_affinity() {
         speed / 5.0
     } else {
         speed
     };
-    
+
     (speed, can_harvest)
 }
 
 /// Calculate breaking progress for one tick.
 /// Returns true if block should be broken this tick.
-pub fn calculate_break_progress(
-    speed: f32,
-    hardness: f32,
-    progress: f32,
-) -> f32 {
+pub fn calculate_break_progress(speed: f32, hardness: f32, progress: f32) -> f32 {
     if hardness <= 0.0 {
         return 1.0; // Instant break
     }
-    
+
     // Formula from reference: progress += speed / hardness / 30
     // 30 is the base time in ticks for hardness 1.0 with speed 1.0
     let delta = speed / hardness / 30.0;
@@ -178,7 +194,7 @@ pub fn get_block_drops(
         // TODO: Return the block item itself
         return Vec::new();
     }
-    
+
     // TODO: Look up drop table for block from registry
     // For now, return empty
     Vec::new()
@@ -200,7 +216,7 @@ pub fn start_breaking(
         block_state,
         block_id,
     };
-    
+
     // Store in player's break state
     if let Some(mut player) = world.get_player_by_entity_id(player_entity_id) {
         player.block_break_state = Some(break_state);
@@ -239,11 +255,11 @@ struct BreakCompletionData {
 /// Tick the block breaking system.
 pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
     let tick = world.tick_count;
-    
+
     // First pass: collect all break progress data without holding mutable borrows across world calls
     let mut progress_data: Vec<BreakProgressData> = Vec::new();
     let mut completions: Vec<BreakCompletionData> = Vec::new();
-    
+
     // Collect break state data from all players
     for mut player in world.players_mut() {
         if let Some(break_state) = &mut player.block_break_state {
@@ -254,7 +270,7 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
             let gamemode = player.gamemode;
             let held_item = player.held_item();
             let held_item_str = held_item.item.map(|i| i.to_string());
-            
+
             // Store data for processing, clear the break state to avoid borrow issues
             progress_data.push(BreakProgressData {
                 player_entity_id: player.entity_id,
@@ -265,12 +281,12 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
                 gamemode,
                 held_item_str,
             });
-            
+
             // We'll update progress after computing it
             player.block_break_state = None;
         }
     }
-    
+
     // Process collected break progress data
     for data in progress_data {
         // Verify block still exists at position
@@ -279,7 +295,7 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
             // Block changed, stop breaking - don't restore break state
             continue;
         }
-        
+
         // Get break speed using the held item string
         let (speed, can_harvest) = get_break_speed_from_item_str(
             data.held_item_str.as_deref(),
@@ -288,22 +304,22 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
             world,
             data.gamemode,
         );
-        
+
         if !can_harvest && data.gamemode != crate::GameMode::Creative {
             // Can't harvest this block, stop breaking
             continue;
         }
-        
+
         // Update progress
         let hardness = world.block_properties(data.block_state).hardness_f32();
         let new_progress = calculate_break_progress(speed, hardness, data.progress);
-        
+
         // Check if breaking is complete
         if new_progress >= 1.0 {
             // Collect completion data - need to re-get player for silk touch/fortune
             let silk_touch = false; // TODO: check enchantments from held item
-            let fortune_level = 0;  // TODO: check enchantments from held item
-            
+            let fortune_level = 0; // TODO: check enchantments from held item
+
             completions.push(BreakCompletionData {
                 player_entity_id: data.player_entity_id,
                 pos: data.pos,
@@ -327,7 +343,7 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
             }
         }
     }
-    
+
     // Apply break completions
     for completion in completions {
         // Get drops
@@ -339,10 +355,10 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
             completion.silk_touch,
             &mut rng,
         );
-        
+
         // Remove block
         world.set_block_state(completion.pos, mclre_core::BlockStateId(0)); // AIR = 0
-        
+
         // Spawn XP orbs (if not creative and block gives XP)
         if completion.gamemode != crate::GameMode::Creative {
             // Get XP value first (using RNG)
@@ -360,15 +376,17 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
                 let orb_data: Vec<(u32, mclre_core::mth::Vec3<f32>)> = {
                     let mut rng = world.rng_mut();
                     let orbs = crate::gameplay::xp::split_xp_into_orbs(xp);
-                    orbs.into_iter().map(|orb_type| {
-                        let value = orb_type as u32;
-                        let mut pos = mclre_core::mth::Vec3::new(
-                            pos_f32.x + (rng.next_float() - 0.5) * 0.5,
-                            pos_f32.y + rng.next_float() * 0.25,
-                            pos_f32.z + (rng.next_float() - 0.5) * 0.5,
-                        );
-                        (value, pos)
-                    }).collect()
+                    orbs.into_iter()
+                        .map(|orb_type| {
+                            let value = orb_type as u32;
+                            let mut pos = mclre_core::mth::Vec3::new(
+                                pos_f32.x + (rng.next_float() - 0.5) * 0.5,
+                                pos_f32.y + rng.next_float() * 0.25,
+                                pos_f32.z + (rng.next_float() - 0.5) * 0.5,
+                            );
+                            (value, pos)
+                        })
+                        .collect()
                 };
                 // Now add orbs to system (no RNG needed)
                 let mut xp_orb_system = world.get_xp_orb_system();
@@ -378,7 +396,7 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
                 }
             }
         }
-        
+
         // Spawn drops (if not creative)
         if completion.gamemode != crate::GameMode::Creative {
             for (item, count) in drops {
@@ -394,7 +412,11 @@ pub fn tick(world: &mut SimWorld) -> Result<(), SimError> {
 fn spawn_block_xp(world: &mut SimWorld, pos: BlockPos, block_id: BlockId, rng: &mut GameRandom) {
     let xp = crate::gameplay::xp::xp_from_block_break(block_id.0, rng);
     if xp > 0 {
-        let pos_f32 = mclre_core::mth::Vec3::new(pos.x() as f32 + 0.5, pos.y() as f32 + 0.5, pos.z() as f32 + 0.5);
+        let pos_f32 = mclre_core::mth::Vec3::new(
+            pos.x() as f32 + 0.5,
+            pos.y() as f32 + 0.5,
+            pos.z() as f32 + 0.5,
+        );
         crate::gameplay::xp::spawn_xp_orbs(&mut world.xp_orb_system, pos_f32, xp, rng);
     }
 }
@@ -412,44 +434,61 @@ fn get_break_speed_from_item_str(
     let hardness = block_props.hardness_f32();
     let harvest_tier = block_props.harvest_tier;
     let harvest_tool = block_props.harvest_tool;
-    
+
     // If not in creative mode, can't break unbreakable blocks
     if hardness < 0.0 && gamemode != crate::GameMode::Creative {
         return (0.0, false);
     }
-    
+
     // Get tool properties from item string
     let (tool_speed, tool_tier, tool_type) = match held_item_str {
         Some(item_str) => {
-            let tool_type = if item_str.contains("pickaxe") { HarvestTool::Pickaxe }
-                else if item_str.contains("axe") { HarvestTool::Axe }
-                else if item_str.contains("shovel") { HarvestTool::Shovel }
-                else if item_str.contains("hoe") { HarvestTool::Hoe }
-                else if item_str.contains("sword") { HarvestTool::Sword }
-                else if item_str.contains("shears") { HarvestTool::Shears }
-                else { HarvestTool::Hand };
-            
-            let tier = if item_str.contains("diamond") { HarvestTier::Diamond }
-                else if item_str.contains("iron") { HarvestTier::Iron }
-                else if item_str.contains("stone") || item_str.contains("cobblestone") { HarvestTier::Stone }
-                else if item_str.contains("gold") { HarvestTier::Wood } // Gold is wood tier
-                else if item_str.contains("wood") { HarvestTier::Wood }
-                else { HarvestTier::Wood };
+            let tool_type = if item_str.contains("pickaxe") {
+                HarvestTool::Pickaxe
+            } else if item_str.contains("axe") {
+                HarvestTool::Axe
+            } else if item_str.contains("shovel") {
+                HarvestTool::Shovel
+            } else if item_str.contains("hoe") {
+                HarvestTool::Hoe
+            } else if item_str.contains("sword") {
+                HarvestTool::Sword
+            } else if item_str.contains("shears") {
+                HarvestTool::Shears
+            } else {
+                HarvestTool::Hand
+            };
+
+            let tier = if item_str.contains("diamond") {
+                HarvestTier::Diamond
+            } else if item_str.contains("iron") {
+                HarvestTier::Iron
+            } else if item_str.contains("stone") || item_str.contains("cobblestone") {
+                HarvestTier::Stone
+            } else if item_str.contains("gold") {
+                HarvestTier::Wood
+            }
+            // Gold is wood tier
+            else if item_str.contains("wood") {
+                HarvestTier::Wood
+            } else {
+                HarvestTier::Wood
+            };
             let speed = tier.mining_speed();
             (speed, tier as u8, tool_type)
         }
         _ => (1.0, 0, HarvestTool::Hand), // Hand
     };
-    
+
     // Check if tool can harvest this block
     let can_harvest = tool_tier >= harvest_tier as u8 && tool_type == harvest_tool;
-    
+
     // Speed calculation
     let speed = if can_harvest {
         tool_speed
     } else {
         1.0 // Hand speed
     };
-    
+
     (speed, can_harvest)
 }

@@ -9,3 +9,15 @@ description = "Audio engine: positional 3D sound, splitscreen listeners, sound e
 
 [lints]
 workspace = true
+
+[dependencies]
+kira.workspace = true
+fastrand.workspace = true
+mclre-core.workspace = true
+mclre-assets.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+parking_lot.workspace = true
+tracing.workspace = true
+crossbeam-channel.workspace = true

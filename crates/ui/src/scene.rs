@@ -60,11 +60,41 @@ impl SceneAccess for Box<dyn Scene> {
 /// UI context passed to scenes.
 pub struct UiContext {
     pub widget_registry: WidgetRegistry,
-    pub input: mclre_input::InputManager<'static>,
+    pub input: mclre_input::InputManager,
     pub assets: Arc<mclre_assets::AssetManager>,
-    pub renderer: mclre_render::Renderer,
+    pub renderer: Option<mclre_render::Renderer>,
     pub delta_time: f32,
     pub screen_size: (u32, u32),
+}
+
+impl UiContext {
+    /// Creates a minimal UI context for testing.
+    pub fn dummy() -> Self {
+        Self {
+            widget_registry: WidgetRegistry::new(),
+            input: mclre_input::InputManager::new(),
+            assets: Arc::new(mclre_assets::AssetManager::new()),
+            renderer: None,
+            delta_time: 0.0,
+            screen_size: (0, 0),
+        }
+    }
+
+    /// Creates a UI context for a specific player viewport.
+    pub fn for_player(
+        _player_index: usize,
+        viewport: Rect,
+        assets: Arc<mclre_assets::AssetManager>,
+    ) -> Self {
+        Self {
+            widget_registry: WidgetRegistry::new(),
+            input: mclre_input::InputManager::new(),
+            assets,
+            renderer: None,
+            delta_time: 0.0,
+            screen_size: (viewport.width as u32, viewport.height as u32),
+        }
+    }
 }
 
 /// Widget registry for managing widgets across scenes.
@@ -271,14 +301,6 @@ pub trait Renderer: Send + Sync {
         rect: Rect,
         color: Color,
     );
-}
-
-/// UI context for scenes (simplified for now).
-impl UiContext {
-    pub fn dummy() -> Self {
-        // This is a placeholder - in real usage, this would be properly constructed
-        unimplemented!("UiContext::dummy() should not be called in production")
-    }
 }
 
 #[cfg(test)]

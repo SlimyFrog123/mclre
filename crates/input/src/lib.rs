@@ -52,6 +52,20 @@ pub enum Action {
     Screenshot,
     TogglePerspective,
     ToggleFullscreen,
+
+    // Splitscreen
+    Join,  // Join game as additional player (splitscreen)
+    Leave, // Leave game (splitscreen)
+
+    // UI Navigation (for gamepad/keyboard UI control)
+    NavigateUp,
+    NavigateDown,
+    NavigateLeft,
+    NavigateRight,
+    NavigateSelect,
+    NavigateBack,
+    NavigateNext,
+    NavigatePrevious,
 }
 
 /// Input state for a single action.
@@ -110,7 +124,7 @@ pub enum GamepadBinding {
 
 /// Input manager for a single player.
 #[derive(Debug)]
-pub struct InputManager<'g> {
+pub struct InputManager {
     /// Current action states.
     action_states: HashMap<Action, ActionState>,
     /// Keyboard bindings.
@@ -119,8 +133,6 @@ pub struct InputManager<'g> {
     mouse_bindings: HashMap<MouseBinding, Action>,
     /// Gamepad bindings.
     gamepad_bindings: HashMap<GamepadBinding, Action>,
-    /// Gamepad state.
-    gamepad_state: Mutex<Option<gilrs::Gamepad<'g>>>,
     /// Mouse delta for camera movement.
     mouse_delta: Mutex<(f32, f32)>,
     /// Whether mouse is captured.
@@ -129,7 +141,7 @@ pub struct InputManager<'g> {
     mouse_sensitivity: f32,
 }
 
-impl<'g> InputManager<'g> {
+impl InputManager {
     /// Creates a new input manager with default LCE-style bindings.
     pub fn new() -> Self {
         let mut manager = Self {
@@ -137,7 +149,6 @@ impl<'g> InputManager<'g> {
             keyboard_bindings: HashMap::new(),
             mouse_bindings: HashMap::new(),
             gamepad_bindings: HashMap::new(),
-            gamepad_state: Mutex::new(None),
             mouse_delta: Mutex::new((0.0, 0.0)),
             mouse_captured: false,
             mouse_sensitivity: 0.002,
@@ -164,6 +175,8 @@ impl<'g> InputManager<'g> {
         manager.bind_keyboard(KeyCode::F2, Action::Screenshot);
         manager.bind_keyboard(KeyCode::F5, Action::TogglePerspective);
         manager.bind_keyboard(KeyCode::F11, Action::ToggleFullscreen);
+        manager.bind_keyboard(KeyCode::KeyJ, Action::Join);
+        manager.bind_keyboard(KeyCode::KeyL, Action::Leave);
 
         // Number keys for hotbar
         for (i, key) in [
@@ -223,10 +236,50 @@ impl<'g> InputManager<'g> {
         );
         manager.bind_gamepad(GamepadBinding::Button(Button::Start), Action::Pause);
         manager.bind_gamepad(GamepadBinding::Button(Button::Select), Action::Chat);
+        manager.bind_gamepad(GamepadBinding::Button(Button::Start), Action::Join);
+        manager.bind_gamepad(GamepadBinding::Button(Button::Mode), Action::Leave);
 
         // Gamepad analog sticks for camera
         manager.bind_gamepad(GamepadBinding::AxisRightX, Action::LookLeft);
         manager.bind_gamepad(GamepadBinding::AxisRightY, Action::LookDown);
+
+        // UI Navigation bindings (keyboard - arrow keys)
+        manager.bind_keyboard(KeyCode::ArrowUp, Action::NavigateUp);
+        manager.bind_keyboard(KeyCode::ArrowDown, Action::NavigateDown);
+        manager.bind_keyboard(KeyCode::ArrowLeft, Action::NavigateLeft);
+        manager.bind_keyboard(KeyCode::ArrowRight, Action::NavigateRight);
+        manager.bind_keyboard(KeyCode::Enter, Action::NavigateSelect);
+        manager.bind_keyboard(KeyCode::Escape, Action::NavigateBack);
+        manager.bind_keyboard(KeyCode::Tab, Action::NavigateNext);
+        manager.bind_keyboard(KeyCode::Backspace, Action::NavigatePrevious);
+
+        // UI Navigation bindings (gamepad - D-pad and face buttons)
+        manager.bind_gamepad(GamepadBinding::Button(Button::DPadUp), Action::NavigateUp);
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::DPadDown),
+            Action::NavigateDown,
+        );
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::DPadLeft),
+            Action::NavigateLeft,
+        );
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::DPadRight),
+            Action::NavigateRight,
+        );
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::South),
+            Action::NavigateSelect,
+        ); // A
+        manager.bind_gamepad(GamepadBinding::Button(Button::East), Action::NavigateBack); // B
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::LeftTrigger2),
+            Action::NavigatePrevious,
+        ); // LB
+        manager.bind_gamepad(
+            GamepadBinding::Button(Button::RightTrigger2),
+            Action::NavigateNext,
+        ); // RB
 
         manager
     }
@@ -265,6 +318,15 @@ impl<'g> InputManager<'g> {
             Action::Screenshot,
             Action::TogglePerspective,
             Action::ToggleFullscreen,
+            // UI Navigation
+            Action::NavigateUp,
+            Action::NavigateDown,
+            Action::NavigateLeft,
+            Action::NavigateRight,
+            Action::NavigateSelect,
+            Action::NavigateBack,
+            Action::NavigateNext,
+            Action::NavigatePrevious,
         ]
     }
 
@@ -395,64 +457,61 @@ impl<'g> InputManager<'g> {
         delta.1 += delta_y * self.mouse_sensitivity;
     }
 
-    /// Updates gamepad state (call once per frame).
-    pub fn update_gamepad(&mut self, gilrs: &'g Gilrs) {
-        let mut state = self.gamepad_state.lock();
-        *state = gilrs.gamepads().next().map(|(id, _)| gilrs.gamepad(id));
+    /// Updates gamepad state for a specific gamepad (call once per frame).
+    pub fn update_gamepad(&mut self, gilrs: &Gilrs, gamepad_id: gilrs::GamepadId) {
+        let gamepad = gilrs.gamepad(gamepad_id);
 
-        if let Some(gamepad) = state.as_ref() {
-            // Process buttons
-            for (binding, action) in &self.gamepad_bindings {
-                if let GamepadBinding::Button(button) = binding {
-                    let pressed = gamepad.is_pressed(*button);
-                    if let Some(state) = self.action_states.get_mut(action) {
-                        state.update(pressed);
-                    }
+        // Process buttons
+        for (binding, action) in &self.gamepad_bindings {
+            if let GamepadBinding::Button(button) = binding {
+                let pressed = gamepad.is_pressed(*button);
+                if let Some(state) = self.action_states.get_mut(action) {
+                    state.update(pressed);
                 }
             }
+        }
 
-            // Process axes
-            for (binding, action) in &self.gamepad_bindings {
-                match binding {
-                    GamepadBinding::AxisLeftX => {
-                        let value = gamepad.value(gilrs::Axis::LeftStickX);
-                        if let Some(state) = self.action_states.get_mut(action) {
-                            state.update(value < -0.5);
-                        }
+        // Process axes
+        for (binding, action) in &self.gamepad_bindings {
+            match binding {
+                GamepadBinding::AxisLeftX => {
+                    let value = gamepad.value(gilrs::Axis::LeftStickX);
+                    if let Some(state) = self.action_states.get_mut(action) {
+                        state.update(value < -0.5);
                     }
-                    GamepadBinding::AxisLeftY => {
-                        let value = gamepad.value(gilrs::Axis::LeftStickY);
-                        if let Some(state) = self.action_states.get_mut(action) {
-                            state.update(value > 0.5);
-                        }
-                    }
-                    GamepadBinding::AxisRightX => {
-                        let value = gamepad.value(gilrs::Axis::RightStickX);
-                        // Update look left/right based on axis
-                        if value < -0.1 {
-                            self.action_states
-                                .get_mut(&Action::LookLeft)
-                                .map(|s| s.update(true));
-                        } else if value > 0.1 {
-                            self.action_states
-                                .get_mut(&Action::LookRight)
-                                .map(|s| s.update(true));
-                        }
-                    }
-                    GamepadBinding::AxisRightY => {
-                        let value = gamepad.value(gilrs::Axis::RightStickY);
-                        if value < -0.1 {
-                            self.action_states
-                                .get_mut(&Action::LookUp)
-                                .map(|s| s.update(true));
-                        } else if value > 0.1 {
-                            self.action_states
-                                .get_mut(&Action::LookDown)
-                                .map(|s| s.update(true));
-                        }
-                    }
-                    _ => {}
                 }
+                GamepadBinding::AxisLeftY => {
+                    let value = gamepad.value(gilrs::Axis::LeftStickY);
+                    if let Some(state) = self.action_states.get_mut(action) {
+                        state.update(value > 0.5);
+                    }
+                }
+                GamepadBinding::AxisRightX => {
+                    let value = gamepad.value(gilrs::Axis::RightStickX);
+                    // Update look left/right based on axis
+                    if value < -0.1 {
+                        self.action_states
+                            .get_mut(&Action::LookLeft)
+                            .map(|s| s.update(true));
+                    } else if value > 0.1 {
+                        self.action_states
+                            .get_mut(&Action::LookRight)
+                            .map(|s| s.update(true));
+                    }
+                }
+                GamepadBinding::AxisRightY => {
+                    let value = gamepad.value(gilrs::Axis::RightStickY);
+                    if value < -0.1 {
+                        self.action_states
+                            .get_mut(&Action::LookUp)
+                            .map(|s| s.update(true));
+                    } else if value > 0.1 {
+                        self.action_states
+                            .get_mut(&Action::LookDown)
+                            .map(|s| s.update(true));
+                    }
+                }
+                _ => {}
             }
         }
     }
@@ -465,7 +524,7 @@ impl<'g> InputManager<'g> {
     }
 }
 
-impl<'g> Default for InputManager<'g> {
+impl Default for InputManager {
     fn default() -> Self {
         Self::new()
     }

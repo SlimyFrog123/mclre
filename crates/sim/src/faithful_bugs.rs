@@ -64,8 +64,12 @@ mod tests {
     fn test_faithful_behavior_trait() {
         struct TestBehavior;
         impl FaithfulBehavior<i32> for TestBehavior {
-            fn faithful(&self) -> i32 { 100 }
-            fn corrected(&self) -> i32 { 200 }
+            fn faithful(&self) -> i32 {
+                100
+            }
+            fn corrected(&self) -> i32 {
+                200
+            }
         }
         let behavior = TestBehavior;
         #[cfg(feature = "faithful_bugs")]

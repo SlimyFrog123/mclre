@@ -13,6 +13,6 @@
 //! numeric ids (SPEC.md 5.2/5.3).
 
 pub mod legacy_blocks;
-pub mod legacy_recipes;
 pub mod legacy_furnace;
 pub mod legacy_items;
+pub mod legacy_recipes;

@@ -7,10 +7,16 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
-#[command(name = "extract-legacy-recipes", about = "Extract recipes from LCE reference")]
+#[command(
+    name = "extract-legacy-recipes",
+    about = "Extract recipes from LCE reference"
+)]
 struct Args {
     /// Path to the reference LCE source directory (Minecraft.World)
-    #[arg(long, default_value = "../../../reference/lce-141217/MinecraftConsoles-141217/Minecraft.World")]
+    #[arg(
+        long,
+        default_value = "../../../reference/lce-141217/MinecraftConsoles-141217/Minecraft.World"
+    )]
     reference_dir: PathBuf,
 
     /// Output directory for generated TOML files
@@ -48,7 +54,9 @@ fn main() -> Result<()> {
         &structure_recipes_cpp,
         &ore_recipes_cpp,
         &cloth_dye_recipes_cpp,
-    ).map_err(|e| anyhow::anyhow!(e)).context("Failed to parse recipes")?;
+    )
+    .map_err(|e| anyhow::anyhow!(e))
+    .context("Failed to parse recipes")?;
 
     println!("Parsed {} recipes", recipes.len());
 
@@ -65,6 +73,5 @@ fn main() -> Result<()> {
 }
 
 fn read_file(path: &PathBuf) -> Result<String> {
-    fs::read_to_string(path)
-        .with_context(|| format!("Failed to read {:?}", path))
+    fs::read_to_string(path).with_context(|| format!("Failed to read {:?}", path))
 }

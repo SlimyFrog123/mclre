@@ -1,6 +1,6 @@
 //! Fluid simulation (water and lava) for MCLRE baseline profile.
 
-use crate::{SimWorld, SimError};
+use crate::{SimError, SimWorld};
 use mclre_core::{BlockId, BlockStateId, Identifier};
 use mclre_world::{BlockPos, ChunkPos};
 use std::collections::VecDeque;
@@ -33,9 +33,9 @@ pub struct FluidProperties {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FluidReaction {
     None,
-    Obsidian,      // Water + Lava (lava source)
-    Cobblestone,   // Water + Lava (lava flowing)
-    Stone,         // Water + Lava (water source into lava flowing)
+    Obsidian,    // Water + Lava (lava source)
+    Cobblestone, // Water + Lava (lava flowing)
+    Stone,       // Water + Lava (water source into lava flowing)
 }
 
 /// Get fluid properties for a fluid type.
@@ -52,7 +52,7 @@ pub fn get_fluid_properties(fluid: FluidType, in_nether: bool) -> FluidPropertie
         FluidType::Lava => FluidProperties {
             flow_distance: if in_nether { 7 } else { 3 },
             nether_flow_distance: 7,
-            tick_rate: 2, // Lava updates every 2 ticks
+            tick_rate: 2,           // Lava updates every 2 ticks
             infinite_source: false, // Lava sources are not infinite in baseline
             viscosity: 2.0,
             reacts_with: FluidReaction::Obsidian, // Will react with water
@@ -77,7 +77,11 @@ impl FluidState {
     /// Create a new fluid source block.
     pub fn source(fluid_type: FluidType) -> Self {
         Self {
-            level: if fluid_type == FluidType::Water { 8 } else { 15 },
+            level: if fluid_type == FluidType::Water {
+                8
+            } else {
+                15
+            },
             is_source: true,
             fluid_type: Some(fluid_type),
             tick_counter: 0,
@@ -149,7 +153,7 @@ pub fn calculate_flow(
 ) -> Vec<(BlockPos, u8)> {
     let props = get_fluid_properties(fluid_type, is_nether(world, source_pos));
     let max_distance = props.flow_distance as i32;
-    
+
     if max_distance == 0 {
         return Vec::new();
     }
@@ -178,7 +182,7 @@ pub fn calculate_flow(
 
         for (x, y, z) in neighbors {
             let neighbor_pos = BlockPos::new(x, y, z);
-            
+
             if visited.contains(&neighbor_pos) {
                 continue;
             }
@@ -188,7 +192,7 @@ pub fn calculate_flow(
             if can_flow_into(world, neighbor_pos, fluid_type) {
                 let new_level = remaining_distance as u8;
                 results.push((neighbor_pos, new_level));
-                
+
                 // Continue flowing from this position
                 queue.push_back((neighbor_pos, remaining_distance - 1));
             }
@@ -201,24 +205,24 @@ pub fn calculate_flow(
 /// Check if fluid can flow into a position.
 fn can_flow_into(world: &SimWorld, pos: BlockPos, fluid_type: FluidType) -> bool {
     let block_state = world.get_block_state(pos);
-    
+
     // Can flow into air
     if block_state == BlockStateId(0) {
         return true;
     }
-    
+
     // Can flow into same fluid type (to level it)
     if let Some(existing) = get_fluid_type(block_state) {
         if existing == fluid_type {
             return true;
         }
     }
-    
+
     // Can flow into replaceable blocks (tall grass, flowers, etc.)
     if is_replaceable(block_state) {
         return true;
     }
-    
+
     false
 }
 
@@ -237,8 +241,9 @@ pub fn check_fluid_reaction(
     fluid_b: FluidType,
 ) -> Option<FluidReaction> {
     // Water + Lava reactions
-    if (fluid_a == FluidType::Water && fluid_b == FluidType::Lava) ||
-       (fluid_a == FluidType::Lava && fluid_b == FluidType::Water) {
+    if (fluid_a == FluidType::Water && fluid_b == FluidType::Lava)
+        || (fluid_a == FluidType::Lava && fluid_b == FluidType::Water)
+    {
         // Need to determine if source or flowing
         // For now, return Obsidian as default
         // In reference: water source + lava source = obsidian
@@ -250,11 +255,7 @@ pub fn check_fluid_reaction(
 }
 
 /// Apply fluid reaction at a position (e.g., create obsidian).
-pub fn apply_fluid_reaction(
-    world: &mut SimWorld,
-    pos: BlockPos,
-    reaction: FluidReaction,
-) -> bool {
+pub fn apply_fluid_reaction(world: &mut SimWorld, pos: BlockPos, reaction: FluidReaction) -> bool {
     match reaction {
         FluidReaction::Obsidian => {
             // Set block to obsidian
@@ -287,7 +288,7 @@ pub fn tick(world: &mut SimWorld) -> Result<(), crate::SimError> {
     // 2. Calculate flow
     // 3. Apply reactions
     // 4. Update block states
-    
+
     // TODO: Implement proper fluid ticking with chunk iteration
     // For now, just return OK
     Ok(())
@@ -319,7 +320,7 @@ pub fn update_fluid_block(
     // 1. If source placed, start flow
     // 2. If source removed, stop flow from that source
     // 3. If fluid level changes, propagate
-    
+
     Ok(())
 }
 

@@ -1,7 +1,7 @@
 //! Inventory and container system for MCLRE baseline profile.
 
-use crate::{SimWorld, SimError, SimPlayer};
-use mclre_core::{Identifier, BlockId, BlockStateId};
+use crate::{SimError, SimPlayer, SimWorld};
+use mclre_core::{BlockId, BlockStateId, Identifier};
 use mclre_world::{BlockPos, ChunkPos};
 use std::collections::HashMap;
 
@@ -56,7 +56,7 @@ impl ItemStack {
         if self.is_empty() {
             return count;
         }
-        
+
         let space = self.max_stack_size().saturating_sub(self.count);
         let added = count.min(space);
         self.count += added;
@@ -81,17 +81,17 @@ impl ItemStack {
         if self.is_empty() || other.is_empty() {
             return false;
         }
-        
+
         if self.item != other.item {
             return false;
         }
-        
+
         if self.damage != other.damage {
             return false;
         }
-        
+
         // TODO: Compare NBT data
-        
+
         true
     }
 
@@ -100,7 +100,7 @@ impl ItemStack {
         if count == 0 || count >= self.count {
             return None;
         }
-        
+
         self.count -= count;
         Some(ItemStack {
             item: self.item,
@@ -128,7 +128,12 @@ pub enum ArmorSlot {
 impl ArmorSlot {
     /// Get all armor slots in order (feet, legs, chest, head).
     pub fn all() -> [ArmorSlot; 4] {
-        [ArmorSlot::Feet, ArmorSlot::Legs, ArmorSlot::Chest, ArmorSlot::Head]
+        [
+            ArmorSlot::Feet,
+            ArmorSlot::Legs,
+            ArmorSlot::Chest,
+            ArmorSlot::Head,
+        ]
     }
 }
 
@@ -260,7 +265,7 @@ impl PlayerInventory {
                 }
             }
         }
-        
+
         // Then find empty slot
         for slot in &mut self.main {
             if slot.is_empty() {
@@ -268,7 +273,7 @@ impl PlayerInventory {
                 return ItemStack::empty();
             }
         }
-        
+
         // No space
         stack
     }
@@ -279,7 +284,7 @@ impl PlayerInventory {
         if slot >= self.main.len() {
             return stack;
         }
-        
+
         if self.main[slot].can_stack_with(&stack) {
             let remaining = self.main[slot].add(stack.count);
             stack.count = remaining;
@@ -287,12 +292,12 @@ impl PlayerInventory {
                 return ItemStack::empty();
             }
         }
-        
+
         if self.main[slot].is_empty() {
             self.main[slot] = stack;
             return ItemStack::empty();
         }
-        
+
         stack
     }
 
@@ -322,28 +327,30 @@ impl PlayerInventory {
         if slot >= container.size() {
             return ItemStack::empty();
         }
-        
+
         let mut stack = container.slots[slot].clone();
         if stack.is_empty() {
             return ItemStack::empty();
         }
-        
+
         container.slots[slot] = ItemStack::empty();
-        
+
         // Try to add to player inventory
         stack = self.add_item(stack);
-        
+
         // If couldn't fit all, put remainder back
         if !stack.is_empty() {
             container.slots[slot] = stack.clone();
         }
-        
+
         stack
     }
 
     /// Get all non-empty slots for serialization.
     pub fn get_non_empty_slots(&self) -> Vec<(usize, &ItemStack)> {
-        self.main.iter().enumerate()
+        self.main
+            .iter()
+            .enumerate()
             .filter(|(_, s)| !s.is_empty())
             .collect()
     }
@@ -420,7 +427,7 @@ impl ContainerInventory {
         if stack.is_empty() {
             return ItemStack::empty();
         }
-        
+
         // Try to stack first
         for slot in &mut self.slots {
             if slot.can_stack_with(&stack) {
@@ -431,7 +438,7 @@ impl ContainerInventory {
                 }
             }
         }
-        
+
         // Find empty slot
         for slot in &mut self.slots {
             if slot.is_empty() {
@@ -439,7 +446,7 @@ impl ContainerInventory {
                 return ItemStack::empty();
             }
         }
-        
+
         stack
     }
 
@@ -448,7 +455,7 @@ impl ContainerInventory {
         if slot >= self.slots.len() {
             return stack;
         }
-        
+
         if self.slots[slot].can_stack_with(&stack) {
             let remaining = self.slots[slot].add(stack.count);
             stack.count = remaining;
@@ -456,12 +463,12 @@ impl ContainerInventory {
                 return ItemStack::empty();
             }
         }
-        
+
         if self.slots[slot].is_empty() {
             self.slots[slot] = stack;
             return ItemStack::empty();
         }
-        
+
         stack
     }
 
@@ -483,7 +490,9 @@ impl ContainerInventory {
 
     /// Get all non-empty slots for serialization.
     pub fn get_non_empty_slots(&self) -> Vec<(usize, &ItemStack)> {
-        self.slots.iter().enumerate()
+        self.slots
+            .iter()
+            .enumerate()
             .filter(|(_, s)| !s.is_empty())
             .collect()
     }
@@ -493,7 +502,11 @@ impl ContainerInventory {
 pub fn create_chest(is_double: bool) -> ContainerInventory {
     let slots = if is_double { 54 } else { 27 };
     ContainerInventory::new(
-        if is_double { ContainerType::DoubleChest } else { ContainerType::Chest },
+        if is_double {
+            ContainerType::DoubleChest
+        } else {
+            ContainerType::Chest
+        },
         slots,
     )
 }
@@ -643,23 +656,52 @@ fn get_knockback_resistance(item: Identifier) -> f32 {
 pub fn get_max_stack_size(item: Identifier) -> u8 {
     let name = item.to_string();
     // Items that stack to 16
-    if name.contains("ender_pearl") || name.contains("snowball") || name.contains("egg") ||
-       name.contains("honey_bottle") || name.contains("bucket") || name.contains("sign") ||
-       name.contains("banner") || name.contains("door") || name.contains("bed") ||
-       name.contains("boat") || name.contains("minecart") || name.contains("saddle") ||
-       name.contains("horse_armor") || name.contains("elytra") || name.contains("totem") {
+    if name.contains("ender_pearl")
+        || name.contains("snowball")
+        || name.contains("egg")
+        || name.contains("honey_bottle")
+        || name.contains("bucket")
+        || name.contains("sign")
+        || name.contains("banner")
+        || name.contains("door")
+        || name.contains("bed")
+        || name.contains("boat")
+        || name.contains("minecart")
+        || name.contains("saddle")
+        || name.contains("horse_armor")
+        || name.contains("elytra")
+        || name.contains("totem")
+    {
         return 16;
     }
     // Items that stack to 1 (tools, armor, weapons, etc.)
-    if name.contains("_sword") || name.contains("_pickaxe") || name.contains("_axe") ||
-       name.contains("_shovel") || name.contains("_hoe") || name.contains("_helmet") ||
-       name.contains("_chestplate") || name.contains("_leggings") || name.contains("_boots") ||
-       name.contains("_horse_armor") || name.contains("shield") || name.contains("bow") ||
-       name.contains("crossbow") || name.contains("trident") || name.contains("fishing_rod") ||
-       name.contains("carrot_on_a_stick") || name.contains("warped_fungus_on_a_stick") ||
-       name.contains("shears") || name.contains("flint_and_steel") || name.contains("clock") ||
-       name.contains("compass") || name.contains("recovery_compass") || name.contains("map") ||
-       name.contains("written_book") || name.contains("enchanted_book") || name.contains("music_disc") {
+    if name.contains("_sword")
+        || name.contains("_pickaxe")
+        || name.contains("_axe")
+        || name.contains("_shovel")
+        || name.contains("_hoe")
+        || name.contains("_helmet")
+        || name.contains("_chestplate")
+        || name.contains("_leggings")
+        || name.contains("_boots")
+        || name.contains("_horse_armor")
+        || name.contains("shield")
+        || name.contains("bow")
+        || name.contains("crossbow")
+        || name.contains("trident")
+        || name.contains("fishing_rod")
+        || name.contains("carrot_on_a_stick")
+        || name.contains("warped_fungus_on_a_stick")
+        || name.contains("shears")
+        || name.contains("flint_and_steel")
+        || name.contains("clock")
+        || name.contains("compass")
+        || name.contains("recovery_compass")
+        || name.contains("map")
+        || name.contains("written_book")
+        || name.contains("enchanted_book")
+        || name.contains("music_disc")
+    {
         return 1;
     }
     DEFAULT_MAX_STACK_SIZE
@@ -700,20 +742,20 @@ impl ItemEntity {
         if self.age >= 6000 {
             return true; // Mark for despawn
         }
-        
+
         if self.pickup_delay > 0 {
             self.pickup_delay -= 1;
         }
-        
+
         // Apply gravity
         self.velocity.y -= crate::physics::GRAVITY;
         if self.velocity.y < -crate::physics::TERMINAL_VELOCITY {
             self.velocity.y = -crate::physics::TERMINAL_VELOCITY;
         }
-        
+
         // Apply velocity
         self.position += self.velocity;
-        
+
         // TODO: Collision detection with blocks
         // Simple ground check
         if self.position.y <= 64.0 && self.velocity.y <= 0.0 {
@@ -722,7 +764,7 @@ impl ItemEntity {
             self.velocity.x *= 0.98;
             self.velocity.z *= 0.98;
         }
-        
+
         false
     }
 }
@@ -735,14 +777,14 @@ pub fn spawn_item_drops(
 ) -> Vec<ItemEntity> {
     let mut entities = Vec::new();
     let mut entity_id = world.next_entity_id();
-    
+
     for stack in stacks {
         if !stack.is_empty() {
             entities.push(ItemEntity::new(stack, position, entity_id));
             entity_id += 1;
         }
     }
-    
+
     entities
 }
 
@@ -753,26 +795,26 @@ pub fn drop_inventory_contents(
     inventory: &mut PlayerInventory,
 ) -> Vec<ItemEntity> {
     let mut all_stacks = Vec::new();
-    
+
     // Main inventory
     for slot in &mut inventory.main {
         if !slot.is_empty() {
             all_stacks.push(std::mem::take(slot));
         }
     }
-    
+
     // Armor
     for slot in &mut inventory.armor {
         if !slot.is_empty() {
             all_stacks.push(std::mem::take(slot));
         }
     }
-    
+
     // Offhand
     if !inventory.offhand.is_empty() {
         all_stacks.push(std::mem::take(&mut inventory.offhand));
     }
-    
+
     // Crafting grid
     for slot in &mut inventory.crafting_input {
         if !slot.is_empty() {
@@ -782,6 +824,6 @@ pub fn drop_inventory_contents(
     if !inventory.crafting_output.is_empty() {
         all_stacks.push(std::mem::take(&mut inventory.crafting_output));
     }
-    
+
     spawn_item_drops(world, position, all_stacks)
 }

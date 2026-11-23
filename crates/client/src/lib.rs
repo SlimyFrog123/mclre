@@ -207,8 +207,12 @@ pub struct ClientConfig {
     pub target_frame_time: Duration,
     /// World size preset.
     pub world_preset: WorldSizePreset,
+    /// Number of split-screen players (1-4).
+    pub split_screen_players: usize,
     /// Initial player position.
     pub spawn_pos: Vec3<f32>,
+    /// Enable VSync.
+    pub enable_vsync: bool,
 }
 
 impl Default for ClientConfig {
@@ -219,7 +223,9 @@ impl Default for ClientConfig {
             height: 720,
             target_frame_time: Duration::from_millis(50), // 20 TPS
             world_preset: WorldSizePreset::Infinite,
+            split_screen_players: 1,
             spawn_pos: Vec3::new(0.0, 64.0, 0.0),
+            enable_vsync: true,
         }
     }
 }
@@ -251,10 +257,11 @@ pub enum RenderEvent {
 pub struct Client {
     config: ClientConfig,
     world: Arc<ClientWorld>,
-    input: Mutex<InputManager<'static>>,
+    input: Mutex<InputManager>,
     asset_manager: Arc<Mutex<mclre_assets::AssetManager>>,
     block_state_model: Arc<mclre_core::BlockStateModel>,
     window: Option<Arc<winit::window::Window>>,
+    network_transports: Vec<Option<Arc<dyn mclre_net::Transport>>>,
 }
 
 impl Client {
@@ -277,6 +284,10 @@ impl Client {
         // Create asset manager
         let asset_manager = Arc::new(Mutex::new(mclre_assets::AssetManager::new()));
 
+        // Initialize network transports for split-screen (up to 4 players)
+        let max_players = config.split_screen_players.clamp(1, 4);
+        let network_transports = vec![None; max_players];
+
         Ok(Self {
             config,
             world,
@@ -284,7 +295,13 @@ impl Client {
             asset_manager,
             block_state_model: Arc::new(block_state_model),
             window: None,
+            network_transports,
         })
+    }
+
+    /// Returns a mutable reference to the network transports.
+    pub fn network_transports_mut(&mut self) -> &mut Vec<Option<Arc<dyn mclre_net::Transport>>> {
+        &mut self.network_transports
     }
 
     /// Renders a frame using the provided renderer.

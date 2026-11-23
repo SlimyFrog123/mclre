@@ -319,7 +319,7 @@ impl Default for BlockProperties {
     fn default() -> Self {
         Self {
             properties: Vec::new(),
-            hardness: 1500,        // Stone-like default (1.5 * 1000)
+            hardness: 1500, // Stone-like default (1.5 * 1000)
             harvest_tier: HarvestTier::Wood,
             harvest_tool: HarvestTool::Pickaxe,
             light_emission: 0,
@@ -362,7 +362,10 @@ impl BlockProperties {
                 });
             }
         }
-        Ok(Self { properties, ..Default::default() })
+        Ok(Self {
+            properties,
+            ..Default::default()
+        })
     }
 
     /// Creates a block with custom gameplay properties.
@@ -412,15 +415,21 @@ impl BlockProperties {
 
 /// A globally dense block-state index (newtype; numeric only inside this
 /// module, chunk palettes, and protocol palettes).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct BlockStateId(pub u32);
 
 /// A block's registry index (dense; SPEC.md 5.3 `BlockId`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct BlockId(pub u32);
 
 /// An item's registry index (dense; parallel to BlockId).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct ItemId(pub u32);
 
 impl ItemId {

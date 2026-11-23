@@ -13,3 +13,15 @@ path = "src/main.rs"
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-server = { path = "../server" }
+mclre-sim = { path = "../sim" }
+mclre-net = { path = "../net" }
+clap = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+tracing = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tracing-appender = { workspace = true }
+toml = { workspace = true }

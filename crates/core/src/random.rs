@@ -25,7 +25,7 @@
 ///
 /// State: 48-bit seed + the Box–Muller gaussian cache
 /// (reference: `Random.h:6-8`, `Random.cpp:21-31`).
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct GameRandom {
     seed: i64,
     have_next_next_gaussian: bool,
@@ -54,6 +54,11 @@ impl GameRandom {
     pub fn set_seed(&mut self, seed: i64) {
         self.seed = (seed ^ MULTIPLIER) & MASK;
         self.have_next_next_gaussian = false;
+    }
+
+    /// Returns the current seed (before XOR with multiplier)
+    pub fn seed(&self) -> i64 {
+        self.seed ^ MULTIPLIER
     }
 
     /// Advances the state and returns the top `bits` bits
@@ -98,6 +103,11 @@ impl GameRandom {
     /// (sign-carrying, Java semantics).
     pub fn next_long(&mut self) -> i64 {
         ((self.next(32) as i64) << 32).wrapping_add(self.next(32) as i64)
+    }
+
+    /// Uniformly distributed `u64` (full 64-bit).
+    pub fn next_u64(&mut self) -> u64 {
+        ((self.next(32) as u64) << 32) | (self.next(32) as u64)
     }
 
     /// Uniformly distributed `f64` in `[0, 1)` (`Random.cpp:41-46`).

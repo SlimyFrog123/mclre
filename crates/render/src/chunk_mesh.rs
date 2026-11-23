@@ -2,9 +2,10 @@
 //!
 //! Implements the per-face strategy from ADR 0008 with LCE smooth lighting.
 
-use crate::resources::ChunkVertex;
-use mclre_core::BlockStateModel;
-use mclre_world::section::ChunkSection;
+use crate::resources::{ChunkVertex, GpuChunkSection, MeshBuffers};
+use mclre_core::{BlockStateModel, Vec3};
+use mclre_world::{ChunkColumn, ChunkPos, section::ChunkSection};
+use wgpu::{Device, Queue};
 
 /// Generates a mesh for a chunk section using per-face meshing with AO.
 ///
@@ -215,6 +216,26 @@ fn get_corner_ao_offsets(face: usize) -> [[(i32, i32, i32); 3]; 4] {
         }
         _ => unreachable!(),
     }
+}
+
+/// Meshes a full chunk column into GPU-ready chunk sections.
+pub fn mesh_chunk(
+    device: &Device,
+    queue: &Queue,
+    chunk: &ChunkColumn,
+    pos: ChunkPos,
+    block_state_model: Option<&BlockStateModel>,
+) -> Result<Vec<GpuChunkSection>, wgpu::Error> {
+    let mut gpu_sections = Vec::new();
+
+    for (sy, section) in chunk.sections().iter().enumerate() {
+        let section_pos = Vec3::new(pos.x, sy as i32, pos.z);
+        let gpu_section =
+            GpuChunkSection::from_section(device, queue, section, section_pos, block_state_model);
+        gpu_sections.push(gpu_section);
+    }
+
+    Ok(gpu_sections)
 }
 
 #[cfg(test)]

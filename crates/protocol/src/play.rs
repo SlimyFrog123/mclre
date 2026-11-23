@@ -1,4 +1,7 @@
-use crate::{Encode, Decode, ProtocolError, read_string, read_uuid, write_string, write_uuid, read_varint, write_varint};
+use crate::{
+    Decode, Encode, ProtocolError, read_string, read_uuid, read_varint, write_string, write_uuid,
+    write_varint,
+};
 use bytes::{Buf, BufMut, BytesMut};
 use uuid::Uuid;
 
@@ -189,7 +192,14 @@ impl<'a> crate::Decode<'a> for PlayerPositionAndLook {
         let yaw = buf.get_f32();
         let pitch = buf.get_f32();
         let on_ground = buf.get_u8() != 0;
-        Ok(Self { x, y, z, yaw, pitch, on_ground })
+        Ok(Self {
+            x,
+            y,
+            z,
+            yaw,
+            pitch,
+            on_ground,
+        })
     }
 }
 
@@ -218,7 +228,11 @@ impl<'a> crate::Decode<'a> for PlayerLook {
         let yaw = buf.get_f32();
         let pitch = buf.get_f32();
         let on_ground = buf.get_u8() != 0;
-        Ok(Self { yaw, pitch, on_ground })
+        Ok(Self {
+            yaw,
+            pitch,
+            on_ground,
+        })
     }
 }
 
@@ -268,13 +282,23 @@ impl<'a> crate::Decode<'a> for PlayerDigging {
             4 => DigStatus::DropItem,
             5 => DigStatus::ShootArrow,
             6 => DigStatus::SwapItemInHand,
-            _ => return Err(crate::ProtocolError::DecodeFailed("invalid dig status".into())),
+            _ => {
+                return Err(crate::ProtocolError::DecodeFailed(
+                    "invalid dig status".into(),
+                ));
+            }
         };
         let x = buf.get_i32();
         let y = buf.get_i32();
         let z = buf.get_i32();
         let face = buf.get_u8();
-        Ok(Self { status, x, y, z, face })
+        Ok(Self {
+            status,
+            x,
+            y,
+            z,
+            face,
+        })
     }
 }
 
@@ -423,7 +447,7 @@ impl crate::Encode for JoinGame {
 
 impl<'a> crate::Decode<'a> for JoinGame {
     fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
-        // Minimum: 4 (entity_id) + 1 (hardcore) + 4 (dimension) + 1 (difficulty) + 1 (max_players) 
+        // Minimum: 4 (entity_id) + 1 (hardcore) + 4 (dimension) + 1 (difficulty) + 1 (max_players)
         // + 1 (empty string varint) + 4 (bools) = 16 bytes
         if buf.remaining() < 16 {
             return Err(crate::ProtocolError::UnexpectedEof);
@@ -434,14 +458,22 @@ impl<'a> crate::Decode<'a> for JoinGame {
             0 => Dimension::Overworld,
             -1 => Dimension::TheNether,
             1 => Dimension::TheEnd,
-            _ => return Err(crate::ProtocolError::DecodeFailed("invalid dimension".into())),
+            _ => {
+                return Err(crate::ProtocolError::DecodeFailed(
+                    "invalid dimension".into(),
+                ));
+            }
         };
         let difficulty = match buf.get_u8() {
             0 => Difficulty::Peaceful,
             1 => Difficulty::Easy,
             2 => Difficulty::Normal,
             3 => Difficulty::Hard,
-            _ => return Err(crate::ProtocolError::DecodeFailed("invalid difficulty".into())),
+            _ => {
+                return Err(crate::ProtocolError::DecodeFailed(
+                    "invalid difficulty".into(),
+                ));
+            }
         };
         let max_players = buf.get_u8();
         let level_type = crate::read_string(buf)?;
@@ -550,14 +582,20 @@ impl crate::Encode for PlayerInfoUpdate {
                 crate::write_string(buf, &prop.name);
                 crate::write_string(buf, &prop.value);
                 match &prop.signature {
-                    Some(s) => { buf.put_u8(1); crate::write_string(buf, s); }
+                    Some(s) => {
+                        buf.put_u8(1);
+                        crate::write_string(buf, s);
+                    }
                     None => buf.put_u8(0),
                 }
             }
             buf.put_i32(player.gamemode as i32);
             buf.put_i32(player.latency);
             match &player.display_name {
-                Some(name) => { buf.put_u8(1); crate::write_string(buf, name); }
+                Some(name) => {
+                    buf.put_u8(1);
+                    crate::write_string(buf, name);
+                }
                 None => buf.put_u8(0),
             }
         }
@@ -573,7 +611,11 @@ impl<'a> crate::Decode<'a> for PlayerInfoUpdate {
             2 => PlayerInfoAction::UpdateLatency,
             3 => PlayerInfoAction::UpdateDisplayName,
             4 => PlayerInfoAction::RemovePlayer,
-            _ => return Err(crate::ProtocolError::DecodeFailed("invalid player info action".into())),
+            _ => {
+                return Err(crate::ProtocolError::DecodeFailed(
+                    "invalid player info action".into(),
+                ));
+            }
         };
         let count = crate::read_varint(buf)? as usize;
         let mut players = Vec::with_capacity(count);
@@ -586,29 +628,295 @@ impl<'a> crate::Decode<'a> for PlayerInfoUpdate {
                 let name = crate::read_string(buf)?;
                 let value = crate::read_string(buf)?;
                 let has_sig = buf.get_u8() != 0;
-                let signature = if has_sig { Some(crate::read_string(buf)?) } else { None };
-                properties.push(ProfileProperty { name, value, signature });
+                let signature = if has_sig {
+                    Some(crate::read_string(buf)?)
+                } else {
+                    None
+                };
+                properties.push(ProfileProperty {
+                    name,
+                    value,
+                    signature,
+                });
             }
             let gamemode = match buf.get_i32() {
                 0 => GameMode::Survival,
                 1 => GameMode::Creative,
                 2 => GameMode::Adventure,
                 3 => GameMode::Spectator,
-                _ => return Err(crate::ProtocolError::DecodeFailed("invalid gamemode".into())),
+                _ => {
+                    return Err(crate::ProtocolError::DecodeFailed(
+                        "invalid gamemode".into(),
+                    ));
+                }
             };
             let latency = buf.get_i32();
             let has_display = buf.get_u8() != 0;
-            let display_name = if has_display { Some(crate::read_string(buf)?) } else { None };
-            players.push(PlayerInfo { uuid, name, properties, gamemode, latency, display_name });
+            let display_name = if has_display {
+                Some(crate::read_string(buf)?)
+            } else {
+                None
+            };
+            players.push(PlayerInfo {
+                uuid,
+                name,
+                properties,
+                gamemode,
+                latency,
+                display_name,
+            });
         }
         Ok(Self { action, players })
+    }
+}
+
+/// Inventory Content packet (server -> client) - sends entire inventory content.
+/// Packet ID: 0x28
+#[derive(Debug, Clone, PartialEq)]
+pub struct InventoryContent {
+    pub window_id: u8,
+    pub state_id: u16,
+    pub slots: Vec<ItemStack>,
+    pub carried_item: ItemStack,
+}
+
+impl crate::Encode for InventoryContent {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        buf.put_u8(self.window_id);
+        buf.put_u16(self.state_id);
+        crate::write_varint(buf, self.slots.len() as i32);
+        for slot in &self.slots {
+            slot.encode(buf)?;
+        }
+        self.carried_item.encode(buf)?;
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for InventoryContent {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        let window_id = buf.get_u8();
+        let state_id = buf.get_u16();
+        let count = crate::read_varint(buf)? as usize;
+        let mut slots = Vec::with_capacity(count);
+        for _ in 0..count {
+            slots.push(ItemStack::decode(buf)?);
+        }
+        let carried_item = ItemStack::decode(buf)?;
+        Ok(Self {
+            window_id,
+            state_id,
+            slots,
+            carried_item,
+        })
+    }
+}
+
+/// Inventory Slot packet (server -> client) - updates a single slot.
+/// Packet ID: 0x29
+#[derive(Debug, Clone, PartialEq)]
+pub struct InventorySlot {
+    pub window_id: u8,
+    pub state_id: u16,
+    pub slot: i16,
+    pub item: ItemStack,
+}
+
+impl crate::Encode for InventorySlot {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        buf.put_u8(self.window_id);
+        buf.put_u16(self.state_id);
+        buf.put_i16(self.slot);
+        self.item.encode(buf)?;
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for InventorySlot {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        let window_id = buf.get_u8();
+        let state_id = buf.get_u16();
+        let slot = buf.get_i16();
+        let item = ItemStack::decode(buf)?;
+        Ok(Self {
+            window_id,
+            state_id,
+            slot,
+            item,
+        })
+    }
+}
+
+/// Open Screen packet (server -> client) - opens a container screen.
+/// Packet ID: 0x2A
+#[derive(Debug, Clone, PartialEq)]
+pub struct OpenScreen {
+    pub window_id: u8,
+    pub screen_type: i32,
+    pub window_title: String,
+    pub slot_count: u8,
+    pub entity_id: i32, // For entity inventories (horses, etc.)
+}
+
+impl crate::Encode for OpenScreen {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        buf.put_u8(self.window_id);
+        buf.put_i32(self.screen_type);
+        crate::write_string(buf, &self.window_title);
+        buf.put_u8(self.slot_count);
+        buf.put_i32(self.entity_id);
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for OpenScreen {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        let window_id = buf.get_u8();
+        let screen_type = buf.get_i32();
+        let window_title = crate::read_string(buf)?;
+        let slot_count = buf.get_u8();
+        let entity_id = buf.get_i32();
+        Ok(Self {
+            window_id,
+            screen_type,
+            window_title,
+            slot_count,
+            entity_id,
+        })
+    }
+}
+
+/// Set Slot packet (server -> client) - sets a slot in a container.
+/// Packet ID: 0x2B
+#[derive(Debug, Clone, PartialEq)]
+pub struct SetSlot {
+    pub window_id: u8,
+    pub state_id: u16,
+    pub slot: i16,
+    pub item: ItemStack,
+}
+
+impl crate::Encode for SetSlot {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        buf.put_u8(self.window_id);
+        buf.put_u16(self.state_id);
+        buf.put_i16(self.slot);
+        self.item.encode(buf)?;
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for SetSlot {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        let window_id = buf.get_u8();
+        let state_id = buf.get_u16();
+        let slot = buf.get_i16();
+        let item = ItemStack::decode(buf)?;
+        Ok(Self {
+            window_id,
+            state_id,
+            slot,
+            item,
+        })
+    }
+}
+
+/// Set Container Content packet (server -> client) - sets all slots in a container.
+/// Packet ID: 0x2C
+#[derive(Debug, Clone, PartialEq)]
+pub struct SetContainerContent {
+    pub window_id: u8,
+    pub state_id: u16,
+    pub slots: Vec<ItemStack>,
+    pub carried_item: ItemStack,
+}
+
+impl crate::Encode for SetContainerContent {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        buf.put_u8(self.window_id);
+        buf.put_u16(self.state_id);
+        crate::write_varint(buf, self.slots.len() as i32);
+        for slot in &self.slots {
+            slot.encode(buf)?;
+        }
+        self.carried_item.encode(buf)?;
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for SetContainerContent {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        let window_id = buf.get_u8();
+        let state_id = buf.get_u16();
+        let count = crate::read_varint(buf)? as usize;
+        let mut slots = Vec::with_capacity(count);
+        for _ in 0..count {
+            slots.push(ItemStack::decode(buf)?);
+        }
+        let carried_item = ItemStack::decode(buf)?;
+        Ok(Self {
+            window_id,
+            state_id,
+            slots,
+            carried_item,
+        })
+    }
+}
+
+/// ItemStack for inventory packets.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ItemStack {
+    pub item_id: i16, // -1 for empty
+    pub count: u8,
+    pub damage: i16,
+}
+
+impl Default for ItemStack {
+    fn default() -> Self {
+        Self {
+            item_id: -1,
+            count: 0,
+            damage: 0,
+        }
+    }
+}
+
+impl crate::Encode for ItemStack {
+    fn encode(&self, buf: &mut bytes::BytesMut) -> Result<(), crate::ProtocolError> {
+        if self.item_id == -1 {
+            buf.put_i16(-1);
+            return Ok(());
+        }
+        buf.put_i16(self.item_id);
+        buf.put_u8(self.count);
+        buf.put_i16(self.damage);
+        Ok(())
+    }
+}
+
+impl<'a> crate::Decode<'a> for ItemStack {
+    fn decode(buf: &mut bytes::BytesMut) -> Result<Self, crate::ProtocolError> {
+        if buf.remaining() < 2 {
+            return Err(crate::ProtocolError::UnexpectedEof);
+        }
+        let item_id = buf.get_i16();
+        if item_id == -1 {
+            return Ok(Self::default());
+        }
+        let count = buf.get_u8();
+        let damage = buf.get_i16();
+        Ok(Self {
+            item_id,
+            count,
+            damage,
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Encode, Decode};
+    use crate::{Decode, Encode};
     use bytes::BytesMut;
     use uuid::Uuid;
 
@@ -624,7 +932,12 @@ mod tests {
 
     #[test]
     fn test_player_position_roundtrip() {
-        let packet = PlayerPosition { x: 100.5, y: 64.0, z: -50.2, on_ground: true };
+        let packet = PlayerPosition {
+            x: 100.5,
+            y: 64.0,
+            z: -50.2,
+            on_ground: true,
+        };
         let mut buf = BytesMut::new();
         packet.encode(&mut buf).unwrap();
         let mut decode_buf = buf.clone();
@@ -634,7 +947,9 @@ mod tests {
 
     #[test]
     fn test_chat_message_roundtrip() {
-        let packet = ChatMessage { message: "Hello, world!".to_string() };
+        let packet = ChatMessage {
+            message: "Hello, world!".to_string(),
+        };
         let mut buf = BytesMut::new();
         packet.encode(&mut buf).unwrap();
         let mut decode_buf = buf.clone();
@@ -656,7 +971,9 @@ mod tests {
     fn test_player_digging_roundtrip() {
         let packet = PlayerDigging {
             status: DigStatus::StartedDigging,
-            x: 10, y: 64, z: 20,
+            x: 10,
+            y: 64,
+            z: 20,
             face: 1,
         };
         let mut buf = BytesMut::new();

@@ -16,3 +16,6 @@ crossbeam-channel = { workspace = true }
 mclre-protocol = { path = "../protocol" }
 thiserror = { workspace = true }
 tracing = { workspace = true }
+mdns-sd = "0.10"
+oxy-upnp-igd = "0.1"
+smol = "1.0"

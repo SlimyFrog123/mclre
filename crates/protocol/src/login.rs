@@ -1,4 +1,4 @@
-use crate::{Encode, Decode, ProtocolError, read_string, read_uuid, write_string, write_uuid};
+use crate::{Decode, Encode, ProtocolError, read_string, read_uuid, write_string, write_uuid};
 use bytes::{Buf, BufMut, BytesMut};
 use uuid::Uuid;
 
@@ -145,9 +145,17 @@ impl<'a> crate::Decode<'a> for LoginSuccess {
             } else {
                 None
             };
-            properties.push(ProfileProperty { name, value, signature });
+            properties.push(ProfileProperty {
+                name,
+                value,
+                signature,
+            });
         }
-        Ok(Self { uuid, username, properties })
+        Ok(Self {
+            uuid,
+            username,
+            properties,
+        })
     }
 }
 
@@ -194,7 +202,7 @@ impl<'a> crate::Decode<'a> for SetCompression {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Encode, Decode};
+    use crate::{Decode, Encode};
     use bytes::BytesMut;
     use uuid::Uuid;
 

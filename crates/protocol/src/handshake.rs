@@ -1,4 +1,4 @@
-use crate::{Encode, Decode, ProtocolError};
+use crate::{Decode, Encode, ProtocolError};
 use bytes::{Buf, BufMut, BytesMut};
 use uuid::Uuid;
 
@@ -42,7 +42,11 @@ impl<'a> Decode<'a> for HandshakePacket {
         let next_state = match crate::read_varint(buf)? {
             1 => NextState::Status,
             2 => NextState::Login,
-            _ => return Err(crate::ProtocolError::DecodeFailed("invalid next state".into())),
+            _ => {
+                return Err(crate::ProtocolError::DecodeFailed(
+                    "invalid next state".into(),
+                ));
+            }
         };
         Ok(Self {
             protocol_version,
@@ -56,7 +60,7 @@ impl<'a> Decode<'a> for HandshakePacket {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Encode, Decode};
+    use crate::{Decode, Encode};
     use bytes::BytesMut;
 
     #[test]

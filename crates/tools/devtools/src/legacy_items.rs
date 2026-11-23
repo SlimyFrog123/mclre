@@ -110,22 +110,23 @@ impl ItemParser {
     pub fn parse_file(&mut self, source: &str, file_name: &str) -> Result<(), String> {
         self.set_source_file(file_name);
         let lines: Vec<&str> = source.lines().collect();
-        
+
         // The reference typically has Item.cpp with static instances like:
         // Item *Item::ironIngot = NULL;
         // And then in staticCtor:
         // Item::ironIngot = (new Item(265))->setMaxStackSize(64)->setIconName(L"iron_ingot");
-        
+
         for (i, line) in lines.iter().enumerate() {
             self.current_line = i + 1;
             let trimmed = line.trim();
-            
+
             // Look for Item instance assignments in staticCtor
-            if trimmed.contains("Item::") && trimmed.contains("new Item(") && trimmed.contains("->") {
+            if trimmed.contains("Item::") && trimmed.contains("new Item(") && trimmed.contains("->")
+            {
                 self.parse_item_assignment(trimmed)?;
             }
         }
-        
+
         Ok(())
     }
 
@@ -212,7 +213,10 @@ impl ItemParser {
                             max_damage: 0, // Would need separate parsing
                             mining_speed: parts[1].trim_end_matches('f').parse().unwrap_or(1.0),
                             attack_damage: parts[2].trim_end_matches('f').parse().unwrap_or(0.0),
-                            harvest_level: parts.get(3).map(|s| s.parse().unwrap_or(0)).unwrap_or(0),
+                            harvest_level: parts
+                                .get(3)
+                                .map(|s| s.parse().unwrap_or(0))
+                                .unwrap_or(0),
                             effective_on: Vec::new(),
                         });
                     }
@@ -281,7 +285,7 @@ impl ItemParser {
         out.push_str("# Do not edit by hand: regenerate from the reference source.\n");
         let _ = writeln!(out, "# Source: {source_label}");
         let _ = writeln!(out, "\nitem_count = {}", self.items.len());
-        
+
         for item in &self.items {
             out.push_str("\n[[item]]\n");
             let _ = writeln!(out, "id = {}", item.id);
@@ -292,18 +296,36 @@ impl ItemParser {
             let _ = writeln!(out, "enchantable = {}", item.enchantable);
             if let Some(food) = &item.food {
                 out.push_str("food = { ");
-                let _ = writeln!(out, "nutrition = {}, saturation = {}, fast_eat = {}, meat = {}, always_edible = {} }},",
-                    food.nutrition, food.saturation, food.fast_eat, food.meat, food.always_edible);
+                let _ = writeln!(
+                    out,
+                    "nutrition = {}, saturation = {}, fast_eat = {}, meat = {}, always_edible = {} }},",
+                    food.nutrition, food.saturation, food.fast_eat, food.meat, food.always_edible
+                );
             }
             if let Some(tool) = &item.tool {
                 out.push_str("tool = { ");
-                let _ = writeln!(out, "tier = \"{}\", max_damage = {}, mining_speed = {}, attack_damage = {}, harvest_level = {} }},",
-                    tool.tier, tool.max_damage, tool.mining_speed, tool.attack_damage, tool.harvest_level);
+                let _ = writeln!(
+                    out,
+                    "tier = \"{}\", max_damage = {}, mining_speed = {}, attack_damage = {}, harvest_level = {} }},",
+                    tool.tier,
+                    tool.max_damage,
+                    tool.mining_speed,
+                    tool.attack_damage,
+                    tool.harvest_level
+                );
             }
             if let Some(armor) = &item.armor {
                 out.push_str("armor = { ");
-                let _ = writeln!(out, "type = \"{}\", max_damage = {}, protection = {}, toughness = {}, knockback_resistance = {}, material = \"{}\" }},",
-                    armor.armor_type, armor.max_damage, armor.protection, armor.toughness, armor.knockback_resistance, armor.material);
+                let _ = writeln!(
+                    out,
+                    "type = \"{}\", max_damage = {}, protection = {}, toughness = {}, knockback_resistance = {}, material = \"{}\" }},",
+                    armor.armor_type,
+                    armor.max_damage,
+                    armor.protection,
+                    armor.toughness,
+                    armor.knockback_resistance,
+                    armor.material
+                );
             }
             let _ = writeln!(out, "source_file = \"{}\"", item.source_file);
             let _ = writeln!(out, "source_line = {}", item.source_line);
@@ -339,19 +361,19 @@ mod tests {
     fn parses_simple_item() {
         let items = parse_items(ITEM_FIXTURE).expect("parses");
         assert_eq!(items.len(), 3);
-        
+
         let iron = &items[0];
         assert_eq!(iron.symbol, "ironIngot");
         assert_eq!(iron.id, 265);
         assert_eq!(iron.max_stack_size, 64);
         assert_eq!(iron.max_damage, 0);
-        
+
         let sword = &items[1];
         assert_eq!(sword.symbol, "diamondSword");
         assert_eq!(sword.id, 276);
         assert_eq!(sword.max_damage, 1561);
         assert_eq!(sword.max_stack_size, 1);
-        
+
         let apple = &items[2];
         assert_eq!(apple.symbol, "apple");
         assert!(apple.food.is_some());

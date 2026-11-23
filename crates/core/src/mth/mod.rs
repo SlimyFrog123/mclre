@@ -80,6 +80,11 @@ impl Mth {
         (x as f64).sqrt() as f32
     }
 
+    /// Reference `Mth::sqrt` for f32 (alias for sqrt).
+    pub fn sqrt_f32(x: f32) -> f32 {
+        Self::sqrt(x)
+    }
+
     /// Reference `Mth::floor(float)` (`Mth.cpp:48-52`).
     pub fn floor_f32(v: f32) -> i32 {
         let i = v as i32;
@@ -129,6 +134,22 @@ impl Mth {
     pub fn ceil_f32(v: f32) -> i32 {
         let i = v as i32;
         if v > i as f32 { i + 1 } else { i }
+    }
+
+    /// Reference `Mth::nextInt` (`Mth.cpp:132-139`).
+    pub fn next_int(random: &mut crate::random::GameRandom, max: i32) -> i32 {
+        if max <= 0 {
+            return 0;
+        }
+        random.next_int_bound(max) as i32
+    }
+
+    /// Reference `Mth::nextInt` with bounds (`Mth.cpp:132-139`).
+    pub fn next_int_bounded(random: &mut crate::random::GameRandom, min: i32, max: i32) -> i32 {
+        if min >= max {
+            return min;
+        }
+        min + Mth::next_int(random, max - min + 1)
     }
 }
 

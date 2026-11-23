@@ -56,7 +56,10 @@ impl PlayerIdentity {
     }
 
     pub fn guest(primary: &PlayerIdentity, slot: LocalSlot) -> Self {
-        let uuid = Uuid::new_v5(&Uuid::NAMESPACE_OID, format!("{}-{}", primary.uuid, slot).as_bytes());
+        let uuid = Uuid::new_v5(
+            &Uuid::NAMESPACE_OID,
+            format!("{}-{}", primary.uuid, slot).as_bytes(),
+        );
         let username = format!("{}-{}", primary.username, slot);
         Self {
             uuid,
@@ -74,7 +77,11 @@ impl PlayerIdentity {
 /// Trait for providing player identity from launch arguments.
 pub trait IdentityProvider: Send + Sync {
     fn primary(&self) -> Result<PlayerIdentity, IdentityError>;
-    fn guest(&self, primary: &PlayerIdentity, slot: LocalSlot) -> Result<PlayerIdentity, IdentityError>;
+    fn guest(
+        &self,
+        primary: &PlayerIdentity,
+        slot: LocalSlot,
+    ) -> Result<PlayerIdentity, IdentityError>;
 }
 
 /// Identity provider backed by command-line arguments.
@@ -91,7 +98,9 @@ impl LaunchArgIdentity {
 
     pub fn from_env() -> Self {
         let username = std::env::var("MCLRE_USERNAME").unwrap_or_else(|_| "Player".to_string());
-        let uuid = std::env::var("MCLRE_UUID").ok().and_then(|s| Uuid::parse_str(&s).ok());
+        let uuid = std::env::var("MCLRE_UUID")
+            .ok()
+            .and_then(|s| Uuid::parse_str(&s).ok());
         Self::new(username, uuid)
     }
 
@@ -109,7 +118,11 @@ impl IdentityProvider for LaunchArgIdentity {
         Ok(PlayerIdentity::new(uuid, self.username.clone()))
     }
 
-    fn guest(&self, primary: &PlayerIdentity, slot: LocalSlot) -> Result<PlayerIdentity, IdentityError> {
+    fn guest(
+        &self,
+        primary: &PlayerIdentity,
+        slot: LocalSlot,
+    ) -> Result<PlayerIdentity, IdentityError> {
         Ok(PlayerIdentity::guest(primary, slot))
     }
 }
@@ -123,7 +136,11 @@ impl IdentityProvider for RefusingIdentityProvider {
         Err(IdentityError::Refused)
     }
 
-    fn guest(&self, _primary: &PlayerIdentity, _slot: LocalSlot) -> Result<PlayerIdentity, IdentityError> {
+    fn guest(
+        &self,
+        _primary: &PlayerIdentity,
+        _slot: LocalSlot,
+    ) -> Result<PlayerIdentity, IdentityError> {
         Err(IdentityError::Refused)
     }
 }
@@ -140,9 +157,15 @@ pub trait EntitlementProvider: Send + Sync {
 pub struct AcceptAllEntitlements;
 
 impl EntitlementProvider for AcceptAllEntitlements {
-    fn has_skin(&self, _uuid: Uuid) -> bool { true }
-    fn has_cape(&self, _uuid: Uuid) -> bool { true }
-    fn has_dlc(&self, _uuid: Uuid, _dlc_id: &str) -> bool { true }
+    fn has_skin(&self, _uuid: Uuid) -> bool {
+        true
+    }
+    fn has_cape(&self, _uuid: Uuid) -> bool {
+        true
+    }
+    fn has_dlc(&self, _uuid: Uuid, _dlc_id: &str) -> bool {
+        true
+    }
 }
 
 /// Refusing entitlement provider (for production).
@@ -150,9 +173,15 @@ impl EntitlementProvider for AcceptAllEntitlements {
 pub struct RefusingEntitlements;
 
 impl EntitlementProvider for RefusingEntitlements {
-    fn has_skin(&self, _uuid: Uuid) -> bool { false }
-    fn has_cape(&self, _uuid: Uuid) -> bool { false }
-    fn has_dlc(&self, _uuid: Uuid, _dlc_id: &str) -> bool { false }
+    fn has_skin(&self, _uuid: Uuid) -> bool {
+        false
+    }
+    fn has_cape(&self, _uuid: Uuid) -> bool {
+        false
+    }
+    fn has_dlc(&self, _uuid: Uuid, _dlc_id: &str) -> bool {
+        false
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -191,7 +220,9 @@ mod tests {
     fn test_guest_identity() {
         let provider = LaunchArgIdentity::new("TestUser".to_string(), Some(Uuid::nil()));
         let primary = provider.primary().unwrap();
-        let guest = provider.guest(&primary, LocalSlot::new(1).unwrap()).unwrap();
+        let guest = provider
+            .guest(&primary, LocalSlot::new(1).unwrap())
+            .unwrap();
         assert_eq!(guest.username, "TestUser-slot1");
         assert!(guest.is_guest);
         assert!(!guest.is_primary());
@@ -204,7 +235,10 @@ mod tests {
         let primary = PlayerIdentity::new(primary_uuid, "Primary".to_string());
         let guest = PlayerIdentity::guest(&primary, LocalSlot::new(1).unwrap());
         // UUID should be deterministically derived
-        let expected = Uuid::new_v5(&Uuid::NAMESPACE_OID, "00000000-0000-0000-0000-000000000000-slot1".as_bytes());
+        let expected = Uuid::new_v5(
+            &Uuid::NAMESPACE_OID,
+            "00000000-0000-0000-0000-000000000000-slot1".as_bytes(),
+        );
         assert_eq!(guest.uuid, expected);
     }
 
@@ -212,7 +246,14 @@ mod tests {
     fn test_refusing_provider() {
         let provider = RefusingIdentityProvider;
         assert!(provider.primary().is_err());
-        assert!(provider.guest(&PlayerIdentity::new(Uuid::nil(), "test".to_string()), LocalSlot::PRIMARY).is_err());
+        assert!(
+            provider
+                .guest(
+                    &PlayerIdentity::new(Uuid::nil(), "test".to_string()),
+                    LocalSlot::PRIMARY
+                )
+                .is_err()
+        );
     }
 
     #[test]

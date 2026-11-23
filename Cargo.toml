@@ -23,6 +23,10 @@ members = [
     "crates/app",
     "crates/tools/assetc",
     "crates/tools/devtools",
+    "parity",
+]
+exclude = [
+    "crates/protocol/fuzz",  # Fuzz targets not part of normal workspace
 ]
 
 [workspace.package]
@@ -48,11 +52,6 @@ module_name_repetitions = { level = "allow", priority = 1 }
 missing_errors_doc = { level = "allow", priority = 1 }
 must_use_candidate = { level = "allow", priority = 1 }
 
-[workspace.features]
-# Faithful bugs feature flag (SPEC §3.3): enables documented deviations from reference behavior
-# that are known bugs in the baseline but must be preserved for world/compatibility.
-faithful_bugs = []
-
 [workspace.dependencies]
 # Shared, version-pinned dependencies. Crates adopt these via `dep.workspace = true`.
 bytes = "1"
@@ -60,7 +59,8 @@ thiserror = "2"
 anyhow = "1"
 tracing = "0.1"
 tracing-subscriber = "0.3"
-serde = "1"
+tracing-appender = "0.2"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 toml = "0.8"
 uuid = { version = "1", features = ["v7", "v5"] }
@@ -73,11 +73,20 @@ parking_lot = "0.12"
 bevy_ecs = { version = "0.14", features = [] }
 image = "0.25"
 flate2 = "1"
-wgpu = { version = "22", features = ["wgsl"] }
+wgpu = { version = "23", features = ["wgsl"] }
 winit = { version = "0.30", features = [] }
-glyphon = { version = "0.8", features = [] }
+glyphon = { version = "0.7", features = [] }
 kira = { version = "0.12", features = [] }
+fastrand = "2"
 gilrs = "0.10"
+tokio = { version = "1", features = ["rt", "macros", "time"] }
+upnp = { package = "upnp-client", version = "0.1" }
+wasmtime = { version = "24", features = ["cranelift", "component-model"] }
+semver = "1"
+futures = "0.3"
+chrono = { version = "0.4", features = ["serde"] }
+dirs = "5"
+tempfile = "3"
 
 # Internal crates (added as needed, e.g. mclre-core.workspace = true)
 mclre-core = { path = "crates/core" }
@@ -96,3 +105,5 @@ mclre-audio = { path = "crates/audio" }
 mclre-input = { path = "crates/input" }
 mclre-assets = { path = "crates/assets" }
 mclre-identity = { path = "crates/identity" }
+mclre-mod-api = { path = "crates/mod-api" }
+mclre-modding = { path = "crates/modding" }
