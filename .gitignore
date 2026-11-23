@@ -1,5 +1,5 @@
-# Cargo build artifacts
-/target/
+# Cargo build artifacts (including standalone fuzz crates)
+target/
 
 # Proprietary converted assets (output of tools/assetc).
 # Isolated by policy (SPEC.md 11.3/16); only added to the repo by explicit owner decision.
