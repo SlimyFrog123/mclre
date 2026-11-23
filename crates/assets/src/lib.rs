@@ -97,6 +97,10 @@ impl TextureAtlas {
     /// Creates a new empty texture atlas with specified padding between textures.
     /// Padding prevents texture bleeding when using mipmaps/bilinear filtering.
     pub fn with_padding(width: u32, height: u32, padding: u32) -> Self {
+        // Very conservative limit: 1024x1024 = 4 MB max to ensure it works even with other games running
+        const MAX_DIMENSION: u32 = 1024;
+        let width = width.min(MAX_DIMENSION);
+        let height = height.min(MAX_DIMENSION);
         let texture = Texture::from_rgba(width, height, vec![0; (width * height * 4) as usize]);
         Self {
             texture,
@@ -153,9 +157,13 @@ impl TextureAtlas {
         // Try to place texture on existing shelves
         for shelf in &mut shelves {
             if shelf.x + padded_width <= self.width {
+                // Check vertical bounds: texture must fit within atlas height
+                let padded_y = shelf.y + pad;
+                if padded_y + tex_height > self.height {
+                    continue; // Doesn't fit vertically on this shelf, try next
+                }
                 // Fits on this shelf
                 let padded_x = shelf.x + pad;
-                let padded_y = shelf.y + pad;
 
                 self.copy_texture(texture, padded_x, padded_y);
 

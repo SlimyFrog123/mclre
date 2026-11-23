@@ -313,6 +313,27 @@ impl TextureAtlas {
         uvs: HashMap<String, [f32; 4]>,
         padding: u32,
     ) -> Result<Self, AtlasError> {
+        // Check if texture is too large before attempting to create it
+        // Use a conservative 128MB limit to leave room for other GPU resources
+        let size_bytes = (width as u64) * (height as u64) * 4;
+        const MAX_ATLAS_SIZE: u64 = 128 * 1024 * 1024; // 128MB limit
+        if size_bytes > MAX_ATLAS_SIZE {
+            eprintln!(
+                "Texture atlas too large: {}x{} ({} MB). Max allowed: {} MB. Returning error for fallback.",
+                width,
+                height,
+                size_bytes / (1024 * 1024),
+                MAX_ATLAS_SIZE / (1024 * 1024)
+            );
+            return Err(AtlasError::Atlas(format!(
+                "Texture atlas too large: {}x{} ({} MB). Max allowed: {} MB",
+                width,
+                height,
+                size_bytes / (1024 * 1024),
+                MAX_ATLAS_SIZE / (1024 * 1024)
+            )));
+        }
+
         // Create GPU texture
         let texture = device.create_texture(&TextureDescriptor {
             label: Some("texture atlas"),
@@ -329,26 +350,40 @@ impl TextureAtlas {
             view_formats: &[],
         });
 
-        wgpu::Queue::write_texture(
-            queue,
-            wgpu::ImageCopyTexture {
-                texture: &texture,
-                mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
-                aspect: wgpu::TextureAspect::All,
-            },
-            atlas,
-            wgpu::ImageDataLayout {
-                offset: 0,
-                bytes_per_row: Some(4 * width),
-                rows_per_image: Some(height),
-            },
-            Extent3d {
-                width,
-                height,
-                depth_or_array_layers: 1,
-            },
-        );
+        // Upload texture data with panic catch for OOM
+        let upload_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            wgpu::Queue::write_texture(
+                queue,
+                wgpu::ImageCopyTexture {
+                    texture: &texture,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                atlas,
+                wgpu::ImageDataLayout {
+                    offset: 0,
+                    bytes_per_row: Some(4 * width),
+                    rows_per_image: Some(height),
+                },
+                Extent3d {
+                    width,
+                    height,
+                    depth_or_array_layers: 1,
+                },
+            );
+        }));
+
+        if let Err(panic_payload) = upload_result {
+            eprintln!(
+                "Caught panic during texture upload (likely OOM): {:?}",
+                panic_payload
+            );
+            return Err(AtlasError::Atlas(format!(
+                "Failed to upload texture atlas to GPU (likely OOM): {:?}",
+                panic_payload
+            )));
+        }
 
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
 

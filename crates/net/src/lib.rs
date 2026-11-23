@@ -57,6 +57,21 @@ pub enum TransportError {
     RecvFailed(String),
 }
 
+/// Trait for starting and managing an integrated server.
+/// Allows the client to start the server when "Play Game" is clicked without depending on server internals.
+pub trait ServerHandle: Send + Sync {
+    /// Start the server in a background thread.
+    /// Returns a handle to stop the server.
+    fn start(&mut self) -> Box<dyn FnOnce() + Send>;
+
+    /// Add a client to the server (called before starting).
+    fn add_client(
+        &mut self,
+        transport: Box<dyn Transport + Send + Sync>,
+        identity: mclre_identity::PlayerIdentity,
+    ) -> Result<i32, crate::TransportError>;
+}
+
 /// In-memory transport for integrated server (singleplayer).
 /// Uses crossbeam channels for zero-copy message passing between client and server.
 pub struct InMemoryTransport {

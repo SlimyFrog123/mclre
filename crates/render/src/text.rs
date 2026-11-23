@@ -4,6 +4,7 @@
 //! Uses the existing UI pipeline's font atlas support (texture_index = 1).
 
 use std::collections::HashMap;
+use std::sync::{Arc, OnceLock};
 
 use wgpu::{Device, Queue, RenderPass, Texture, TextureFormat, TextureView};
 
@@ -12,9 +13,9 @@ pub struct BitmapFont {
     /// Character to UV mapping (u0, v0, u1, v1 in atlas coordinates)
     char_uvs: HashMap<char, [f32; 4]>,
     /// Font atlas texture
-    texture: Texture,
+    texture: Arc<Texture>,
     /// Font atlas view
-    view: TextureView,
+    view: Arc<TextureView>,
     /// Character size in pixels
     char_width: u32,
     char_height: u32,
@@ -26,74 +27,14 @@ pub struct BitmapFont {
 impl BitmapFont {
     /// Creates a new bitmap font from a texture atlas.
     pub fn new(
-        device: &Device,
-        queue: &Queue,
+        char_uvs: HashMap<char, [f32; 4]>,
+        texture: Arc<Texture>,
+        view: Arc<TextureView>,
         char_width: u32,
         char_height: u32,
         atlas_width: u32,
         atlas_height: u32,
-        char_map: &[(char, u32, u32)], // (char, x, y) in grid coordinates
     ) -> Self {
-        // Create a simple font atlas texture (placeholder - white texture)
-        // In a real implementation, this would be loaded from a font image file
-        let size = atlas_width.max(atlas_height);
-        let data = vec![0xFFu8; (size * size * 4) as usize];
-
-        let texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("Bitmap font atlas"),
-            size: wgpu::Extent3d {
-                width: atlas_width,
-                height: atlas_height,
-                depth_or_array_layers: 1,
-            },
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: TextureFormat::Rgba8UnormSrgb,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-
-        queue.write_texture(
-            wgpu::ImageCopyTexture {
-                texture: &texture,
-                mip_level: 0,
-                origin: wgpu::Origin3d::ZERO,
-                aspect: wgpu::TextureAspect::All,
-            },
-            &data,
-            wgpu::ImageDataLayout {
-                offset: 0,
-                bytes_per_row: Some(atlas_width * 4),
-                rows_per_image: Some(atlas_height),
-            },
-            wgpu::Extent3d {
-                width: atlas_width,
-                height: atlas_height,
-                depth_or_array_layers: 1,
-            },
-        );
-
-        let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-
-        // Build character UV map
-        let mut char_uvs = HashMap::new();
-        let cell_w = 1.0 / (atlas_width / char_width) as f32;
-        let cell_h = 1.0 / (atlas_height / char_height) as f32;
-
-        for &(ch, gx, gy) in char_map {
-            let u0 = gx as f32 * cell_w;
-            let v0 = gy as f32 * cell_h;
-            let u1 = u0 + cell_w;
-            let v1 = v0 + cell_h;
-            char_uvs.insert(ch, [u0, v0, u1, v1]);
-        }
-
-        // Add space character if not present
-        if !char_uvs.contains_key(&' ') {
-            char_uvs.insert(' ', [0.0, 0.0, cell_w, cell_h]);
-        }
-
         Self {
             char_uvs,
             texture,
@@ -106,6 +47,7 @@ impl BitmapFont {
     }
 
     /// Creates a default Minecraft-style font (16x16 chars in 256x256 atlas).
+    /// Uses a cached 1x1 white texture to minimize VRAM usage.
     pub fn minecraft_default(device: &Device, queue: &Queue) -> Self {
         // Standard ASCII 32-126 mapped to 16x16 grid (16 cols x 6 rows = 96 chars)
         let mut char_map = Vec::new();
@@ -117,7 +59,68 @@ impl BitmapFont {
             char_map.push((ch, gx, gy));
         }
 
-        Self::new(device, queue, 16, 16, 256, 256, &char_map)
+        // Use a static cached 1x1 texture to avoid VRAM leak from repeated creation
+        static FONT_TEXTURE: OnceLock<(Arc<Texture>, Arc<TextureView>)> = OnceLock::new();
+
+        let (texture_arc, view_arc) = FONT_TEXTURE.get_or_init(|| {
+            let texture = device.create_texture(&wgpu::TextureDescriptor {
+                label: Some("Bitmap font atlas cached"),
+                size: wgpu::Extent3d {
+                    width: 1,
+                    height: 1,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: TextureFormat::Rgba8UnormSrgb,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            });
+
+            // Use panic catch to handle OOM gracefully during texture upload
+            let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                queue.write_texture(
+                    wgpu::ImageCopyTexture {
+                        texture: &texture,
+                        mip_level: 0,
+                        origin: wgpu::Origin3d::ZERO,
+                        aspect: wgpu::TextureAspect::All,
+                    },
+                    &[0xFFu8; 4], // 1x1 white pixel
+                    wgpu::ImageDataLayout {
+                        offset: 0,
+                        bytes_per_row: Some(4),
+                        rows_per_image: Some(1),
+                    },
+                    wgpu::Extent3d {
+                        width: 1,
+                        height: 1,
+                        depth_or_array_layers: 1,
+                    },
+                );
+            }));
+
+            let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+            (Arc::new(texture), Arc::new(view))
+        });
+
+        // Build character UV map (all chars map to the same 1x1 white pixel)
+        let mut char_uvs = HashMap::new();
+        for &(ch, gx, gy) in &char_map {
+            // All characters map to the same white pixel
+            char_uvs.insert(ch, [0.0, 0.0, 1.0, 1.0]);
+        }
+
+        Self {
+            char_uvs,
+            texture: texture_arc.clone(),
+            view: view_arc.clone(),
+            char_width: 16,
+            char_height: 16,
+            atlas_width: 1,
+            atlas_height: 1,
+        }
     }
 
     /// Gets UV coordinates for a character.

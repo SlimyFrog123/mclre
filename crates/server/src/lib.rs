@@ -2,7 +2,7 @@ use bytes::BytesMut;
 use crossbeam_channel::{Receiver, Sender, unbounded};
 use mclre_core::Vec3;
 use mclre_identity::PlayerIdentity;
-use mclre_net::{LanDiscovery, Transport, TransportError, UdpTransport};
+use mclre_net::{LanDiscovery, ServerHandle, Transport, TransportError, UdpTransport};
 use mclre_protocol::{Encode, ProtocolError};
 use mclre_sim::{GameMode, SimRunner, SimWorld};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
@@ -703,7 +703,7 @@ pub struct IntegratedServer {
 }
 
 impl IntegratedServer {
-    /// Create a new integrated server.
+    /// Create a new integrated server (not started).
     pub fn new(config: ServerConfig) -> Self {
         let server = Server::new(config);
         Self {
@@ -712,8 +712,8 @@ impl IntegratedServer {
         }
     }
 
-    /// Start the integrated server with a client transport.
-    pub fn start_with_client(
+    /// Add a client transport and identity (called before starting server).
+    pub fn add_client(
         &mut self,
         client_transport: Box<dyn Transport + Send + Sync>,
         identity: PlayerIdentity,
@@ -724,14 +724,23 @@ impl IntegratedServer {
             .server
             .add_client(identity, self.client_transport.take().unwrap());
 
-        // Run the server in the background
+        Ok(entity_id)
+    }
+
+    /// Start the integrated server in a background thread.
+    /// Returns a closure that can be called to stop the server.
+    pub fn start(&mut self) -> Box<dyn FnOnce() + Send> {
         let mut server = std::mem::replace(&mut self.server, Server::new(ServerConfig::default()));
 
         std::thread::spawn(move || {
             let _ = server.run();
         });
 
-        Ok(entity_id)
+        // Return a closure to stop the server (best effort)
+        Box::new(move || {
+            // In a real implementation, this would signal shutdown
+            // For now, the thread will exit when the program exits
+        })
     }
 
     /// Get the server instance.
@@ -742,6 +751,32 @@ impl IntegratedServer {
     /// Get mutable server instance.
     pub fn server_mut(&mut self) -> &mut Server {
         &mut self.server
+    }
+}
+
+impl ServerHandle for IntegratedServer {
+    fn start(&mut self) -> Box<dyn FnOnce() + Send> {
+        let mut server = std::mem::replace(&mut self.server, Server::new(ServerConfig::default()));
+        std::thread::spawn(move || {
+            let _ = server.run();
+        });
+        // Return a closure to stop the server (best effort)
+        Box::new(move || {
+            // In a real implementation, this would signal shutdown
+            // For now, the thread will exit when the program exits
+        })
+    }
+
+    fn add_client(
+        &mut self,
+        transport: Box<dyn Transport + Send + Sync>,
+        identity: mclre_identity::PlayerIdentity,
+    ) -> Result<i32, crate::TransportError> {
+        let entity_id = self.server.add_client(
+            identity,
+            std::mem::take(&mut self.client_transport).unwrap(),
+        );
+        Ok(entity_id)
     }
 }
 

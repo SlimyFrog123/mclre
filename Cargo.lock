@@ -3603,6 +3603,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "crossbeam-channel",
+ "mclre-identity",
  "mclre-protocol",
  "mdns-sd 0.10.5",
  "oxy-upnp-igd",

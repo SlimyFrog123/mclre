@@ -28,7 +28,7 @@ pub use player_ui::PlayerUIContext;
 pub use scene::{Renderer, Scene, SceneId, SceneManager, UiContext, WidgetRegistry};
 pub use screens::{
     BaseScreen, HotbarSlot, HudScreen, MainMenuScreen, PauseScreen, Screen, ScreenManager,
-    ScreenType, TitleScreen,
+    ScreenTransition, ScreenType, TitleScreen,
 };
 pub use widget::{BaseWidget, Button, Container, Image, Label, Panel, ScrollView, Widget};
 

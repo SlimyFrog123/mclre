@@ -87,34 +87,43 @@ impl View {
         let right = self.right();
         let up = self.up();
 
-        // View matrix (column-major for wgpu)
+        // View matrix (row-major, will be transposed to column-major for GPU).
+        // This is the transpose of the standard column-major lookAt matrix.
+        // Column-major lookAt:
+        // col0: [right.x, right.y, right.z, 0]
+        // col1: [up.x, up.y, up.z, 0]
+        // col2: [-forward.x, -forward.y, -forward.z, 0]
+        // col3: [-dot(right, eye), -dot(up, eye), dot(forward, eye), 1]
+        // Transposed to row-major:
         let view = [
-            [right.x, up.x, -forward.x, 0.0],
-            [right.y, up.y, -forward.y, 0.0],
-            [right.z, up.z, -forward.z, 0.0],
+            [right.x, right.y, right.z, -right.dot(self.position)],
+            [up.x, up.y, up.z, -up.dot(self.position)],
             [
-                -right.dot(self.position),
-                -up.dot(self.position),
+                -forward.x,
+                -forward.y,
+                -forward.z,
                 forward.dot(self.position),
-                1.0,
             ],
+            [0.0, 0.0, 0.0, 1.0],
         ];
 
-        // Projection matrix (perspective)
+        // Projection matrix (perspective) for Vulkan/DX12 (NDC Z in [0, 1]).
+        // Row-major matrix; will be transposed to column-major for GPU.
+        // Column-major Vulkan projection:
+        // col0: [f/aspect, 0, 0, 0]
+        // col1: [0, f, 0, 0]
+        // col2: [0, 0, -far/(far-near), -1]
+        // col3: [0, 0, -far*near/(far-near), 0]
+        // Transposed to row-major:
         let f = 1.0 / (self.fov / 2.0).tan();
         let proj = [
             [f / self.aspect, 0.0, 0.0, 0.0],
             [0.0, f, 0.0, 0.0],
+            [0.0, 0.0, -self.far / (self.far - self.near), -1.0],
             [
                 0.0,
                 0.0,
-                (self.far + self.near) / (self.near - self.far),
-                -1.0,
-            ],
-            [
-                0.0,
-                0.0,
-                (2.0 * self.far * self.near) / (self.near - self.far),
+                -(self.far * self.near) / (self.far - self.near),
                 0.0,
             ],
         ];

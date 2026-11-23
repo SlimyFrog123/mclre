@@ -111,17 +111,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         target_frame_time: Duration::from_millis(50),
         world_preset: args.world_size,
         split_screen_players: args.split_screen,
-        spawn_pos: Vec3::new(0.0, 64.0, 0.0),
+        spawn_pos: Vec3::new(0.0, 65.62, 0.0),
         enable_vsync: args.vsync,
     };
 
     let active_players = config.split_screen_players;
     let mut client = Client::new(config)?;
-    println!("Client created successfully, starting integrated server...");
+    println!("Client created successfully, ready for main menu...");
 
-    // Create integrated server
+    // Create integrated server but DON'T start it yet - wait for "Play Game"
     let server_config = mclre_server::ServerConfig::default();
-    let mut integrated_server = IntegratedServer::new(server_config);
+    let integrated_server = IntegratedServer::new(server_config);
+    let server_arc = Arc::new(Mutex::new(integrated_server));
 
     // Create InMemoryTransport pairs for each player
     let mut client_transports = Vec::with_capacity(active_players);
@@ -132,26 +133,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let identity = PlayerIdentity::new(Uuid::now_v7(), format!("Player{}", player_idx + 1));
 
-        // Add client to server
-        let entity_id =
-            integrated_server.start_with_client(Box::new(server_transport), identity)?;
+        // Add client to server (but don't start server yet)
+        let entity_id = {
+            let mut server = server_arc.lock();
+            server.add_client(Box::new(server_transport), identity)?
+        };
 
         client_transports.push(Arc::new(client_transport) as Arc<dyn Transport + Send + Sync>);
         entity_ids.push(entity_id);
 
         println!(
-            "Player {} connected to integrated server with entity_id {}",
+            "Player {} registered with integrated server (entity_id {})",
             player_idx, entity_id
         );
     }
-
-    // Run the integrated server in the background
-    let server_arc = Arc::new(Mutex::new(integrated_server));
-    let server_clone = server_arc.clone();
-    std::thread::spawn(move || {
-        let mut server = server_clone.lock();
-        let _ = server.server_mut().run();
-    });
 
     // Set up singleplayer transports on the client
     let network_transports = client.network_transports_mut();
@@ -160,7 +155,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             network_transports[i] = Some(transport);
         }
     }
-    println!("Singleplayer transports set up, starting game loop...");
+    println!("Singleplayer transports configured, starting main menu...");
+
+    // Give client access to server for deferred startup
+    client.set_server(server_arc.clone());
 
     // Wrap run in error handling to generate error reports
     if let Err(e) = client.run() {

@@ -151,7 +151,7 @@ impl InputManager {
             gamepad_bindings: HashMap::new(),
             mouse_delta: Mutex::new((0.0, 0.0)),
             mouse_captured: false,
-            mouse_sensitivity: 0.002,
+            mouse_sensitivity: 0.01,
         };
 
         // Initialize all action states
@@ -455,6 +455,64 @@ impl InputManager {
         let mut delta = self.mouse_delta.lock();
         delta.0 += delta_x * self.mouse_sensitivity;
         delta.1 += delta_y * self.mouse_sensitivity;
+    }
+
+    /// Translates a keyboard event to an Action for UI navigation.
+    /// Returns the Action if the key is bound to a navigation action, None otherwise.
+    pub fn translate_keyboard(&mut self, event: KeyEvent) -> Option<Action> {
+        if let PhysicalKey::Code(key) = event.physical_key {
+            if let Some(action) = self.keyboard_bindings.get(&key) {
+                // Only return navigation actions
+                if matches!(
+                    action,
+                    Action::NavigateUp
+                        | Action::NavigateDown
+                        | Action::NavigateLeft
+                        | Action::NavigateRight
+                        | Action::NavigateSelect
+                        | Action::NavigateBack
+                        | Action::NavigateNext
+                        | Action::NavigatePrevious
+                ) {
+                    return Some(*action);
+                }
+            }
+        }
+        None
+    }
+
+    /// Translates a mouse button to an Action for UI navigation.
+    pub fn translate_mouse_button(&self, button: MouseButton) -> Option<Action> {
+        let binding = match button {
+            MouseButton::Left => MouseBinding::Left,
+            MouseButton::Right => MouseBinding::Right,
+            MouseButton::Middle => MouseBinding::Middle,
+            MouseButton::Back => MouseBinding::Button4,
+            MouseButton::Forward => MouseBinding::Button5,
+            _ => return None,
+        };
+
+        if let Some(action) = self.mouse_bindings.get(&binding) {
+            if matches!(
+                action,
+                Action::NavigateSelect | Action::UseItem | Action::Attack
+            ) {
+                return Some(*action);
+            }
+        }
+        None
+    }
+
+    /// Translates a mouse scroll delta to an Action for UI navigation.
+    pub fn translate_mouse_scroll(&self, delta: MouseScrollDelta) -> Option<Action> {
+        let action = match delta {
+            MouseScrollDelta::LineDelta(_, y) if y > 0.0 => Action::NavigatePrevious,
+            MouseScrollDelta::LineDelta(_, y) if y < 0.0 => Action::NavigateNext,
+            MouseScrollDelta::PixelDelta(pos) if pos.y > 0.0 => Action::NavigatePrevious,
+            MouseScrollDelta::PixelDelta(pos) if pos.y < 0.0 => Action::NavigateNext,
+            _ => return None,
+        };
+        Some(action)
     }
 
     /// Updates gamepad state for a specific gamepad (call once per frame).

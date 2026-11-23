@@ -57,6 +57,11 @@ pub trait Screen: Send + Sync {
         false
     }
 
+    /// Take the requested screen transition, if any.
+    fn take_requested_transition(&mut self) -> ScreenTransition {
+        ScreenTransition::None
+    }
+
     /// Downcast to Any for type-safe access to concrete screen types.
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any;
 }
@@ -248,6 +253,128 @@ impl BaseScreen {
             _ => false,
         }
     }
+
+    /// Recursively render the widget tree.
+    pub fn render_widgets(&self, renderer: &mut dyn crate::scene::Renderer) {
+        self.render_widget_recursive(renderer, self.root_widget);
+    }
+
+    fn render_widget_recursive(
+        &self,
+        renderer: &mut dyn crate::scene::Renderer,
+        widget_id: WidgetId,
+    ) {
+        if let Some(widget) = self.widgets.get(&widget_id) {
+            let rect = widget.rect();
+            if !widget.visible() {
+                return;
+            }
+
+            // Draw widget based on type
+            match widget.widget_type() {
+                crate::WidgetType::Button => {
+                    if let Some(btn) = widget.as_any().downcast_ref::<crate::widget::Button>() {
+                        // Draw button background
+                        let bg_color = crate::Color::rgba(
+                            btn.background_color[0],
+                            btn.background_color[1],
+                            btn.background_color[2],
+                            btn.background_color[3],
+                        );
+                        renderer.draw_rect(rect, bg_color);
+                        // Draw button text
+                        let text_color = crate::Color::rgba(
+                            btn.text_color[0],
+                            btn.text_color[1],
+                            btn.text_color[2],
+                            btn.text_color[3],
+                        );
+                        let text_pos = (rect.x + rect.width * 0.5, rect.y + rect.height * 0.5);
+                        renderer.draw_text(&btn.label, text_pos, btn.font_size, text_color);
+                    }
+                }
+                crate::WidgetType::Label => {
+                    if let Some(label) = widget.as_any().downcast_ref::<crate::widget::Label>() {
+                        let text_color = crate::Color::rgba(
+                            label.color[0],
+                            label.color[1],
+                            label.color[2],
+                            label.color[3],
+                        );
+                        renderer.draw_text(
+                            &label.text,
+                            (rect.x, rect.y),
+                            label.font_size,
+                            text_color,
+                        );
+                    }
+                }
+                crate::WidgetType::Panel => {
+                    if let Some(panel) = widget.as_any().downcast_ref::<crate::widget::Panel>() {
+                        let bg_color = crate::Color::rgba(
+                            panel.background_color[0],
+                            panel.background_color[1],
+                            panel.background_color[2],
+                            panel.background_color[3],
+                        );
+                        renderer.draw_rect(rect, bg_color);
+                        if panel.border_width > 0.0 {
+                            let border_color = crate::Color::rgba(
+                                panel.border_color[0],
+                                panel.border_color[1],
+                                panel.border_color[2],
+                                panel.border_color[3],
+                            );
+                            // Draw border as four thin rects
+                            renderer.draw_rect(
+                                crate::Rect::new(rect.x, rect.y, rect.width, panel.border_width),
+                                border_color,
+                            );
+                            renderer.draw_rect(
+                                crate::Rect::new(
+                                    rect.x,
+                                    rect.y + rect.height - panel.border_width,
+                                    rect.width,
+                                    panel.border_width,
+                                ),
+                                border_color,
+                            );
+                            renderer.draw_rect(
+                                crate::Rect::new(rect.x, rect.y, panel.border_width, rect.height),
+                                border_color,
+                            );
+                            renderer.draw_rect(
+                                crate::Rect::new(
+                                    rect.x + rect.width - panel.border_width,
+                                    rect.y,
+                                    panel.border_width,
+                                    rect.height,
+                                ),
+                                border_color,
+                            );
+                        }
+                    }
+                }
+                crate::WidgetType::Image => {
+                    if let Some(img) = widget.as_any().downcast_ref::<crate::widget::Image>() {
+                        let tint =
+                            crate::Color::rgba(img.tint[0], img.tint[1], img.tint[2], img.tint[3]);
+                        // Note: texture lookup would need asset manager; for now skip if no texture
+                        if let Some(_texture_id) = &img.texture_id {
+                            // TODO: Look up texture from asset manager
+                            // renderer.draw_image(texture, rect, img.uv_rect.unwrap_or([0.0, 0.0, 1.0, 1.0]), tint);
+                        }
+                    }
+                }
+                _ => {}
+            }
+
+            // Recursively render children
+            for child_id in widget.children() {
+                self.render_widget_recursive(renderer, *child_id);
+            }
+        }
+    }
 }
 
 /// Main title screen matching LCE reference.
@@ -393,8 +520,14 @@ impl Screen for TitleScreen {
         // Update animations, etc.
     }
 
-    fn render(&self, _renderer: &mut dyn crate::scene::Renderer) {
-        // Render handled by widget tree
+    fn render(&self, renderer: &mut dyn crate::scene::Renderer) {
+        // Draw fullscreen background
+        if self.base.is_fullscreen() {
+            let bg = self.base.background_color();
+            renderer.draw_rect(crate::Rect::new(0.0, 0.0, 1920.0, 1080.0), bg);
+        }
+        // Render widget tree
+        self.base.render_widgets(renderer);
     }
 
     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
@@ -2919,6 +3052,11 @@ impl ScreenManager {
 
     pub fn get_current(&self) -> Option<ScreenType> {
         self.current_screen
+    }
+
+    /// Set the current screen directly (used for entering gameplay from menu).
+    pub fn set_current_screen(&mut self, screen_type: Option<ScreenType>) {
+        self.current_screen = screen_type;
     }
 
     pub fn get_screen(&self, screen_type: ScreenType) -> Option<&dyn Screen> {

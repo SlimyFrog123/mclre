@@ -1,12 +1,7 @@
 //! UI renderer adapter that implements the UI Renderer trait using mclre_render.
 
-use mclre_render::{Renderer as GpuRenderer, UiPipeline, BitmapFont};
-use mclre_ui::{
-    nine_slice::NineSliceRegion,
-    Rect,
-    scene::{Renderer as UiRendererTrait},
-    Color,
-};
+use mclre_render::{BitmapFont, Renderer as GpuRenderer, UiPipeline};
+use mclre_ui::{Color, Rect, nine_slice::NineSliceRegion, scene::Renderer as UiRendererTrait};
 
 /// UI renderer that adapts mclre_render to the UI Renderer trait.
 pub struct UiRenderer<'a> {
@@ -20,10 +15,7 @@ impl<'a> UiRenderer<'a> {
         let font = BitmapFont::minecraft_default(gpu_renderer.device(), gpu_renderer.queue());
         // Then get mutable reference to UI pipeline
         let ui_pipeline = gpu_renderer.ui_pipeline_mut();
-        Self {
-            ui_pipeline,
-            font,
-        }
+        Self { ui_pipeline, font }
     }
 }
 
@@ -41,8 +33,9 @@ impl<'a> UiRendererTrait for UiRenderer<'a> {
     fn draw_text(&mut self, text: &str, pos: (f32, f32), size: f32, color: Color) {
         let color_u32 = color.to_u32();
         let scale = size / 16.0;
-        
-        self.ui_pipeline.add_text(text, pos.0, pos.1, scale, color_u32, &self.font);
+
+        self.ui_pipeline
+            .add_text(text, pos.0, pos.1, scale, color_u32, &self.font);
     }
 
     fn draw_image(
@@ -53,12 +46,8 @@ impl<'a> UiRendererTrait for UiRenderer<'a> {
         color: Color,
     ) {
         let color_u32 = color.to_u32();
-        self.ui_pipeline.add_quad(
-            [rect.x, rect.y, rect.width, rect.height],
-            uv,
-            color_u32,
-            0,
-        );
+        self.ui_pipeline
+            .add_quad([rect.x, rect.y, rect.width, rect.height], uv, color_u32, 0);
     }
 
     fn draw_nine_slice(

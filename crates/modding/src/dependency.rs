@@ -174,10 +174,7 @@ impl DependencyResolver {
             }
 
             // Add edge: dependency -> mod_id (dependencies load first).
-            graph
-                .entry(dep.id)
-                .or_default()
-                .insert(mod_id.clone());
+            graph.entry(dep.id).or_default().insert(mod_id.clone());
             *in_degree.entry(mod_id.clone()).or_insert(0) += 1;
 
             // Recursively collect transitive dependencies

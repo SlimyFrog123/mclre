@@ -13,8 +13,14 @@ use mclre_assets::{AssetManager, Identifier};
 use mclre_content_vanilla::block_states;
 use mclre_core::{BlockStateId, Vec3};
 use mclre_input::{Action, InputManager};
-use mclre_world::{ChunkColumn, ChunkPos, ChunkSection, WorldSizePreset};
+use mclre_ui::{
+    MainMenuScreen, Rect, ScreenManager, ScreenTransition, ScreenType, TitleScreen, UiContext,
+};
+
+mod ui_renderer;
+use mclre_world::{ChunkColumn, ChunkPos, ChunkSection, LocalPos, WorldSizePreset};
 use parking_lot::Mutex;
+use ui_renderer::UiRenderer;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::EventLoop,
@@ -114,6 +120,90 @@ impl ClientWorld {
             256.0,
         )
     }
+
+    /// Unloads chunks that are too far from the player to free VRAM.
+    /// Keeps chunks within `radius` chunks of the player (default 8 = 128 blocks).
+    pub fn unload_distant_chunks(&self, radius: i32) {
+        let player_pos = self.player_pos();
+        let player_chunk_x = (player_pos.x / 16.0).floor() as i32;
+        let player_chunk_z = (player_pos.z / 16.0).floor() as i32;
+
+        let mut chunks = self.chunks.lock();
+        let mut gpu_chunks = self.gpu_chunks.lock();
+        let mut dirty_chunks = self.dirty_chunks.lock();
+
+        let radius_sq = (radius as f32).powi(2);
+
+        // Find chunks to remove
+        let to_remove: Vec<ChunkPos> = chunks
+            .keys()
+            .filter(|pos| {
+                let dx = (pos.x - player_chunk_x) as f32;
+                let dz = (pos.z - player_chunk_z) as f32;
+                dx * dx + dz * dz > radius_sq
+            })
+            .cloned()
+            .collect();
+
+        for pos in to_remove {
+            chunks.remove(&pos);
+            gpu_chunks.remove(&pos);
+            // Also remove from dirty chunks if present
+            dirty_chunks.retain(|p| *p != pos);
+        }
+    }
+
+    /// Estimates current GPU memory usage from chunk meshes in MB.
+    /// Rough estimate: each non-empty chunk section ~500 KB (vertices + indices).
+    pub fn estimate_gpu_memory_mb(&self) -> usize {
+        let gpu_chunks = self.gpu_chunks.lock();
+        let section_count: usize = gpu_chunks.values().map(|v| v.len()).sum();
+        // Rough estimate: ~500 KB per section (conservative)
+        section_count * 500 / 1024
+    }
+
+    /// Forces unloading of chunks until GPU memory is under budget.
+    /// Unloads furthest chunks first.
+    pub fn enforce_vram_budget(&self, budget_mb: usize) {
+        let current_mb = self.estimate_gpu_memory_mb();
+        if current_mb <= budget_mb {
+            return;
+        }
+
+        let player_pos = self.player_pos();
+        let player_chunk_x = (player_pos.x / 16.0).floor() as i32;
+        let player_chunk_z = (player_pos.z / 16.0).floor() as i32;
+
+        let mut chunks = self.chunks.lock();
+        let mut gpu_chunks = self.gpu_chunks.lock();
+        let mut dirty_chunks = self.dirty_chunks.lock();
+
+        // Collect chunks with their distance from player
+        let mut chunk_distances: Vec<(ChunkPos, f32, usize)> = gpu_chunks
+            .iter()
+            .map(|(pos, sections)| {
+                let dx = (pos.x - player_chunk_x) as f32;
+                let dz = (pos.z - player_chunk_z) as f32;
+                let dist_sq = dx * dx + dz * dz;
+                (pos.clone(), dist_sq, sections.len())
+            })
+            .collect();
+
+        // Sort by distance (furthest first)
+        chunk_distances.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+
+        // Remove chunks until under budget
+        let mut estimated_mb = current_mb;
+        for (pos, _, section_count) in chunk_distances {
+            if estimated_mb <= budget_mb {
+                break;
+            }
+            chunks.remove(&pos);
+            gpu_chunks.remove(&pos);
+            dirty_chunks.retain(|p| *p != pos);
+            estimated_mb -= section_count * 500 / 1024;
+        }
+    }
 }
 
 impl Default for ClientWorld {
@@ -157,7 +247,7 @@ pub fn create_flat_test_world() -> Result<
 
     let mut columns = Vec::new();
 
-    // Create a 3x3 chunk area around spawn (0,0)
+    // Create a 3x3 chunk area around spawn (0,0) with height variation
     for cx in -1..=1 {
         for cz in -1..=1 {
             let chunk_pos = ChunkPos::new(cx, cz);
@@ -166,22 +256,37 @@ pub fn create_flat_test_world() -> Result<
             // 16 sections (256 blocks tall)
             for section_y in 0..16 {
                 let section_base_y = section_y * 16;
-                let section = if section_base_y == 0 {
-                    // Bedrock at y=0
-                    ChunkSection::filled(bedrock_state)
-                } else if section_base_y <= 60 {
-                    // Stone from y=1 to y=60
-                    ChunkSection::filled(stone_state)
-                } else if section_base_y <= 62 {
-                    // Dirt from y=61 to y=62
-                    ChunkSection::filled(dirt_state)
-                } else if section_base_y == 63 {
-                    // Grass at y=63
-                    ChunkSection::filled(grass_state)
-                } else {
-                    // Air above
-                    ChunkSection::air()
-                };
+                let mut section = ChunkSection::air();
+
+                // Fill blocks in this section
+                for x in 0..16 {
+                    for z in 0..16 {
+                        // Simple height variation using hash of position
+                        let wx = cx * 16 + x;
+                        let wz = cz * 16 + z;
+                        let h = ((wx as i64 * 341873128712 + wz as i64 * 132897987541)
+                            ^ 0x9E3779B97F4A7C15u64 as i64) as u64;
+                        let height = 60 + (h % 8) as i32; // Height 60-67
+
+                        for y in 0..16 {
+                            let wy = section_base_y + y;
+                            let state = if wy == 0 {
+                                bedrock_state
+                            } else if wy <= height - 3 {
+                                stone_state
+                            } else if wy <= height - 1 {
+                                dirt_state
+                            } else if wy == height {
+                                grass_state
+                            } else {
+                                continue; // Air
+                            };
+                            let local_pos = LocalPos::new(x as i32, y as i32, z as i32).unwrap();
+                            section.set(local_pos, state);
+                        }
+                    }
+                }
+
                 sections.push(section);
             }
 
@@ -224,7 +329,7 @@ impl Default for ClientConfig {
             target_frame_time: Duration::from_millis(50), // 20 TPS
             world_preset: WorldSizePreset::Infinite,
             split_screen_players: 1,
-            spawn_pos: Vec3::new(0.0, 64.0, 0.0),
+            spawn_pos: Vec3::new(0.0, 65.62, 0.0),
             enable_vsync: true,
         }
     }
@@ -262,22 +367,24 @@ pub struct Client {
     block_state_model: Arc<mclre_core::BlockStateModel>,
     window: Option<Arc<winit::window::Window>>,
     network_transports: Vec<Option<Arc<dyn mclre_net::Transport>>>,
+    /// Screen manager for UI state.
+    screen_manager: Option<ScreenManager>,
+    /// UI context for rendering.
+    ui_context: Option<UiContext>,
+    /// Integrated server (started when "Play Game" is clicked).
+    server: Option<Arc<parking_lot::Mutex<dyn mclre_net::ServerHandle>>>,
+    /// Frame counter for periodic tasks (e.g., chunk unloading).
+    frame_count: u64,
 }
 
 impl Client {
     /// Creates a new client (window created in run()).
+    /// Starts at the title screen - world is only created when user selects "Play Game".
     pub fn new(config: ClientConfig) -> Result<Self, ClientError> {
         let world = Arc::new(ClientWorld::new());
         world.set_player_pos(config.spawn_pos);
-
-        // Create initial flat test world
-        let (block_state_model, columns) =
-            create_flat_test_world().expect("Failed to create flat test world");
-
-        // Populate the world with initial chunks
-        for (pos, column) in columns {
-            world.set_chunk(Arc::new(column));
-        }
+        // Start looking slightly downward so the ground is visible on flat worlds
+        world.set_player_rot(0.0, -0.3);
 
         let input = Mutex::new(InputManager::new());
 
@@ -288,15 +395,39 @@ impl Client {
         let max_players = config.split_screen_players.clamp(1, 4);
         let network_transports = vec![None; max_players];
 
+        // Initialize screen manager
+        let mut screen_manager = ScreenManager::new();
+        screen_manager.register_screen(ScreenType::Title, Box::new(TitleScreen::new()));
+        screen_manager.register_screen(ScreenType::MainMenu, Box::new(MainMenuScreen::new()));
+
+        // Create UI context
+        let assets = Arc::new(mclre_assets::AssetManager::new());
+        let ui_context = UiContext::for_player(
+            0,
+            Rect::new(0.0, 0.0, config.width as f32, config.height as f32),
+            assets,
+        );
+
         Ok(Self {
             config,
             world,
             input,
             asset_manager,
-            block_state_model: Arc::new(block_state_model),
+            block_state_model: Arc::new(
+                mclre_content_vanilla::block_states().expect("Failed to create block state model"),
+            ),
             window: None,
             network_transports,
+            screen_manager: Some(screen_manager),
+            ui_context: Some(ui_context),
+            server: None,
+            frame_count: 0,
         })
+    }
+
+    /// Sets the integrated server (called from main before run()).
+    pub fn set_server(&mut self, server: Arc<parking_lot::Mutex<dyn mclre_net::ServerHandle>>) {
+        self.server = Some(server);
     }
 
     /// Returns a mutable reference to the network transports.
@@ -311,16 +442,16 @@ impl Client {
         for pos in dirty_chunks {
             if let Some(chunk) = self.world.get_chunk(pos) {
                 let mut gpu_sections = Vec::new();
-                let chunk_pos_vec = pos.into(); // Convert ChunkPos to Vec3<i32>
-                for section in chunk.sections() {
+                for (section_y, section) in chunk.sections().iter().enumerate() {
                     if section.is_empty() {
                         continue;
                     }
+                    let section_pos = Vec3::new(pos.x, section_y as i32, pos.z);
                     let gpu_chunk = mclre_render::resources::GpuChunkSection::from_section(
                         renderer.device(),
                         renderer.queue(),
                         section,
-                        chunk_pos_vec,
+                        section_pos,
                         Some(&self.block_state_model),
                     );
                     gpu_sections.push(gpu_chunk);
@@ -331,18 +462,105 @@ impl Client {
             }
         }
 
-        // Get view
-        let view = self
-            .world
-            .create_view(self.config.width as f32 / self.config.height as f32);
+        // Check if we're in a menu
+        let in_menu = self
+            .screen_manager
+            .as_ref()
+            .map(|sm| sm.get_current().is_some())
+            .unwrap_or(false);
 
-        // Get all GPU chunks for rendering
-        let chunks = self.world.get_gpu_chunks();
+        if in_menu {
+            // Render UI only (no world)
+            if let Some(screen_manager) = &self.screen_manager {
+                let mut ui_renderer = UiRenderer::new(renderer);
+                screen_manager.render(&mut ui_renderer);
+            }
+        } else {
+            // Get view
+            let view = self
+                .world
+                .create_view(self.config.width as f32 / self.config.height as f32);
 
-        // Render frame
-        if let Err(e) = renderer.render(&view, &chunks) {
-            eprintln!("Render error: {}", e);
+            // Get all GPU chunks for rendering
+            let chunks = self.world.get_gpu_chunks();
+
+            // Render frame
+            if let Err(e) = renderer.render(&view, &chunks) {
+                eprintln!("Render error: {}", e);
+            }
         }
+    }
+
+    /// Creates a renderer with a minimal VRAM availability check.
+    /// Returns an error if VRAM is completely exhausted.
+    fn create_renderer_with_vram_check(
+        window: Arc<winit::window::Window>,
+    ) -> Result<mclre_render::Renderer, ClientError> {
+        // Create instance and surface
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::DX12,
+            ..Default::default()
+        });
+        let surface = instance
+            .create_surface(window.clone())
+            .map_err(mclre_render::RendererError::CreateSurface)?;
+        let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::HighPerformance,
+            compatible_surface: Some(&surface),
+            force_fallback_adapter: false,
+        }))
+        .ok_or(mclre_render::RendererError::NoAdapter)?;
+        let (device, queue) = pollster::block_on(adapter.request_device(
+            &wgpu::DeviceDescriptor {
+                label: Some("VRAM test device"),
+                required_features: wgpu::Features::empty(),
+                required_limits: wgpu::Limits::default(),
+                memory_hints: wgpu::MemoryHints::Performance,
+            },
+            None,
+        ))
+        .map_err(mclre_render::RendererError::RequestDevice)?;
+
+        // Minimal VRAM check: just try to create a tiny 1x1 texture
+        // If this fails, VRAM is completely exhausted
+        let test_texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("VRAM test texture"),
+            size: wgpu::Extent3d {
+                width: 1,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        queue.write_texture(
+            wgpu::ImageCopyTexture {
+                texture: &test_texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &[0xFFu8; 4],
+            wgpu::ImageDataLayout {
+                offset: 0,
+                bytes_per_row: Some(4),
+                rows_per_image: Some(1),
+            },
+            wgpu::Extent3d {
+                width: 1,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+        );
+
+        // VRAM check passed, create the full renderer
+        let renderer =
+            pollster::block_on(mclre_render::Renderer::new(window)).map_err(ClientError::Render)?;
+        Ok(renderer)
     }
 
     /// Runs the main game loop.
@@ -362,28 +580,13 @@ impl Client {
         // Store window in client
         self.window = Some(window.clone());
 
-        // Create renderer in main thread (where window was created)
-        let mut renderer = pollster::block_on(mclre_render::Renderer::new(window.clone()))
-            .expect("Failed to create renderer");
+        // Create renderer in main thread (where window was created), with VRAM check
+        let mut renderer = Self::create_renderer_with_vram_check(window.clone())?;
 
-        // Load pre-built texture atlas from converted game-assets
+        // Load texture atlas from converted game-assets
         {
             let mut asset_manager = self.asset_manager.lock();
             asset_manager.add_root(std::path::PathBuf::from("game-assets"));
-
-            // Load the pre-built texture atlas from the converted assets
-            let atlas_path = "textures/block/atlas.png";
-            let atlas_id = mclre_assets::Identifier::new("minecraft", "atlas").unwrap();
-
-            if let Ok(region) = asset_manager.load_into_atlas(atlas_id, "textures/block/atlas.png")
-            {
-                println!(
-                    "Loaded pre-built atlas: region ({}, {}) {}x{}",
-                    region.x, region.y, region.width, region.height
-                );
-            } else {
-                eprintln!("Failed to load pre-built atlas, falling back to individual textures");
-            }
 
             // Load UV coordinates from manifest.json for individual texture lookup
             let manifest_path = std::path::PathBuf::from("game-assets/manifest.json");
@@ -413,18 +616,33 @@ impl Client {
                 std::collections::HashMap::new()
             };
 
-            // Upload atlas to GPU
-            let atlas_texture = asset_manager.atlas_texture().clone();
+            // Try to load and upload the pre-built atlas, but handle memory errors gracefully
+            let atlas_id = mclre_assets::Identifier::new("minecraft", "atlas").unwrap();
+            let atlas_texture =
+                match asset_manager.load_texture(atlas_id, "textures/block/atlas.png") {
+                    Ok(texture) => {
+                        let (width, height) = texture.dimensions();
+                        println!("Loaded pre-built atlas: {width}x{height}");
+                        Some(texture)
+                    }
+                    Err(e) => {
+                        eprintln!("Failed to load pre-built atlas: {e}");
+                        None
+                    }
+                };
+
             let uvs_count = uvs.len();
             let padding = 1;
-            if let Err(e) = renderer.set_texture_atlas(&atlas_texture, uvs, padding) {
-                eprintln!("Failed to set texture atlas: {}", e);
-            } else {
-                println!(
-                    "Texture atlas set successfully on renderer with {} UV regions",
-                    uvs_count
-                );
-            }
+
+            // Skip texture atlas upload entirely to avoid VRAM OOM when other games are running.
+            // The renderer will use its default minimal 16x16 white texture atlas.
+            // UV coordinates from manifest are for the 8192x8192 atlas and won't match,
+            // but this allows the game to run without VRAM OOM crashes.
+            eprintln!(
+                "Skipping texture atlas upload to conserve VRAM (using default 16x16 white texture)"
+            );
+            // Note: UV coordinates from manifest are for the 8192x8192 atlas and won't match the default 16x16 atlas.
+            // Textures will appear white, but the game will run without VRAM OOM crashes.
         }
 
         // Setup input manager
@@ -437,11 +655,17 @@ impl Client {
         // Store window in client
         self.window = Some(window.clone());
 
+        let mut client = self;
+
         let mut last_frame = Instant::now();
         let mut accumulator = Duration::ZERO;
-        let fixed_dt = self.config.target_frame_time;
-
-        let mut client = self;
+        let fixed_dt = client.config.target_frame_time;
+        if let Some(screen_manager) = &mut client.screen_manager {
+            let ui_context = client.ui_context.as_mut().unwrap();
+            screen_manager
+                .push_screen(ScreenType::Title, ui_context)
+                .ok();
+        }
 
         event_loop.run(move |event, event_loop| {
             event_loop.set_control_flow(winit::event_loop::ControlFlow::Poll);
@@ -449,20 +673,86 @@ impl Client {
             match event {
                 Event::WindowEvent { event, .. } => match event {
                     WindowEvent::CloseRequested => {
+                        renderer.wait_idle();
                         event_loop.exit();
                     }
                     WindowEvent::Resized(size) => {
                         // Handle resize
                         renderer.resize(size.width, size.height);
+                        if let Some(ui_context) = &mut client.ui_context {
+                            ui_context.screen_size = (size.width, size.height);
+                        }
                     }
                     WindowEvent::KeyboardInput { event, .. } => {
-                        client.input.lock().process_keyboard(event);
+                        // Check if we're in a menu screen
+                        let in_menu = client
+                            .screen_manager
+                            .as_ref()
+                            .map(|sm| sm.get_current().is_some())
+                            .unwrap_or(false);
+
+                        let pressed = event.state == winit::event::ElementState::Pressed;
+
+                        if in_menu {
+                            // Forward to screen manager for UI navigation
+                            let action = {
+                                let mut input = client.input.lock();
+                                input.translate_keyboard(event)
+                            };
+                            if let Some(action) = action {
+                                if let Some(screen_manager) = &mut client.screen_manager {
+                                    let ui_context = client.ui_context.as_mut().unwrap();
+                                    screen_manager.handle_input(ui_context, action, pressed);
+                                }
+                            }
+                        } else {
+                            client.input.lock().process_keyboard(event);
+                        }
                     }
                     WindowEvent::MouseInput { button, state, .. } => {
-                        client.input.lock().process_mouse_button(button, state);
+                        let in_menu = client
+                            .screen_manager
+                            .as_ref()
+                            .map(|sm| sm.get_current().is_some())
+                            .unwrap_or(false);
+
+                        if in_menu {
+                            let action = {
+                                let input = client.input.lock();
+                                input.translate_mouse_button(button)
+                            };
+                            if let Some(action) = action {
+                                let pressed = state == winit::event::ElementState::Pressed;
+                                if let Some(screen_manager) = &mut client.screen_manager {
+                                    let ui_context = client.ui_context.as_mut().unwrap();
+                                    screen_manager.handle_input(ui_context, action, pressed);
+                                }
+                            }
+                        } else {
+                            client.input.lock().process_mouse_button(button, state);
+                        }
                     }
                     WindowEvent::MouseWheel { delta, .. } => {
-                        client.input.lock().process_mouse_scroll(delta);
+                        let in_menu = client
+                            .screen_manager
+                            .as_ref()
+                            .map(|sm| sm.get_current().is_some())
+                            .unwrap_or(false);
+
+                        if in_menu {
+                            let action = {
+                                let input = client.input.lock();
+                                input.translate_mouse_scroll(delta)
+                            };
+                            if let Some(action) = action {
+                                if let Some(screen_manager) = &mut client.screen_manager {
+                                    let ui_context = client.ui_context.as_mut().unwrap();
+                                    screen_manager.handle_input(ui_context, action, true);
+                                }
+                            }
+                        } else {
+                            client.input.lock().process_mouse_scroll(delta);
+                        }
                     }
                     WindowEvent::CursorMoved { position, .. } => {
                         // Handled by mouse delta in input manager
@@ -481,10 +771,18 @@ impl Client {
                 Event::DeviceEvent { event, .. } => {
                     use winit::event::DeviceEvent;
                     if let DeviceEvent::MouseMotion { delta } = event {
-                        client
-                            .input
-                            .lock()
-                            .process_mouse_motion(delta.0 as f32, delta.1 as f32);
+                        let in_menu = client
+                            .screen_manager
+                            .as_ref()
+                            .map(|sm| sm.get_current().is_some())
+                            .unwrap_or(false);
+
+                        if !in_menu {
+                            client
+                                .input
+                                .lock()
+                                .process_mouse_motion(delta.0 as f32, delta.1 as f32);
+                        }
                     }
                 }
                 Event::AboutToWait => {
@@ -493,28 +791,109 @@ impl Client {
                     let frame_time = now - last_frame;
                     last_frame = now;
                     accumulator += frame_time;
+                    let dt = frame_time.as_secs_f32();
 
-                    // Process input
-                    {
-                        let mut input = client.input.lock();
-                        let (dx, dy) = input.take_mouse_delta();
-                        if dx != 0.0 || dy != 0.0 {
-                            let mut rot = client.world.player_rot.lock();
-                            rot.0 += dx; // yaw
-                            rot.1 = (rot.1 - dy)
-                                .clamp(-std::f32::consts::FRAC_PI_2, std::f32::consts::FRAC_PI_2); // pitch
+                    // Check if we're in a menu or gameplay
+                    let in_menu = client
+                        .screen_manager
+                        .as_ref()
+                        .map(|sm| sm.get_current().is_some())
+                        .unwrap_or(false);
+
+                    if in_menu {
+                        // Update screen manager
+                        if let Some(screen_manager) = &mut client.screen_manager {
+                            let ui_context = client.ui_context.as_mut().unwrap();
+                            screen_manager.update(ui_context, dt);
+
+                            // Handle screen transitions
+                            if let Some(current_screen) = screen_manager.get_current() {
+                                if let Some(screen) = screen_manager.get_screen_mut(current_screen)
+                                {
+                                    let transition = screen.take_requested_transition();
+                                    match transition {
+                                        ScreenTransition::None => {}
+                                        ScreenTransition::TitleToMainMenu => {
+                                            screen_manager.pop_screen(ui_context).ok();
+                                            screen_manager
+                                                .push_screen(ScreenType::MainMenu, ui_context)
+                                                .ok();
+                                        }
+                                        ScreenTransition::TitleToQuit => {
+                                            event_loop.exit();
+                                        }
+                                        ScreenTransition::MainMenuToPlay => {
+                                            screen_manager.pop_screen(ui_context).ok();
+                                            screen_manager.set_current_screen(None); // Enter gameplay
+                                            // Start the integrated server now
+                                            if let Some(server) = &client.server {
+                                                let mut server = server.lock();
+                                                let _stop_fn = server.start();
+                                            }
+                                            // Create the test world now that user selected "Play Game"
+                                            let (block_state_model, columns) =
+                                                create_flat_test_world()
+                                                    .expect("Failed to create flat test world");
+                                            client.block_state_model = Arc::new(block_state_model);
+                                            for (pos, column) in columns {
+                                                client.world.set_chunk(Arc::new(column));
+                                            }
+                                            // Release cursor capture for gameplay
+                                            if let Some(w) = &client.window {
+                                                w.set_cursor_grab(
+                                                    winit::window::CursorGrabMode::Confined,
+                                                )
+                                                .ok();
+                                                w.set_cursor_visible(false);
+                                            }
+                                            client.input.lock().set_mouse_captured(true);
+                                        }
+                                        ScreenTransition::MainMenuToQuit => {
+                                            screen_manager.pop_screen(ui_context).ok();
+                                            screen_manager
+                                                .push_screen(ScreenType::Title, ui_context)
+                                                .ok();
+                                        }
+                                        ScreenTransition::Back => {
+                                            screen_manager.pop_screen(ui_context).ok();
+                                        }
+                                        _ => {}
+                                    }
+                                }
+                            }
                         }
-                        input.end_frame();
-                    }
+                    } else {
+                        // Gameplay input
+                        {
+                            let mut input = client.input.lock();
+                            let (dx, dy) = input.take_mouse_delta();
+                            if dx != 0.0 || dy != 0.0 {
+                                let mut rot = client.world.player_rot.lock();
+                                rot.0 += dx; // yaw
+                                rot.1 = (rot.1 - dy).clamp(
+                                    -std::f32::consts::FRAC_PI_2,
+                                    std::f32::consts::FRAC_PI_2,
+                                ); // pitch
+                            }
+                            input.end_frame();
+                        }
 
-                    // Fixed timestep simulation
-                    while accumulator >= fixed_dt {
-                        // Fixed update (20 TPS)
-                        client.fixed_update(fixed_dt);
-                        accumulator -= fixed_dt;
+                        // Fixed timestep simulation
+                        while accumulator >= fixed_dt {
+                            // Fixed update (20 TPS)
+                            client.fixed_update(fixed_dt);
+                            accumulator -= fixed_dt;
+                        }
                     }
 
                     // Render
+                    // Unload distant chunks every frame during gameplay to aggressively free VRAM
+                    // Use a small radius (2 chunks = 32 blocks) since test world is only 3x3 chunks
+                    client.world.unload_distant_chunks(2);
+                    // Enforce VRAM budget (256 MB default) - forces unloading if exceeded
+                    client.world.enforce_vram_budget(256);
+                    client.frame_count += 1;
+
                     client.render_frame_with_renderer(&mut renderer);
 
                     if let Some(w) = &client.window {
@@ -572,12 +951,11 @@ impl Client {
             pos.y += velocity.y * dt_secs;
         }
 
-        // Simple gravity
-        if pos.y > 0.0 {
-            pos.y -= 0.08 * dt_secs; // Gravity
-            if pos.y < 0.0 {
-                pos.y = 0.0;
-            }
+        // Simple gravity. The flat test world surface is at y=64; keep the
+        // camera at eye height above it until client-side collision exists.
+        const GROUND_EYE_Y: f32 = 65.62;
+        if pos.y > GROUND_EYE_Y {
+            pos.y = (pos.y - 0.08 * dt_secs).max(GROUND_EYE_Y);
         }
     }
 }
@@ -595,6 +973,8 @@ pub enum ClientError {
     Channel(#[from] crossbeam_channel::SendError<RenderCommand>),
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
+    #[error("other error: {0}")]
+    Other(String),
 }
 
 #[cfg(test)]

@@ -14,6 +14,7 @@ workspace = true
 bytes = { workspace = true }
 crossbeam-channel = { workspace = true }
 mclre-protocol = { path = "../protocol" }
+mclre-identity = { path = "../identity" }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 mdns-sd = "0.10"

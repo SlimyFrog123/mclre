@@ -9,6 +9,13 @@ use wgpu::{Device, RenderPass, TextureFormat};
 /// Maximum number of texture atlas regions supported.
 const MAX_ATLAS_REGIONS: usize = 512;
 
+/// Maximum chunk sections drawn in one frame.
+/// Limited by max uniform buffer binding size (65536) / dynamic offset alignment (256) = 256.
+const MAX_CHUNKS_PER_FRAME: usize = 256;
+
+/// Alignment required for dynamic uniform buffer offsets.
+const UNIFORM_OFFSET_ALIGNMENT: u64 = 256;
+
 /// Chunk rendering pipeline.
 pub struct ChunkPipeline {
     render_pipeline: wgpu::RenderPipeline,
@@ -74,8 +81,8 @@ impl ChunkPipeline {
                     visibility: wgpu::ShaderStages::VERTEX,
                     ty: wgpu::BindingType::Buffer {
                         ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+                        has_dynamic_offset: true,
+                        min_binding_size: wgpu::BufferSize::new(16),
                     },
                     count: None,
                 }],
@@ -98,10 +105,12 @@ impl ChunkPipeline {
             }],
         });
 
-        // Create uniform buffer for chunk origin (vec3<i32> = 16 bytes due to alignment)
+        // Create uniform buffer for chunk origin (vec3<i32> = 16 bytes due to alignment).
+        // Each chunk section gets its own 256-byte-aligned slot so the origin can be
+        // selected per draw with a dynamic offset.
         let chunk_origin_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("chunk origin"),
-            size: 16,
+            label: Some("chunk origins"),
+            size: MAX_CHUNKS_PER_FRAME as u64 * UNIFORM_OFFSET_ALIGNMENT,
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -111,7 +120,12 @@ impl ChunkPipeline {
             layout: &chunk_origin_bind_group_layout,
             entries: &[wgpu::BindGroupEntry {
                 binding: 0,
-                resource: chunk_origin_buffer.as_entire_binding(),
+                resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                    buffer: &chunk_origin_buffer,
+                    offset: 0,
+                    // Size of one ChunkOrigin (vec3<i32> = 16 bytes with alignment)
+                    size: Some(wgpu::BufferSize::new(16).unwrap()),
+                }),
             }],
         });
 
@@ -149,7 +163,9 @@ impl ChunkPipeline {
                 topology: wgpu::PrimitiveTopology::TriangleList,
                 strip_index_format: None,
                 front_face: wgpu::FrontFace::Ccw,
-                cull_mode: Some(wgpu::Face::Back),
+                // TODO: re-enable back-face culling once every face winding in
+                // chunk_mesh.rs is verified; several faces are currently inverted.
+                cull_mode: None,
                 unclipped_depth: false,
                 polygon_mode: wgpu::PolygonMode::Fill,
                 conservative: false,
@@ -190,7 +206,7 @@ impl ChunkPipeline {
     }
 
     /// Renders chunk sections.
-    /// Updates the chunk origin uniform for each chunk before drawing.
+    /// Updates the chunk origin uniform for each chunk before drawing using dynamic offsets.
     pub fn render<'a>(
         &'a self,
         render_pass: &mut RenderPass<'a>,
@@ -203,17 +219,24 @@ impl ChunkPipeline {
         // Bind group 0 (view) is set by the renderer
         render_pass.set_bind_group(1, atlas_bind_group, &[]);
         render_pass.set_bind_group(2, &self.atlas_uv_bind_group, &[]);
-        render_pass.set_bind_group(3, &self.chunk_origin_bind_group, &[]);
 
-        // Render all non-empty chunks, updating chunk origin per chunk
-        for chunk in chunks {
+        // Render all non-empty chunks, updating chunk origin per chunk via dynamic offset
+        for (i, chunk) in chunks.iter().enumerate() {
             if chunk.is_empty || chunk.mesh.index_count == 0 {
                 continue;
             }
 
-            // Update chunk origin uniform for this chunk
+            // Update chunk origin uniform for this chunk at its aligned offset
             let origin: [i32; 3] = [chunk.position.x, chunk.position.y, chunk.position.z];
-            queue.write_buffer(&self.chunk_origin_buffer, 0, bytemuck::bytes_of(&origin));
+            let offset = (i as u64) * UNIFORM_OFFSET_ALIGNMENT;
+            queue.write_buffer(
+                &self.chunk_origin_buffer,
+                offset,
+                bytemuck::bytes_of(&origin),
+            );
+
+            // Bind with dynamic offset for this chunk
+            render_pass.set_bind_group(3, &self.chunk_origin_bind_group, &[offset as u32]);
 
             render_pass.set_vertex_buffer(0, chunk.mesh.vertices.slice(..));
             render_pass.set_index_buffer(chunk.mesh.indices.slice(..), wgpu::IndexFormat::Uint32);

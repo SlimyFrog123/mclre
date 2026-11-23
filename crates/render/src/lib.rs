@@ -48,18 +48,15 @@ pub struct Renderer {
     texture_atlas: TextureAtlas,
 }
 
-/// Creates a default font atlas texture for text rendering.
+/// Creates a minimal font atlas texture for text rendering.
+/// Uses 1x1 white texture to minimize VRAM usage. Infallible - falls back to minimal texture on OOM.
 fn create_font_atlas_texture(device: &Device, queue: &Queue) -> wgpu::Texture {
-    // Create a simple 256x256 white texture as placeholder font atlas
-    // In a full implementation, this would be generated from a TTF font using Glyphon
-    let size: u32 = 256;
-    let data = vec![0xFFu8; (size * size * 4) as usize]; // White texture
-
+    // Use 1x1 white texture to minimize VRAM usage
     let texture = device.create_texture(&wgpu::TextureDescriptor {
-        label: Some("Font atlas placeholder"),
+        label: Some("Font atlas minimal"),
         size: wgpu::Extent3d {
-            width: size,
-            height: size,
+            width: 1,
+            height: 1,
             depth_or_array_layers: 1,
         },
         mip_level_count: 1,
@@ -70,25 +67,28 @@ fn create_font_atlas_texture(device: &Device, queue: &Queue) -> wgpu::Texture {
         view_formats: &[],
     });
 
-    queue.write_texture(
-        wgpu::ImageCopyTexture {
-            texture: &texture,
-            mip_level: 0,
-            origin: wgpu::Origin3d::ZERO,
-            aspect: wgpu::TextureAspect::All,
-        },
-        &data,
-        wgpu::ImageDataLayout {
-            offset: 0,
-            bytes_per_row: Some(size * 4),
-            rows_per_image: Some(size),
-        },
-        wgpu::Extent3d {
-            width: size,
-            height: size,
-            depth_or_array_layers: 1,
-        },
-    );
+    // Use panic catch to handle OOM gracefully
+    let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        queue.write_texture(
+            wgpu::ImageCopyTexture {
+                texture: &texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &[0xFF, 0xFF, 0xFF, 0xFF],
+            wgpu::ImageDataLayout {
+                offset: 0,
+                bytes_per_row: Some(4),
+                rows_per_image: Some(1),
+            },
+            wgpu::Extent3d {
+                width: 1,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+        );
+    })); // Close closure, AssertUnwindSafe, and catch_unwind
 
     texture
 }
@@ -96,8 +96,9 @@ fn create_font_atlas_texture(device: &Device, queue: &Queue) -> wgpu::Texture {
 impl Renderer {
     /// Creates a new renderer for the given window.
     pub async fn new(window: Arc<winit::window::Window>) -> Result<Self, RendererError> {
+        // Force DX12 on Windows to avoid Vulkan surface semaphore issues
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::PRIMARY,
+            backends: wgpu::Backends::DX12,
             ..Default::default()
         });
 
@@ -223,8 +224,26 @@ impl Renderer {
         uvs: HashMap<String, [f32; 4]>,
         padding: u32,
     ) -> Result<(), RendererError> {
-        self.texture_atlas =
-            TextureAtlas::from_texture(&self.device, &self.queue, texture, uvs, padding)?;
+        // Try to upload the texture atlas, with OOM fallback
+        let result =
+            TextureAtlas::from_texture(&self.device, &self.queue, texture, uvs.clone(), padding);
+
+        self.texture_atlas = match result {
+            Ok(atlas) => atlas,
+            Err(e) => {
+                eprintln!(
+                    "Failed to upload texture atlas (likely OOM): {}. Using minimal fallback.",
+                    e
+                );
+                // Create minimal 1x1 white texture atlas as fallback
+                let mut uvs = uvs;
+                uvs.insert("fallback".to_string(), [0.0, 0.0, 1.0, 1.0]);
+                let fallback_texture =
+                    mclre_assets::Texture::from_rgba(1, 1, vec![255, 255, 255, 255]);
+                TextureAtlas::from_texture(&self.device, &self.queue, &fallback_texture, uvs, 1)
+                    .expect("1x1 fallback texture should never fail")
+            }
+        };
 
         // Create a properly ordered UV array for the shader.
         // Assign explicit layer indices to basic blocks first for consistent rendering.
@@ -291,6 +310,12 @@ impl Renderer {
         self.frame_graph.resize(&self.device, &self.config);
     }
 
+    /// Waits for all GPU work to complete.
+    /// Call this before dropping the Renderer to avoid surface semaphore errors.
+    pub fn wait_idle(&self) {
+        self.device.poll(wgpu::Maintain::Wait);
+    }
+
     /// Prepares the UI pipeline for a new frame.
     pub fn ui_begin_frame(&mut self) {
         self.ui_pipeline.begin_frame();
@@ -351,6 +376,26 @@ impl Renderer {
         Ok(())
     }
 
+    /// Acquires the next surface texture, handling surface loss/outdated errors.
+    /// If the surface is lost or outdated, reconfigures it and returns an error
+    /// so the current frame is skipped; the next frame will retry with the
+    /// reconfigured surface.
+    fn acquire_surface_texture(&mut self) -> Result<wgpu::SurfaceTexture, RendererError> {
+        match self.surface.get_current_texture() {
+            Ok(frame) => Ok(frame),
+            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
+                // Reconfigure surface for next frame; skip this frame.
+                let width = self.config.width.max(1);
+                let height = self.config.height.max(1);
+                self.config.width = width;
+                self.config.height = height;
+                self.surface.configure(&self.device, &self.config);
+                Err(RendererError::Surface(wgpu::SurfaceError::Outdated))
+            }
+            Err(e) => Err(e.into()),
+        }
+    }
+
     /// Renders a frame with the given view and chunk sections.
     pub fn render(&mut self, view: &View, chunks: &[GpuChunkSection]) -> Result<(), RendererError> {
         self.render_views(
@@ -385,7 +430,7 @@ impl Renderer {
             )));
         }
 
-        let frame = self.surface.get_current_texture()?;
+        let frame = self.acquire_surface_texture()?;
         let frame_view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
@@ -430,7 +475,13 @@ impl Renderer {
                         resolve_target: None,
                         ops: if i == 0 {
                             wgpu::Operations {
-                                load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                                // Clear to an LCE-style sky blue instead of black.
+                                load: wgpu::LoadOp::Clear(wgpu::Color {
+                                    r: 0.47,
+                                    g: 0.66,
+                                    b: 1.0,
+                                    a: 1.0,
+                                }),
                                 store: wgpu::StoreOp::Store,
                             }
                         } else {

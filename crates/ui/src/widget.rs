@@ -185,9 +185,9 @@ pub struct Button {
     base: BaseWidget,
     pub label: String,
     on_click: Option<Arc<dyn Fn() + Send + Sync>>,
-    background_color: [u8; 4],
-    text_color: [u8; 4],
-    font_size: f32,
+    pub background_color: [u8; 4],
+    pub text_color: [u8; 4],
+    pub font_size: f32,
 }
 
 impl std::fmt::Debug for Button {
@@ -353,9 +353,9 @@ impl Widget for Button {
 #[derive(Debug, Clone)]
 pub struct Label {
     base: BaseWidget,
-    text: String,
-    color: [u8; 4],
-    font_size: f32,
+    pub text: String,
+    pub color: [u8; 4],
+    pub font_size: f32,
     align_h: AlignH,
     align_v: AlignV,
     wrap: bool,
@@ -502,9 +502,9 @@ impl Widget for Label {
 #[derive(Debug, Clone)]
 pub struct Image {
     base: BaseWidget,
-    texture_id: Option<Identifier>,
-    uv_rect: Option<[f32; 4]>,
-    tint: [u8; 4],
+    pub texture_id: Option<Identifier>,
+    pub uv_rect: Option<[f32; 4]>,
+    pub tint: [u8; 4],
     keep_aspect: bool,
 }
 
@@ -634,9 +634,9 @@ impl Widget for Image {
 pub struct Panel {
     base: BaseWidget,
     nine_slice: Option<crate::nine_slice::NineSliceRegion>,
-    background_color: [u8; 4],
-    border_color: [u8; 4],
-    border_width: f32,
+    pub background_color: [u8; 4],
+    pub border_color: [u8; 4],
+    pub border_width: f32,
 }
 
 impl Panel {
