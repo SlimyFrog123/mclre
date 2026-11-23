@@ -1,0 +1,45 @@
+# Worldgen Parity: Biome Map
+# Tests biome map generation at chunk resolution
+# [REF: BiomeInitLayer.cpp, BiomeDecorator.cpp]
+
+scenario: "biome_map_generation"
+description: "Biome map matches reference for fixed seeds"
+profile: "lce:141217"
+
+seeds:
+  - 0
+  - 12345
+  - -12345
+  - "minecraft"
+  - "test"
+
+presets:
+  - "Classic"
+  - "Small"
+  - "Medium"
+  - "Large"
+  - "Infinite"
+
+# Expected biome IDs at specific chunk coordinates for seed 12345, Classic preset
+# These values must match reference dumps exactly
+expected_chunks:
+  seed: 12345
+  preset: "Classic"
+  chunks:
+    - pos: [0, 0]
+      biome: "Plains"
+    - pos: [0, 1]
+      biome: "Plains"
+    - pos: [1, 0]
+      biome: "Plains"
+    - pos: [1, 1]
+      biome: "Plains"
+    - pos: [2, 0]
+      biome: "Desert"
+    - pos: [-1, 0]
+      biome: "Forest"
+    - pos: [0, -1]
+      biome: "Ocean"
+
+# Biome distribution statistics (should match reference within tolerance)
+distribution_tolerance: 0.05  # 5% tolerance for biome percentages

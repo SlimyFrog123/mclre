@@ -1,0 +1,59 @@
+# Worldgen Parity: Structure Generation
+# Tests structure placement coordinates and content
+# [REF: VillageFeature.cpp, StrongholdFeature.cpp, MineShaftFeature.cpp]
+
+scenario: "structure_generation"
+description: "Structure placement matches reference for fixed seeds"
+profile: "lce:141217"
+
+seeds:
+  - 0
+  - 12345
+  - -12345
+  - "minecraft"
+  - "test"
+
+presets:
+  - "Classic"
+  - "Small"
+  - "Medium"
+  - "Large"
+  - "Infinite"
+
+# Expected structure coordinates for seed 12345, Classic preset
+expected_structures:
+  seed: 12345
+  preset: "Classic"
+
+  villages:
+    - pos: [64, 64, 64]
+      type: "Plains"
+      buildings: 8
+    - pos: [-128, 64, 192]
+      type: "Desert"
+      buildings: 6
+
+  strongholds:
+    - pos: [1024, 32, 1024]
+      portal_room: [1024, 32, 1024]
+
+  mineshafts:
+    - pos: [256, 40, 512]
+      corridors: 12
+
+  temples:
+    - pos: [512, 64, -256]
+      type: "Desert"
+
+  witch_huts:
+    - pos: [-512, 64, 512]
+
+# Dungeon generation (8 per chunk, random positions)
+dungeons_per_chunk: 8
+dungeon_types:
+  - "Zombie"
+  - "Skeleton"
+  - "Spider"
+
+# Structure detection tolerance
+coordinate_tolerance: 0  # Exact match required

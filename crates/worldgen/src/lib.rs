@@ -1,38 +1,44 @@
 //! Versioned world generators (per Game Profile): biomes, terrain, caves, structures, decoration.
 
 // Core math and noise
-pub mod noise;
 pub mod mth;
+pub mod noise;
 
 // Biome generation
 pub mod biome;
 pub mod layer;
 
 // World generation
-pub mod terrain;
-pub mod structure;
 pub mod decoration;
+pub mod structure;
+pub mod terrain;
 
 // Dimension generators
-pub mod overworld;
-pub mod nether;
 pub mod end;
+pub mod nether;
+pub mod overworld;
+
+// Special generators
+pub mod tutorial;
 
 // Profile-specific generators
 pub mod v_tu19;
 
+#[cfg(test)]
+mod tests;
+
 use mclre_core::GameRandom;
-use mclre_world::{BlockPos, ChunkPos, WorldSizePreset};
 use mclre_profiles::Profile;
+use mclre_world::{BlockPos, ChunkPos, WorldSizePreset};
 
 /// World generator trait for versioned generators
 pub trait WorldGenerator {
     /// Generate a chunk column at the given position
     fn generate_chunk(&mut self, chunk_pos: ChunkPos) -> ChunkData;
-    
+
     /// Post-process a chunk (structures, decoration, etc.)
     fn post_process_chunk(&mut self, chunk_pos: ChunkPos, chunk_data: &mut ChunkData);
-    
+
     /// Get the biome at a position
     fn get_biome(&self, pos: BlockPos) -> BiomeId;
 }
@@ -55,16 +61,28 @@ impl ChunkData {
     pub fn new() -> Self {
         Self {
             blocks: vec![mclre_core::BlockStateId(0); 16 * 256 * 16],
-            biomes: vec![BiomeId(0); 16 * 16],
+            biomes: vec![BiomeId::Ocean; 16 * 16],
             heightmap: vec![0; 16 * 16],
         }
     }
 }
 
+/// Re-export tutorial types
+pub use tutorial::{TutorialGenerator, TutorialStep};
+
 /// Create a world generator for the given profile
-pub fn create_generator(profile: &Profile, seed: i64, preset: WorldSizePreset) -> Box<dyn WorldGenerator> {
-    match profile.id.as_str() {
+pub fn create_generator(
+    profile: &Profile,
+    seed: i64,
+    preset: WorldSizePreset,
+) -> Box<dyn WorldGenerator> {
+    match profile.id.as_str().as_str() {
         "lce:141217" => Box::new(v_tu19::Tu19Generator::new(seed, preset)),
         _ => Box::new(v_tu19::Tu19Generator::new(seed, preset)), // fallback
     }
+}
+
+/// Create a tutorial world generator
+pub fn create_tutorial_generator(seed: i64, preset: WorldSizePreset) -> Box<dyn WorldGenerator> {
+    Box::new(TutorialGenerator::new(seed, preset))
 }

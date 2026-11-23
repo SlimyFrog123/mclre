@@ -1,0 +1,18 @@
+[package]
+name = "mclre-parity"
+version = "0.1.0"
+edition = "2024"
+description = "MCLRE parity test runner"
+
+[dependencies]
+mclre-core = { path = "../crates/core" }
+mclre-profiles = { path = "../crates/profiles" }
+mclre-world = { path = "../crates/world" }
+mclre-worldgen = { path = "../crates/worldgen" }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+anyhow = "1.0"
+
+[[bin]]
+name = "parity-runner"
+path = "runner.rs"

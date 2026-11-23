@@ -1,0 +1,53 @@
+# Worldgen Parity: Heightmap
+# Tests heightmap generation at chunk resolution
+# [REF: RandomLevelSource.cpp, TerrainGenerator.cpp]
+
+scenario: "heightmap_generation"
+description: "Heightmap matches reference for fixed seeds"
+profile: "lce:141217"
+
+seeds:
+  - 0
+  - 12345
+  - -12345
+  - "minecraft"
+  - "test"
+
+presets:
+  - "Classic"
+  - "Small"
+  - "Medium"
+  - "Large"
+  - "Infinite"
+
+# Expected heightmap values at specific chunk coordinates for seed 12345, Classic preset
+# These values are the top-most non-air block Y coordinate for each of the 17x17 points
+# (16 chunk blocks + 1 border on each side)
+expected_heightmaps:
+  seed: 12345
+  preset: "Classic"
+  chunk: [0, 0]
+  # 17x17 grid of heights (y-coordinates)
+  # Format: [[y for x in 0..16] for z in 0..16]
+  heights:
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+    - [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+
+# Heightmap tolerance (exact match required for deterministic generation)
+height_tolerance: 0

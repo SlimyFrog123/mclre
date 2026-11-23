@@ -11,11 +11,17 @@ pub mod worldgen_math {
     /// Seed mixing function matching reference
     pub fn mix_seed(seed: i64, seed_mixup: i64) -> i64 {
         let mut result = seed;
-        result = result.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        result = result
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         result = result.wrapping_add(seed_mixup);
-        result = result.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        result = result
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         result = result.wrapping_add(seed_mixup);
-        result = result.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        result = result
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         result = result.wrapping_add(seed_mixup);
         result
     }
