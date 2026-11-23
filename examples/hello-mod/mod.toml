@@ -1,0 +1,38 @@
+# Hello Mod - A simple example mod for MCLRE
+
+id = "hello:mod"
+name = "Hello Mod"
+version = "1.0.0"
+description = "A simple example mod that adds a custom block and listens to events"
+authors = ["MCLRE Team"]
+license = "MIT"
+
+# Required MCLRE version range
+mclre_version = "^1.0.0"
+
+# Dependencies on other mods (none for this example)
+dependencies = []
+
+# Permissions this mod requests
+permissions = [
+    "world_read",
+    "world_write",
+    "player_interact",
+]
+
+# Entry point function name (exported from WASM)
+entry_point = "mod_init"
+
+# Configuration schema (optional)
+config_schema = { 
+    "type": "object",
+    "properties": {
+        "greeting_message": {
+            "type": "string",
+            "default": "Hello from Hello Mod!"
+        }
+    }
+}
+
+# Minimum API version required
+api_version = "1.0.0"

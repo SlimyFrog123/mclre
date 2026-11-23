@@ -9,3 +9,9 @@ description = "Guest-side SDK crate that WASM mods depend on (no_std-friendly wh
 
 [lints]
 workspace = true
+
+[dependencies]
+mclre-core.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
